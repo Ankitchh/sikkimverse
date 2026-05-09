@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && node -e \"require('fs').writeFileSync('src/generated/prisma/index.ts','export * from \\'./client\\'\\n')\" && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate && node -e \"require('fs').writeFileSync('src/generated/prisma/index.ts','export * from \\'./client\\'\\n')\""
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

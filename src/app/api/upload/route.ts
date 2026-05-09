@@ -148,10 +148,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const bytes      = await file.arrayBuffer()
     const buffer     = Buffer.from(bytes)
 
-    // Use Supabase if configured, otherwise fall back to local filesystem
     const useSupabase =
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    // On Vercel (or any read-only filesystem), local storage is unavailable
+    const isVercel = process.env.VERCEL === '1'
+
+    if (!useSupabase && isVercel) {
+      return NextResponse.json(
+        { error: 'Storage not configured. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in Vercel environment variables.' },
+        { status: 503 },
+      )
+    }
 
     const url = useSupabase
       ? await uploadToSupabase(buffer, uniqueName, category, file.type)

@@ -5,7 +5,7 @@
  * Run with: npx tsx prisma/seed.ts  (or `npm run seed`)
  */
 
-import { PrismaClient } from '../src/generated/prisma'
+import { PrismaClient } from '../src/generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import bcrypt from 'bcryptjs'
 
