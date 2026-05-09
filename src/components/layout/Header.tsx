@@ -25,6 +25,7 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/features/NotificationBell";
 
 // ── Nav items ─────────────────────────────────────────────────────────────────
 
@@ -484,6 +485,9 @@ export function Header() {
 
           {/* Right side */}
           <div className="flex items-center gap-3">
+            {/* Notification bell */}
+            <NotificationBell />
+
             {/* Theme toggle (desktop) */}
             <div className="hidden sm:block">
               <ThemeToggle />

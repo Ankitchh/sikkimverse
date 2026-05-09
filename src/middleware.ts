@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
-// ─── Protected route patterns ─────────────────────────────────────────────────
+// ─── Route protection & role guards ──────────────────────────────────────────
 
 const PROTECTED_PATTERNS = [
   /^\/dashboard(\/.*)?$/,
@@ -12,6 +12,22 @@ const PROTECTED_PATTERNS = [
 
 function isProtectedRoute(pathname: string): boolean {
   return PROTECTED_PATTERNS.some((pattern) => pattern.test(pathname))
+}
+
+// Dashboard sub-route → minimum required roles
+const DASHBOARD_ROLE_MAP: Record<string, string[]> = {
+  '/dashboard/admin':       ['ADMIN', 'SUPER_ADMIN'],
+  '/dashboard/government':  ['GOVERNMENT_OFFICER', 'ADMIN', 'SUPER_ADMIN'],
+  '/dashboard/community':   ['COMMUNITY_PRESIDENT', 'ADMIN', 'SUPER_ADMIN'],
+  '/dashboard/moderator':   ['MODERATOR', 'COMMUNITY_PRESIDENT', 'ADMIN', 'SUPER_ADMIN'],
+  '/dashboard/contributor': ['CONTRIBUTOR', 'MODERATOR', 'COMMUNITY_PRESIDENT', 'GOVERNMENT_OFFICER', 'ADMIN', 'SUPER_ADMIN'],
+}
+
+function getDashboardRoles(pathname: string): string[] | null {
+  for (const [prefix, roles] of Object.entries(DASHBOARD_ROLE_MAP)) {
+    if (pathname === prefix || pathname.startsWith(prefix + '/')) return roles
+  }
+  return null
 }
 
 // ─── Rate limit tracking (in-memory, per worker instance) ─────────────────────
@@ -133,6 +149,27 @@ export async function middleware(request: NextRequest) {
       const response = NextResponse.redirect(signInUrl)
       applySecurityHeaders(response)
       return response
+    }
+
+    // Role-based dashboard guards
+    const requiredRoles = getDashboardRoles(pathname)
+    if (requiredRoles) {
+      const userRole = (token.role as string | undefined) ?? 'PUBLIC_USER'
+      if (!requiredRoles.includes(userRole)) {
+        // Redirect to the user's own dashboard or learn page
+        const roleRoutes: Record<string, string> = {
+          ADMIN:               '/dashboard/admin',
+          SUPER_ADMIN:         '/dashboard/admin',
+          GOVERNMENT_OFFICER:  '/dashboard/government',
+          COMMUNITY_PRESIDENT: '/dashboard/community',
+          MODERATOR:           '/dashboard/moderator',
+          CONTRIBUTOR:         '/dashboard/contributor',
+        }
+        const dest = roleRoutes[userRole] ?? '/learn'
+        const response = NextResponse.redirect(new URL(dest, request.url))
+        applySecurityHeaders(response)
+        return response
+      }
     }
   }
 
