@@ -1,0 +1,644 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  PUBLIC_USER
+  CONTRIBUTOR
+  MODERATOR
+  COMMUNITY_PRESIDENT
+  GOVERNMENT_OFFICER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum EndangermentLevel {
+  SAFE
+  VULNERABLE
+  ENDANGERED
+  CRITICALLY_ENDANGERED
+  EXTINCT
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum LessonType {
+  VOCABULARY
+  GRAMMAR
+  PRONUNCIATION
+  SCRIPT
+  CULTURE
+}
+
+enum QuizType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  AUDIO_MATCH
+  SCRIPT_DRAW
+  FILL_BLANK
+}
+
+enum StoryType {
+  FOLKTALE
+  MYTH
+  LEGEND
+  HISTORY
+  ORAL_HISTORY
+}
+
+enum ContentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VideoType {
+  LESSON
+  CULTURAL
+  DOCUMENTARY
+  FESTIVAL
+  RITUAL
+}
+
+enum RecordingType {
+  WORD
+  PHRASE
+  SENTENCE
+  STORY
+  SONG
+  RITUAL
+}
+
+enum SubmissionType {
+  WORD
+  STORY
+  SONG
+  VIDEO
+  RECORDING
+}
+
+enum HandwritingGrade {
+  A_PLUS
+  A
+  B
+  C
+  NEEDS_PRACTICE
+}
+
+// ─── Auth Models (NextAuth v5 / @auth/prisma-adapter) ─────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── User ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  name               String?
+  image              String?
+  passwordHash       String?
+  role               UserRole  @default(PUBLIC_USER)
+  communityId        String?
+  xp                 Int       @default(0)
+  streak             Int       @default(0)
+  streakLastActivity DateTime?
+  emailVerified      DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  community           Community?           @relation(fields: [communityId], references: [id])
+  accounts            Account[]
+  sessions            Session[]
+  progress            UserProgress[]
+  quizAttempts        QuizAttempt[]
+  achievements        UserAchievement[]
+  notifications       Notification[]
+  stories             Story[]              @relation("StoryContributor")
+  songs               Song[]               @relation("SongContributor")
+  videos              Video[]              @relation("VideoContributor")
+  recordings          Recording[]          @relation("RecordingContributor")
+  words               Word[]               @relation("WordContributor")
+  moderatedSubmission Submission[]         @relation("SubmissionModerator")
+  submissions         Submission[]         @relation("SubmissionContributor")
+  pronunciationAttempts PronunciationAttempt[]
+  handwritingAttempts HandwritingAttempt[]
+
+  @@index([communityId])
+  @@index([role])
+  @@index([email])
+}
+
+// ─── Community & Language ──────────────────────────────────────────────────────
+
+model Community {
+  id                String   @id @default(cuid())
+  name              String
+  slug              String   @unique
+  description       String   @db.Text
+  coverImage        String?
+  logoImage         String?
+  colorPrimary      String   @default("#3B82F6")
+  colorSecondary    String   @default("#1D4ED8")
+  region            String
+  totalSpeakers     Int      @default(0)
+  preservationScore Int      @default(0)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  users       User[]
+  languages   Language[]
+  courses     Course[]
+  stories     Story[]
+  songs       Song[]
+  videos      Video[]
+  recordings  Recording[]
+  words       Word[]
+  submissions Submission[]
+  earnings    CommunityEarning[]
+  festivals   Festival[]
+  tags        Tag[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model Language {
+  id               String            @id @default(cuid())
+  name             String
+  code             String            @unique
+  communityId      String
+  scriptType       String?
+  description      String?           @db.Text
+  speakerCount     Int               @default(0)
+  endangermentLevel EndangermentLevel @default(VULNERABLE)
+  createdAt        DateTime          @default(now())
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  dialects  Dialect[]
+  courses   Course[]
+  words     Word[]
+
+  @@index([communityId])
+  @@index([endangermentLevel])
+}
+
+model Dialect {
+  id          String  @id @default(cuid())
+  name        String
+  languageId  String
+  region      String?
+  description String? @db.Text
+  speakerCount Int    @default(0)
+
+  language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  words    Word[]
+
+  @@index([languageId])
+}
+
+// ─── Learning: Courses, Lessons, Progress ─────────────────────────────────────
+
+model Course {
+  id           String      @id @default(cuid())
+  title        String
+  description  String      @db.Text
+  communityId  String
+  languageId   String
+  level        CourseLevel @default(BEGINNER)
+  coverImage   String?
+  totalLessons Int         @default(0)
+  isPublished  Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+
+  community Community      @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  language  Language       @relation(fields: [languageId], references: [id])
+  lessons   Lesson[]
+  progress  UserProgress[]
+  quizzes   Quiz[]
+
+  @@index([communityId])
+  @@index([languageId])
+  @@index([isPublished])
+  @@index([level])
+}
+
+model Lesson {
+  id               String     @id @default(cuid())
+  title            String
+  description      String?    @db.Text
+  courseId         String
+  order            Int
+  type             LessonType @default(VOCABULARY)
+  xpReward         Int        @default(10)
+  estimatedMinutes Int        @default(10)
+  content          Json
+  isPublished      Boolean    @default(false)
+  createdAt        DateTime   @default(now())
+
+  course   Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress UserProgress[]
+  quizzes  Quiz[]
+
+  @@index([courseId])
+  @@index([order])
+  @@index([isPublished])
+}
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  lessonId    String
+  courseId    String
+  completed   Boolean   @default(false)
+  score       Int       @default(0)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([completed])
+}
+
+// ─── Quizzes ──────────────────────────────────────────────────────────────────
+
+model Quiz {
+  id            String   @id @default(cuid())
+  lessonId      String
+  courseId      String
+  question      String   @db.Text
+  type          QuizType @default(MULTIPLE_CHOICE)
+  options       Json?
+  correctAnswer String   @db.Text
+  audioUrl      String?
+  imageUrl      String?
+  createdAt     DateTime @default(now())
+
+  lesson   Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  course   Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attempts QuizAttempt[]
+
+  @@index([lessonId])
+  @@index([courseId])
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  quizId    String
+  answer    String   @db.Text
+  isCorrect Boolean  @default(false)
+  score     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([quizId])
+  @@index([createdAt])
+}
+
+// ─── Achievements ─────────────────────────────────────────────────────────────
+
+model Achievement {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String @db.Text
+  icon        String
+  xpRequired  Int    @default(0)
+  badgeImage  String?
+  type        String
+
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  earnedAt      DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+  @@index([earnedAt])
+}
+
+// ─── Cultural Archive: Stories, Songs, Videos, Recordings ─────────────────────
+
+model Story {
+  id            String        @id @default(cuid())
+  title         String
+  content       String        @db.Text
+  summary       String?       @db.Text
+  communityId   String
+  contributorId String
+  status        ContentStatus @default(PENDING)
+  language      String
+  audioUrl      String?
+  imageUrl      String?
+  type          StoryType     @default(FOLKTALE)
+  tags          Json?
+  viewCount     Int           @default(0)
+  createdAt     DateTime      @default(now())
+
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  contributor User      @relation("StoryContributor", fields: [contributorId], references: [id])
+
+  @@index([communityId])
+  @@index([contributorId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model Song {
+  id            String        @id @default(cuid())
+  title         String
+  lyrics        String?       @db.Text
+  communityId   String
+  contributorId String
+  status        ContentStatus @default(PENDING)
+  audioUrl      String?
+  videoUrl      String?
+  imageUrl      String?
+  occasion      String?
+  language      String
+  tags          Json?
+  viewCount     Int           @default(0)
+  createdAt     DateTime      @default(now())
+
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  contributor User      @relation("SongContributor", fields: [contributorId], references: [id])
+
+  @@index([communityId])
+  @@index([contributorId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Video {
+  id            String        @id @default(cuid())
+  title         String
+  description   String?       @db.Text
+  communityId   String
+  contributorId String
+  status        ContentStatus @default(PENDING)
+  videoUrl      String
+  thumbnailUrl  String?
+  duration      Int           @default(0)
+  type          VideoType     @default(CULTURAL)
+  viewCount     Int           @default(0)
+  createdAt     DateTime      @default(now())
+
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  contributor User      @relation("VideoContributor", fields: [contributorId], references: [id])
+
+  @@index([communityId])
+  @@index([contributorId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model Recording {
+  id            String        @id @default(cuid())
+  title         String
+  description   String?       @db.Text
+  communityId   String
+  contributorId String
+  status        ContentStatus @default(PENDING)
+  audioUrl      String
+  duration      Int           @default(0)
+  type          RecordingType @default(WORD)
+  transcription String?       @db.Text
+  translation   String?       @db.Text
+  createdAt     DateTime      @default(now())
+
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  contributor User      @relation("RecordingContributor", fields: [contributorId], references: [id])
+
+  @@index([communityId])
+  @@index([contributorId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ─── Dictionary / Lexicon ─────────────────────────────────────────────────────
+
+model Word {
+  id              String        @id @default(cuid())
+  word            String
+  meaning         String        @db.Text
+  communityId     String
+  languageId      String
+  dialectId       String?
+  pronunciation   String?
+  audioUrl        String?
+  imageUrl        String?
+  partOfSpeech    String?
+  status          ContentStatus @default(PENDING)
+  contributorId   String
+  exampleSentence String?       @db.Text
+  createdAt       DateTime      @default(now())
+
+  community   Community              @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  language    Language               @relation(fields: [languageId], references: [id])
+  dialect     Dialect?               @relation(fields: [dialectId], references: [id])
+  contributor User                   @relation("WordContributor", fields: [contributorId], references: [id])
+  attempts    PronunciationAttempt[]
+
+  @@index([communityId])
+  @@index([languageId])
+  @@index([dialectId])
+  @@index([contributorId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model PronunciationAttempt {
+  id           String   @id @default(cuid())
+  userId       String
+  wordId       String
+  recordingUrl String
+  score        Int      @default(0)
+  feedback     String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([wordId])
+  @@index([createdAt])
+}
+
+model HandwritingAttempt {
+  id          String           @id @default(cuid())
+  userId      String
+  characterId String
+  imageData   String           @db.Text
+  score       Int              @default(0)
+  grade       HandwritingGrade @default(NEEDS_PRACTICE)
+  feedback    String?          @db.Text
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([characterId])
+  @@index([createdAt])
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// ─── Moderation / Submissions ─────────────────────────────────────────────────
+
+model Submission {
+  id              String         @id @default(cuid())
+  type            SubmissionType
+  communityId     String
+  contributorId   String
+  moderatorId     String?
+  status          ContentStatus  @default(PENDING)
+  rejectionReason String?        @db.Text
+  submittedAt     DateTime       @default(now())
+  reviewedAt      DateTime?
+
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  contributor User      @relation("SubmissionContributor", fields: [contributorId], references: [id])
+  moderator   User?     @relation("SubmissionModerator", fields: [moderatorId], references: [id])
+
+  @@index([communityId])
+  @@index([contributorId])
+  @@index([moderatorId])
+  @@index([status])
+  @@index([submittedAt])
+}
+
+// ─── Economics / Earnings ─────────────────────────────────────────────────────
+
+model CommunityEarning {
+  id          String   @id @default(cuid())
+  communityId String
+  amount      Decimal  @db.Decimal(12, 2)
+  source      String
+  period      String
+  createdAt   DateTime @default(now())
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@index([communityId])
+  @@index([period])
+  @@index([createdAt])
+}
+
+// ─── Festivals ────────────────────────────────────────────────────────────────
+
+model Festival {
+  id           String   @id @default(cuid())
+  name         String
+  communityId  String
+  description  String   @db.Text
+  month        Int
+  imageUrl     String?
+  significance String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@index([communityId])
+  @@index([month])
+}
+
+// ─── Tags ─────────────────────────────────────────────────────────────────────
+
+model Tag {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String
+  communityId String?
+
+  community Community? @relation(fields: [communityId], references: [id], onDelete: SetNull)
+
+  @@unique([slug, communityId])
+  @@index([communityId])
+  @@index([slug])
+}
