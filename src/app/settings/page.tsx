@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { User, BookOpen, Palette, Bell, Shield, LogOut, Moon, Sun, ChevronRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,18 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   );
 }
 
+const STORAGE_KEY = "sikkimverse-settings";
+
+function loadSettings() {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -42,7 +54,21 @@ export default function SettingsPage() {
   const [privacy, setPrivacy] = useState({ publicProfile: true, showAchievements: true, shareProgress: false });
   const [saved, setSaved] = useState(false);
 
+  // Hydrate from localStorage on mount
+  useEffect(() => {
+    const stored = loadSettings();
+    if (!stored) return;
+    if (stored.theme)     setTheme(stored.theme);
+    if (stored.fontSize)  setFontSize(stored.fontSize);
+    if (stored.dailyGoal) setDailyGoal(stored.dailyGoal);
+    if (stored.notifs)    setNotifs(stored.notifs);
+    if (stored.privacy)   setPrivacy(stored.privacy);
+  }, []);
+
   const save = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ theme, fontSize, dailyGoal, notifs, privacy }));
+    } catch { /* quota exceeded — ignore */ }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };

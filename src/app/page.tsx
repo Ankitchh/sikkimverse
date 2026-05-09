@@ -9,6 +9,7 @@ import {
   Calendar, MapPin, Check, Sparkles
 } from 'lucide-react'
 import { COMMUNITIES } from '@/lib/constants'
+import { SikkimMapSection } from '@/components/features/SikkimMap'
 
 // ─── Animated Counter ─────────────────────────────────────────────────────────
 
@@ -185,15 +186,45 @@ const LEARNING_STEPS = [
 
 // ─── Homepage Component ───────────────────────────────────────────────────────
 
+interface LiveActivity { icon: string; text: string; time: string }
+
+const TYPE_ICONS: Record<string, string> = {
+  word_added: '📝', story_archived: '📖', song_recorded: '🎵',
+  learner_joined: '🎓', achievement_earned: '🏆', moderation_approved: '✅',
+}
+
 export default function HomePage() {
+  const [activities, setActivities] = useState<LiveActivity[]>(
+    ACTIVITY_ITEMS.map(a => ({ icon: a.icon, text: a.text, time: a.time }))
+  )
   const [activeActivity, setActiveActivity] = useState(0)
 
+  // Connect SSE for live activity
+  useEffect(() => {
+    const es = new EventSource('/api/realtime/activity')
+    es.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data)
+        const icon = TYPE_ICONS[data.type] ?? '⚡'
+        const item: LiveActivity = {
+          icon,
+          text: `${data.actor} (${data.community}) ${data.detail}`,
+          time: 'just now',
+        }
+        setActivities(prev => [item, ...prev.slice(0, 7)])
+        setActiveActivity(0)
+      } catch { /* ignore parse errors */ }
+    }
+    return () => es.close()
+  }, [])
+
+  // Carousel rotation
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveActivity(prev => (prev + 1) % ACTIVITY_ITEMS.length)
+      setActiveActivity(prev => (prev + 1) % activities.length)
     }, 2800)
     return () => clearInterval(interval)
-  }, [])
+  }, [activities.length])
 
   return (
     <main className="min-h-screen bg-[#0a0f0d] text-white overflow-x-hidden">
@@ -472,6 +503,38 @@ export default function HomePage() {
               </FadeInSection>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          INTERACTIVE SIKKIM MAP
+      ═══════════════════════════════════════════ */}
+      <section className="py-24 px-6" style={{ background: '#080c0a' }}>
+        <div className="max-w-7xl mx-auto">
+          <FadeInSection>
+            <div className="text-center mb-12">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest mb-4"
+                style={{ background: 'rgba(22,163,74,0.1)', border: '1px solid rgba(22,163,74,0.2)', color: '#4ADE80' }}
+              >
+                <MapPin size={12} /> Interactive Map
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                Sikkim's Living Heritage Map
+              </h2>
+              <p className="text-white/50 text-lg max-w-2xl mx-auto">
+                Explore the geographic distribution of indigenous communities across Sikkim's four districts.
+              </p>
+            </div>
+          </FadeInSection>
+          <FadeInSection delay={0.2}>
+            <div
+              className="rounded-3xl overflow-hidden p-6 md:p-10"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+            >
+              <SikkimMapSection />
+            </div>
+          </FadeInSection>
         </div>
       </section>
 
@@ -826,10 +889,10 @@ export default function HomePage() {
                   transition={{ duration: 0.4 }}
                   className="flex items-center gap-3"
                 >
-                  <span className="text-xl">{ACTIVITY_ITEMS[activeActivity].icon}</span>
-                  <span className="text-white/70 text-sm">{ACTIVITY_ITEMS[activeActivity].text}</span>
+                  <span className="text-xl">{activities[activeActivity].icon}</span>
+                  <span className="text-white/70 text-sm">{activities[activeActivity].text}</span>
                   <span className="text-white/30 text-xs ml-auto flex-none">
-                    {ACTIVITY_ITEMS[activeActivity].time}
+                    {activities[activeActivity].time}
                   </span>
                 </motion.div>
               </AnimatePresence>
