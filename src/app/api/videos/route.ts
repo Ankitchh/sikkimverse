@@ -30,7 +30,10 @@ export async function GET(request: NextRequest) {
     const [videos, total] = await Promise.all([
       prisma.video.findMany({
         where,
-        include: { community: { select: { name: true, slug: true } } },
+        include: {
+          community: { select: { name: true, slug: true } },
+          contributor: { select: { name: true } },
+        },
         orderBy: [{ viewCount: 'desc' }, { createdAt: 'desc' }],
         skip,
         take: query.limit,

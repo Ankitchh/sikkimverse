@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Flame,
@@ -11,7 +12,6 @@ import {
   ChevronRight,
   Play,
   Lock,
-  Zap,
   Target,
   Award,
   TrendingUp,
@@ -22,10 +22,24 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
+
+interface ApiCourse {
+  id: string;
+  title: string;
+  description: string;
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  coverImage: string | null;
+  totalLessons: number;
+  enrolledCount: number;
+  community: { id: string; name: string; slug: string; colorPrimary: string } | null;
+  language: { name: string } | null;
+}
+
 interface Course {
   id: string;
   title: string;
   community: string;
+  communitySlug: string;
   level: "Beginner" | "Intermediate" | "Advanced";
   lessons: number;
   enrolled: number;
@@ -33,110 +47,54 @@ interface Course {
   color: string;
   emoji: string;
   description: string;
-  tags: string[];
 }
 
 interface LeaderboardEntry {
   rank: number;
-  name: string;
+  id: string;
+  name: string | null;
   xp: number;
   streak: number;
-  avatar: string;
+  community: { name: string } | null;
   isCurrentUser?: boolean;
 }
 
-// ── Sample Data ────────────────────────────────────────────────────────────────
-const COURSES: Course[] = [
-  {
-    id: "lepcha-beginners",
-    title: "Lepcha Beginners",
-    community: "Lepcha",
-    level: "Beginner",
-    lessons: 20,
-    enrolled: 1842,
-    progress: 35,
-    color: "from-emerald-600 to-teal-700",
-    emoji: "🌿",
-    description: "Start your journey into the ancient Lepcha script and spoken language.",
-    tags: ["Script", "Conversation", "Culture"],
-  },
-  {
-    id: "bhutia-essentials",
-    title: "Bhutia Essentials",
-    community: "Bhutia",
-    level: "Beginner",
-    lessons: 15,
-    enrolled: 1204,
-    progress: 0,
-    color: "from-blue-600 to-indigo-700",
-    emoji: "🏔️",
-    description: "Learn everyday Bhutia expressions and cultural practices.",
-    tags: ["Spoken", "Phrases", "Heritage"],
-  },
-  {
-    id: "limbu-script-mastery",
-    title: "Limbu Script Mastery",
-    community: "Limbu",
-    level: "Intermediate",
-    lessons: 25,
-    enrolled: 987,
-    progress: 0,
-    color: "from-orange-500 to-amber-600",
-    emoji: "✍️",
-    description: "Master the beautiful Sirijonga script used in Limbu writing.",
-    tags: ["Script", "Writing", "Advanced"],
-  },
-  {
-    id: "nepali-classical",
-    title: "Classical Nepali Poetry",
-    community: "Nepali",
-    level: "Advanced",
-    lessons: 18,
-    enrolled: 3201,
-    progress: 0,
-    color: "from-red-500 to-rose-600",
-    emoji: "📜",
-    description: "Explore the rich tradition of Nepali classical literature.",
-    tags: ["Literature", "Poetry", "Culture"],
-  },
-  {
-    id: "rai-conversational",
-    title: "Rai Conversational",
-    community: "Rai",
-    level: "Beginner",
-    lessons: 12,
-    enrolled: 678,
-    progress: 0,
-    color: "from-purple-600 to-violet-700",
-    emoji: "🌸",
-    description: "Everyday conversations in the Rai dialect of Eastern Sikkim.",
-    tags: ["Conversation", "Daily Life"],
-  },
-  {
-    id: "tamang-music-language",
-    title: "Tamang Music & Language",
-    community: "Tamang",
-    level: "Beginner",
-    lessons: 16,
-    enrolled: 892,
-    progress: 0,
-    color: "from-pink-500 to-fuchsia-600",
-    emoji: "🎵",
-    description: "Learn Tamang through its vibrant musical traditions.",
-    tags: ["Music", "Culture", "Language"],
-  },
-];
+// ── Static cultural metadata ──────────────────────────────────────────────────
 
-const COMMUNITIES = ["All", "Lepcha", "Bhutia", "Limbu", "Nepali", "Rai", "Tamang"];
+const LEVEL_COLORS: Record<string, string> = {
+  BEGINNER: 'from-emerald-600 to-teal-700',
+  INTERMEDIATE: 'from-amber-500 to-orange-600',
+  ADVANCED: 'from-red-600 to-rose-700',
+}
 
-const LEADERBOARD: LeaderboardEntry[] = [
-  { rank: 1, name: "Priya Sharma", xp: 12480, streak: 47, avatar: "PS" },
-  { rank: 2, name: "Tenzin Dorje", xp: 11230, streak: 32, avatar: "TD" },
-  { rank: 3, name: "Aasha Rai", xp: 10890, streak: 28, avatar: "AR" },
-  { rank: 4, name: "You", xp: 9750, streak: 12, avatar: "ME", isCurrentUser: true },
-  { rank: 5, name: "Karma Bhutia", xp: 8920, streak: 21, avatar: "KB" },
-];
+const COMMUNITY_EMOJIS: Record<string, string> = {
+  lepcha: '🌿', bhutia: '🏔️', limbu: '🌄', tamang: '🥁',
+  rai: '🌾', gurung: '🏞️', sherpa: '⛰️', magar: '🌺',
+  newar: '🏛️', sunwar: '🎶', nepali: '📜',
+}
 
+const LEVEL_LABEL: Record<string, Course['level']> = {
+  BEGINNER: 'Beginner',
+  INTERMEDIATE: 'Intermediate',
+  ADVANCED: 'Advanced',
+}
+
+const XP_PER_LEVEL = 1000
+
+function xpToLevel(xp: number) {
+  return Math.floor(xp / XP_PER_LEVEL) + 1
+}
+
+const LEVEL_NAMES = [
+  'Novice', 'Seeker', 'Explorer', 'Apprentice', 'Scholar',
+  'Keeper', 'Guardian', 'Elder', 'Sage', 'Heritage Master',
+]
+
+function levelName(level: number): string {
+  return LEVEL_NAMES[Math.min(level - 1, LEVEL_NAMES.length - 1)]
+}
+
+// PATH_NODES are illustrative — a real implementation would fetch user lesson progress
 const PATH_NODES = [
   { id: 1, label: "Greetings", done: true },
   { id: 2, label: "Numbers", done: true },
@@ -171,7 +129,6 @@ function CourseCard({ course }: { course: Course }) {
       transition={{ duration: 0.2 }}
       className="bg-background-secondary rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow"
     >
-      {/* Cover gradient */}
       <div className={cn("h-28 bg-gradient-to-br flex items-center justify-center text-5xl relative", course.color)}>
         <span>{course.emoji}</span>
         <div className="absolute top-3 right-3">
@@ -179,10 +136,7 @@ function CourseCard({ course }: { course: Course }) {
         </div>
         {hasProgress && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
-            <div
-              className="h-full bg-white/80 transition-all"
-              style={{ width: `${course.progress}%` }}
-            />
+            <div className="h-full bg-white/80 transition-all" style={{ width: `${course.progress}%` }} />
           </div>
         )}
       </div>
@@ -289,16 +243,92 @@ function LearningPath() {
   );
 }
 
+// ── Skeleton for course cards ─────────────────────────────────────────────────
+function CourseCardSkeleton() {
+  return (
+    <div className="bg-background-secondary rounded-2xl border border-border overflow-hidden animate-pulse">
+      <div className="h-28 bg-gray-200" />
+      <div className="p-4 space-y-3">
+        <div className="h-3 w-20 bg-gray-200 rounded" />
+        <div className="h-4 w-full bg-gray-200 rounded" />
+        <div className="h-3 w-4/5 bg-gray-200 rounded" />
+        <div className="h-9 w-full bg-gray-200 rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function LearnPage() {
+  const { data: session } = useSession();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(true);
+  const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
   const [activeTab, setActiveTab] = useState("All");
 
-  const filteredCourses =
-    activeTab === "All"
-      ? COURSES
-      : COURSES.filter((c) => c.community === activeTab);
+  const user = session?.user;
+  const xp = user?.xp ?? 0;
+  const streak = user?.streak ?? 0;
+  const currentLevel = xpToLevel(xp);
+  const xpIntoLevel = xp % XP_PER_LEVEL;
+  const firstName = user?.name?.split(' ')[0] ?? 'Learner';
 
-  const inProgressCourse = COURSES.find((c) => c.progress && c.progress > 0);
+  // Fetch courses
+  useEffect(() => {
+    fetch('/api/courses?limit=20')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data?.data) return;
+        const mapped: Course[] = (data.data as ApiCourse[]).map(c => ({
+          id: c.id,
+          title: c.title,
+          description: c.description,
+          level: LEVEL_LABEL[c.level] ?? 'Beginner',
+          lessons: c.totalLessons,
+          enrolled: c.enrolledCount,
+          community: c.community?.name ?? 'Community',
+          communitySlug: c.community?.slug ?? '',
+          color: LEVEL_COLORS[c.level] ?? 'from-emerald-600 to-teal-700',
+          emoji: COMMUNITY_EMOJIS[c.community?.slug ?? ''] ?? '📚',
+        }));
+        setCourses(mapped);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingCourses(false));
+  }, []);
+
+  // Fetch leaderboard
+  useEffect(() => {
+    fetch('/api/leaderboard?limit=5')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data?.leaderboard) return;
+        const entries = (data.leaderboard as (LeaderboardEntry & { id: string })[]).map(e => ({
+          ...e,
+          isCurrentUser: e.id === user?.id,
+        }));
+        setLeaderboard(entries);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingLeaderboard(false));
+  }, [user?.id]);
+
+  const communityTabs = useMemo(() => {
+    const names = Array.from(new Set(courses.map(c => c.community))).sort();
+    return ['All', ...names];
+  }, [courses]);
+
+  const filteredCourses = useMemo(() => {
+    if (activeTab === 'All') return courses;
+    return courses.filter(c => c.community === activeTab);
+  }, [courses, activeTab]);
+
+  const inProgressCourse = courses.find(c => c.progress && c.progress > 0);
+
+  // Gap to top 3
+  const top3Xp = leaderboard[2]?.xp ?? 0;
+  const xpGap = Math.max(0, top3Xp - xp + 1);
 
   return (
     <div className="min-h-screen bg-background">
@@ -312,7 +342,7 @@ export default function LearnPage() {
           >
             <div>
               <p className="text-white/70 text-sm font-medium">Good morning,</p>
-              <h1 className="text-2xl font-bold text-white mt-1">Tenzin Namgyal 👋</h1>
+              <h1 className="text-2xl font-bold text-white mt-1">{firstName} 👋</h1>
             </div>
             <div className="flex items-center gap-3">
               <motion.div
@@ -320,14 +350,14 @@ export default function LearnPage() {
                 className="flex items-center gap-1.5 bg-white/15 backdrop-blur px-3 py-2 rounded-xl"
               >
                 <Flame className="w-5 h-5 text-orange-300" />
-                <span className="text-white font-bold">12</span>
+                <span className="text-white font-bold">{streak}</span>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-1.5 bg-white/15 backdrop-blur px-3 py-2 rounded-xl"
               >
                 <Star className="w-5 h-5 text-yellow-300" />
-                <span className="text-white font-bold">9,750</span>
+                <span className="text-white font-bold">{xp.toLocaleString()}</span>
               </motion.div>
             </div>
           </motion.div>
@@ -340,13 +370,13 @@ export default function LearnPage() {
             className="mt-5 bg-white/10 backdrop-blur rounded-2xl p-4"
           >
             <div className="flex justify-between text-sm text-white/80 mb-2">
-              <span>Level 4 — Apprentice</span>
-              <span>9,750 / 10,000 XP</span>
+              <span>Level {currentLevel} — {levelName(currentLevel)}</span>
+              <span>{xpIntoLevel.toLocaleString()} / {XP_PER_LEVEL.toLocaleString()} XP</span>
             </div>
             <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: "97.5%" }}
+                animate={{ width: `${(xpIntoLevel / XP_PER_LEVEL) * 100}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
                 className="h-full bg-gradient-to-r from-yellow-300 to-amber-400 rounded-full"
               />
@@ -376,14 +406,9 @@ export default function LearnPage() {
                 <h2 className="font-bold text-foreground mt-0.5">{inProgressCourse.title}</h2>
                 <div className="mt-1.5 flex items-center gap-2">
                   <div className="flex-1 h-1.5 bg-background-tertiary rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary rounded-full"
-                      style={{ width: `${inProgressCourse.progress}%` }}
-                    />
+                    <div className="h-full bg-primary rounded-full" style={{ width: `${inProgressCourse.progress}%` }} />
                   </div>
-                  <span className="text-xs text-foreground-muted font-medium">
-                    {inProgressCourse.progress}%
-                  </span>
+                  <span className="text-xs text-foreground-muted font-medium">{inProgressCourse.progress}%</span>
                 </div>
               </div>
               <Link href={`/learn/${inProgressCourse.id}`}>
@@ -414,7 +439,7 @@ export default function LearnPage() {
               </div>
               <div>
                 <p className="font-bold text-lg">Daily Challenge</p>
-                <p className="text-white/80 text-sm">Translate 5 Lepcha phrases • 50 XP reward</p>
+                <p className="text-white/80 text-sm">Translate 5 phrases • 50 XP reward</p>
               </div>
             </div>
             <Link href="/learn/lesson/daily-challenge">
@@ -429,8 +454,7 @@ export default function LearnPage() {
           </div>
           <div className="mt-3 flex items-center gap-2 text-white/70 text-xs">
             <Clock className="w-3.5 h-3.5" />
-            <span>Resets in 14h 32m</span>
-            <span className="ml-auto">3 of 5 completed</span>
+            <span>Resets at midnight</span>
           </div>
         </motion.div>
 
@@ -452,12 +476,14 @@ export default function LearnPage() {
         >
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-foreground">Browse Courses</h2>
-            <span className="text-sm text-foreground-muted">{filteredCourses.length} courses</span>
+            <span className="text-sm text-foreground-muted">
+              {loadingCourses ? '—' : `${filteredCourses.length} courses`}
+            </span>
           </div>
 
           {/* Community Tabs */}
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {COMMUNITIES.map((community) => (
+            {(loadingCourses ? ['All'] : communityTabs).map((community) => (
               <motion.button
                 key={community}
                 whileHover={{ scale: 1.03 }}
@@ -485,9 +511,10 @@ export default function LearnPage() {
               transition={{ duration: 0.2 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {filteredCourses.map((course) => (
-                <CourseCard key={course.id} course={course} />
-              ))}
+              {loadingCourses
+                ? Array.from({ length: 6 }).map((_, i) => <CourseCardSkeleton key={i} />)
+                : filteredCourses.map(course => <CourseCard key={course.id} course={course} />)
+              }
             </motion.div>
           </AnimatePresence>
         </motion.div>
@@ -502,62 +529,81 @@ export default function LearnPage() {
           <div className="flex items-center justify-between p-5 border-b border-border">
             <div className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-amber-500" />
-              <h2 className="font-bold text-foreground">Weekly Leaderboard</h2>
+              <h2 className="font-bold text-foreground">Top Learners</h2>
             </div>
-            <Link href="/leaderboard" className="text-sm text-primary font-medium hover:underline">
-              View all
+            <Link href="/leaderboard" className="text-sm text-primary font-medium hover:underline flex items-center gap-1">
+              View all <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
           <div className="divide-y divide-border">
-            {LEADERBOARD.map((entry, i) => (
-              <motion.div
-                key={entry.rank}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.35 + i * 0.05 }}
-                className={cn(
-                  "flex items-center gap-4 px-5 py-3.5 transition-colors",
-                  entry.isCurrentUser && "bg-primary/5 border-l-2 border-l-primary"
-                )}
-              >
-                <span
-                  className={cn(
-                    "w-6 text-center font-bold text-sm",
-                    entry.rank === 1 && "text-amber-500",
-                    entry.rank === 2 && "text-slate-400",
-                    entry.rank === 3 && "text-amber-700",
-                    entry.rank > 3 && "text-foreground-muted"
-                  )}
-                >
-                  {entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : entry.rank}
-                </span>
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xs font-bold shrink-0">
-                  {entry.avatar}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={cn("font-semibold text-sm", entry.isCurrentUser && "text-primary")}>
-                    {entry.name} {entry.isCurrentUser && "(You)"}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-foreground-muted mt-0.5">
-                    <Flame className="w-3 h-3 text-orange-400" />
-                    <span>{entry.streak} day streak</span>
+            {loadingLeaderboard
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-4 px-5 py-3.5 animate-pulse">
+                    <div className="w-6 h-4 bg-gray-200 rounded" />
+                    <div className="w-9 h-9 rounded-full bg-gray-200" />
+                    <div className="flex-1">
+                      <div className="h-3 w-32 bg-gray-200 rounded mb-1" />
+                      <div className="h-3 w-20 bg-gray-200 rounded" />
+                    </div>
+                    <div className="h-4 w-12 bg-gray-200 rounded" />
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-foreground text-sm">{entry.xp.toLocaleString()}</p>
-                  <p className="text-xs text-foreground-muted">XP</p>
-                </div>
-              </motion.div>
-            ))}
+                ))
+              : leaderboard.map((entry, i) => {
+                  const initials = entry.name
+                    ? entry.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+                    : 'U'
+                  return (
+                    <motion.div
+                      key={entry.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.35 + i * 0.05 }}
+                      className={cn(
+                        "flex items-center gap-4 px-5 py-3.5 transition-colors",
+                        entry.isCurrentUser && "bg-primary/5 border-l-2 border-l-primary"
+                      )}
+                    >
+                      <span className={cn(
+                        "w-6 text-center font-bold text-sm",
+                        entry.rank === 1 && "text-amber-500",
+                        entry.rank === 2 && "text-slate-400",
+                        entry.rank === 3 && "text-amber-700",
+                        entry.rank > 3 && "text-foreground-muted"
+                      )}>
+                        {entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : entry.rank}
+                      </span>
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xs font-bold shrink-0">
+                        {initials}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={cn("font-semibold text-sm", entry.isCurrentUser && "text-primary")}>
+                          {entry.name ?? 'Learner'} {entry.isCurrentUser && "(You)"}
+                        </p>
+                        <div className="flex items-center gap-2 text-xs text-foreground-muted mt-0.5">
+                          <Flame className="w-3 h-3 text-orange-400" />
+                          <span>{entry.streak} day streak</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-foreground text-sm">{entry.xp.toLocaleString()}</p>
+                        <p className="text-xs text-foreground-muted">XP</p>
+                      </div>
+                    </motion.div>
+                  )
+                })
+            }
           </div>
 
-          {/* Achievement teaser */}
           <div className="p-5 bg-gradient-to-r from-primary/5 to-accent/5 border-t border-border">
             <div className="flex items-center gap-3">
               <Award className="w-5 h-5 text-primary" />
-              <p className="text-sm text-foreground-secondary">
-                <span className="font-semibold text-foreground">250 XP more</span> to reach Top 3!
-              </p>
+              {xpGap > 0 ? (
+                <p className="text-sm text-foreground-secondary">
+                  <span className="font-semibold text-foreground">{xpGap.toLocaleString()} XP more</span> to reach Top 3!
+                </p>
+              ) : (
+                <p className="text-sm text-foreground-secondary font-semibold text-foreground">You&apos;re in the Top 3! 🎉</p>
+              )}
               <TrendingUp className="w-4 h-4 text-primary ml-auto" />
             </div>
           </div>

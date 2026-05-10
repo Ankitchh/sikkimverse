@@ -42,7 +42,10 @@ export async function GET(request: NextRequest) {
     const [recordings, total] = await Promise.all([
       prisma.recording.findMany({
         where,
-        include: { community: { select: { name: true, slug: true } } },
+        include: {
+          community: { select: { name: true, slug: true } },
+          contributor: { select: { name: true } },
+        },
         orderBy: { createdAt: 'desc' },
         skip,
         take: query.limit,

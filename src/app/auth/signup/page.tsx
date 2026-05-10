@@ -1,15 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Check, X, ChevronRight, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-
-const COMMUNITIES = [
-  "Lepcha","Bhutia","Limbu","Tamang","Rai","Gurung","Sherpa","Mangar","Newar","Sunwar"
-];
 
 function getPasswordStrength(pwd: string): { score: number; label: string; color: string } {
   let score = 0;
@@ -37,6 +33,18 @@ export default function SignUpPage() {
   const [form, setForm] = useState({
     name: "", email: "", password: "", confirmPassword: "", communityId: "", role: "PUBLIC_USER",
   });
+  const [communities, setCommunities] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    fetch('/api/communities?limit=50')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (Array.isArray(data?.data)) {
+          setCommunities(data.data.map((c: { id: string; name: string }) => ({ id: c.id, name: c.name })));
+        }
+      })
+      .catch(() => {});
+  }, []);
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -144,7 +152,7 @@ export default function SignUpPage() {
                 className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:border-primary transition-colors"
               >
                 <option value="">Select your community…</option>
-                {COMMUNITIES.map(c => <option key={c} value={c.toLowerCase()}>{c}</option>)}
+                {communities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
 

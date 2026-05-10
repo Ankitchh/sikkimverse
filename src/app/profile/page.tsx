@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 import {
-  Flame, Trophy, BookOpen, Mic, Star, Lock, CheckCircle2,
+  Flame, Trophy, BookOpen, Star, Lock, CheckCircle2,
   TrendingUp, Clock, Target, Award, Settings, ChevronRight, Globe
 } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const ACHIEVEMENTS = [
@@ -31,12 +33,22 @@ const RECENT_ACTIVITY = [
   { action: "Practiced Róng script characters", time: "4 days ago", xp: 40 },
 ];
 
+const XP_PER_LEVEL = 1000;
+const LEVEL_NAMES = ['Novice','Seeker','Explorer','Apprentice','Scholar','Keeper','Guardian','Elder','Sage','Heritage Master'];
+
 export default function ProfilePage() {
-  const currentXP = 1250;
-  const levelXP = 1600;
-  const level = 4;
-  const streak = 12;
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const totalXP = user?.xp ?? 0;
+  const level = Math.floor(totalXP / XP_PER_LEVEL) + 1;
+  const currentXP = totalXP % XP_PER_LEVEL;
+  const levelXP = XP_PER_LEVEL;
+  const levelTitle = LEVEL_NAMES[Math.min(level - 1, LEVEL_NAMES.length - 1)];
+  const streak = user?.streak ?? 0;
   const xpPercent = Math.round((currentXP / levelXP) * 100);
+  const userName = user?.name ?? 'Learner';
+  const userInitial = userName.charAt(0).toUpperCase();
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-8">
@@ -47,21 +59,25 @@ export default function ProfilePage() {
         <div className="max-w-2xl mx-auto relative">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-4xl border border-white/30 shadow-xl">
-                🧑‍🎓
+              <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-bold text-white border border-white/30 shadow-xl">
+                {user?.image
+                  ? <img src={user.image} alt={userName} className="w-full h-full rounded-2xl object-cover" />
+                  : userInitial
+                }
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Karma Tshering</h1>
-                <p className="text-white/70 text-sm mt-0.5">Learning Lepcha & Bhutia</p>
+                <h1 className="text-2xl font-bold text-white">{userName}</h1>
+                <p className="text-white/70 text-sm mt-0.5">{user?.email ?? ''}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs text-white font-medium">Public Learner</span>
-                  <span className="px-2 py-0.5 bg-amber-400/30 rounded-full text-xs text-amber-200 font-medium">🏔️ Bhutia Community</span>
+                  <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs text-white font-medium capitalize">
+                    {(user?.role ?? 'PUBLIC_USER').replace('_', ' ').toLowerCase()}
+                  </span>
                 </div>
               </div>
             </div>
-            <button className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">
+            <Link href="/settings" className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">
               <Settings className="w-5 h-5 text-white" />
-            </button>
+            </Link>
           </div>
 
           {/* XP Bar */}
@@ -69,9 +85,9 @@ export default function ProfilePage() {
             <div className="flex items-center justify-between text-sm text-white/80 mb-2">
               <span className="flex items-center gap-1.5 font-semibold">
                 <Trophy className="w-4 h-4 text-amber-300" />
-                Level {level}
+                Level {level} — {levelTitle}
               </span>
-              <span>{currentXP} / {levelXP} XP</span>
+              <span>{currentXP.toLocaleString()} / {levelXP.toLocaleString()} XP</span>
             </div>
             <div className="h-3 bg-white/20 rounded-full overflow-hidden">
               <motion.div

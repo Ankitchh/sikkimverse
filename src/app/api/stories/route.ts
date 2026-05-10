@@ -6,6 +6,7 @@ import { z } from 'zod'
 const QuerySchema = z.object({
   communityId: z.string().optional(),
   type:        z.nativeEnum(StoryType).optional(),
+  status:      z.enum(['APPROVED', 'PENDING', 'REJECTED']).optional(),
   search:      z.string().optional(),
   page:        z.coerce.number().int().min(1).default(1),
   limit:       z.coerce.number().int().min(1).max(50).default(12),
@@ -26,7 +27,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const query = QuerySchema.parse(Object.fromEntries(searchParams))
 
-    const where: Prisma.StoryWhereInput = {}
+    const where: Prisma.StoryWhereInput = {
+      status: query.status ?? 'APPROVED',
+    }
     if (query.communityId) where.communityId = query.communityId
     if (query.type)        where.type        = query.type
     if (query.search) {
@@ -42,6 +45,7 @@ export async function GET(request: NextRequest) {
         where,
         include: {
           community: { select: { name: true, slug: true } },
+          contributor: { select: { name: true } },
         },
         orderBy: { createdAt: 'desc' },
         skip,

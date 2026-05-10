@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, BookOpen, Music, Video, Camera, Radio, Upload, CheckCircle2, ChevronRight, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,13 +16,24 @@ const TYPES: { id: ContribType; icon: React.ComponentType<{className?: string}>;
   { id: "oral",  icon: Radio,   label: "Oral History",    desc: "Elder stories, community memories",  color: "bg-teal-500" },
 ];
 
-const COMMUNITIES = ["Lepcha","Bhutia","Limbu","Tamang","Rai","Gurung","Sherpa","Mangar","Newar","Sunwar"];
 const LANGUAGES = ["Lepcha (Róng)","Sikkimese (Drenjongke)","Limbu (Sirijonga)","Tamang","Rai (various)","Gurung","Sherpa","Mangar","Newari","Sunwar"];
 
 export default function ContributePage() {
   const [selected, setSelected] = useState<ContribType | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [communities, setCommunities] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    fetch('/api/communities?limit=50')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (Array.isArray(data?.data)) {
+          setCommunities(data.data.map((c: { id: string; name: string }) => ({ id: c.id, name: c.name })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,7 +157,7 @@ export default function ContributePage() {
                       <label className="text-xs font-medium text-foreground-muted block mb-1.5">Community</label>
                       <select required className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary">
                         <option value="">Select…</option>
-                        {COMMUNITIES.map(c => <option key={c}>{c}</option>)}
+                        {communities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                       </select>
                     </div>
                     <div>

@@ -1,7 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Globe, TrendingUp, AlertTriangle, Download, BookOpen, Users, FileText, Activity } from "lucide-react";
+import { Globe, TrendingUp, AlertTriangle, Download, BookOpen, Users, FileText, Activity, RefreshCw } from "lucide-react";
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -35,18 +36,11 @@ const PLATFORM_GROWTH = [
   { month: "May", users: 3427, content: 2814 },
 ];
 
-const COMMUNITIES_TABLE = [
-  { name: "Lepcha",  region: "N & W Sikkim",  speakers: 50000,  learners: 1240, content: 385, score: 35, level: "Endangered"      },
-  { name: "Bhutia",  region: "E & N Sikkim",  speakers: 70000,  learners: 1820, content: 421, score: 48, level: "Vulnerable"      },
-  { name: "Limbu",   region: "East Sikkim",   speakers: 120000, learners: 2100, content: 507, score: 75, level: "Vulnerable"      },
-  { name: "Tamang",  region: "West Sikkim",   speakers: 150000, learners: 2450, content: 272, score: 62, level: "Vulnerable"      },
-  { name: "Rai",     region: "South Sikkim",  speakers: 200000, learners: 1890, content: 323, score: 58, level: "Vulnerable"      },
-  { name: "Gurung",  region: "West Sikkim",   speakers: 80000,  learners: 980,  content: 198, score: 65, level: "Vulnerable"      },
-  { name: "Sherpa",  region: "North Sikkim",  speakers: 25000,  learners: 890,  content: 198, score: 80, level: "Safe"            },
-  { name: "Mangar",  region: "South Sikkim",  speakers: 40000,  learners: 620,  content: 145, score: 55, level: "Vulnerable"      },
-  { name: "Newar",   region: "East Sikkim",   speakers: 35000,  learners: 540,  content: 167, score: 70, level: "Vulnerable"      },
-  { name: "Sunwar",  region: "South Sikkim",  speakers: 15000,  learners: 380,  content: 98,  score: 60, level: "Endangered"      },
-];
+interface CommunityRow {
+  id: string; name: string; region: string; slug: string; colorPrimary: string;
+  totalSpeakers: number; memberCount: number; totalApprovedContent: number;
+  preservationScore: number; pendingSubmissions: number;
+}
 
 const LEVEL_STYLE: Record<string, string> = {
   Safe:        "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
@@ -56,8 +50,36 @@ const LEVEL_STYLE: Record<string, string> = {
 
 const RADAR_COLORS = ["#16A34A","#DC2626","#92400E","#2C3E50","#7B3F00"];
 
+function endangermentLevel(score: number): string {
+  if (score >= 70) return 'Safe';
+  if (score >= 50) return 'Vulnerable';
+  return 'Endangered';
+}
+
+interface DashStats {
+  overview: { totalUsers: number; activeUsersLast7Days: number; newUsersThisMonth: number; pendingSubmissions: number };
+  content: { total: number; totalStories: number; totalSongs: number; totalWords: number; totalVideos: number; totalRecordings: number };
+  communities: CommunityRow[];
+  submissions: { byStatus: { pending: number; approved: number; rejected: number } };
+}
+
 export default function GovernmentDashboard() {
-  const atRisk = COMMUNITIES_TABLE.filter(c => c.score < 50).length;
+  const [stats, setStats] = useState<DashStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadStats = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/dashboard/stats');
+      if (res.ok) setStats(await res.json());
+    } catch { }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { loadStats(); }, []);
+
+  const communities: CommunityRow[] = stats?.communities ?? [];
+  const atRisk = communities.filter(c => c.preservationScore < 50).length;
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-8">
@@ -73,8 +95,13 @@ export default function GovernmentDashboard() {
               <h1 className="text-2xl font-bold text-white">Sikkim Heritage Preservation</h1>
               <p className="text-slate-400 text-sm mt-1">State Cultural Affairs · Language Preservation Index</p>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-medium transition-colors">
-              <Download className="w-4 h-4" /> Export Report
+            <button
+              onClick={loadStats}
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-medium transition-colors"
+            >
+              {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {loading ? 'Loading…' : 'Refresh'}
             </button>
           </div>
         </div>
@@ -84,10 +111,30 @@ export default function GovernmentDashboard() {
         {/* Statewide KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total Learners",    value: "12,910",  sub: "+847 this month",   icon: Users,    color: "bg-blue-600" },
-            { label: "Content Archived",  value: "2,814",   sub: "Across 10 languages", icon: FileText, color: "bg-primary" },
-            { label: "Communities",       value: "10",      sub: "All active",          icon: Globe,    color: "bg-purple-600" },
-            { label: "At-Risk Languages", value: atRisk.toString(), sub: "Score below 50", icon: AlertTriangle, color: "bg-red-600" },
+            {
+              label: "Total Users",
+              value: loading ? '—' : (stats?.overview.totalUsers ?? 0).toLocaleString(),
+              sub: loading ? '' : `+${stats?.overview.newUsersThisMonth ?? 0} this month`,
+              icon: Users, color: "bg-blue-600"
+            },
+            {
+              label: "Content Archived",
+              value: loading ? '—' : (stats?.content.total ?? 0).toLocaleString(),
+              sub: "Across all communities",
+              icon: FileText, color: "bg-primary"
+            },
+            {
+              label: "Communities",
+              value: loading ? '—' : communities.length.toString(),
+              sub: "All active",
+              icon: Globe, color: "bg-purple-600"
+            },
+            {
+              label: "At-Risk Languages",
+              value: loading ? '—' : atRisk.toString(),
+              sub: "Score below 50%",
+              icon: AlertTriangle, color: "bg-red-600"
+            },
           ].map((kpi, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
               className="bg-background-secondary rounded-2xl p-5 border border-border">
@@ -194,33 +241,42 @@ export default function GovernmentDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {COMMUNITIES_TABLE.map((row, i) => (
-                  <tr key={i} className="border-b border-border last:border-0 hover:bg-background-tertiary transition-colors">
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="border-b border-border">
+                      <td colSpan={7} className="py-3"><div className="h-4 bg-gray-200 rounded animate-pulse" /></td>
+                    </tr>
+                  ))
+                ) : communities.map((row) => {
+                  const level = endangermentLevel(row.preservationScore);
+                  return (
+                  <tr key={row.id} className="border-b border-border last:border-0 hover:bg-background-tertiary transition-colors">
                     <td className="py-3 pr-4 font-semibold text-foreground">{row.name}</td>
                     <td className="py-3 pr-4 text-foreground-secondary text-xs">{row.region}</td>
-                    <td className="py-3 pr-4 text-foreground-secondary">{row.speakers.toLocaleString()}</td>
-                    <td className="py-3 pr-4 text-foreground-secondary">{row.learners.toLocaleString()}</td>
-                    <td className="py-3 pr-4 text-foreground-secondary">{row.content}</td>
+                    <td className="py-3 pr-4 text-foreground-secondary">{row.totalSpeakers.toLocaleString()}</td>
+                    <td className="py-3 pr-4 text-foreground-secondary">{row.memberCount.toLocaleString()}</td>
+                    <td className="py-3 pr-4 text-foreground-secondary">{row.totalApprovedContent}</td>
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-2">
                         <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
                           <div className="h-full rounded-full"
                             style={{
-                              width: `${row.score}%`,
-                              backgroundColor: row.score >= 70 ? "#16A34A" : row.score >= 50 ? "#D97706" : "#DC2626"
+                              width: `${row.preservationScore}%`,
+                              backgroundColor: row.preservationScore >= 70 ? "#16A34A" : row.preservationScore >= 50 ? "#D97706" : "#DC2626"
                             }}
                           />
                         </div>
-                        <span className="text-xs font-bold text-foreground-muted">{row.score}%</span>
+                        <span className="text-xs font-bold text-foreground-muted">{row.preservationScore}%</span>
                       </div>
                     </td>
                     <td className="py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${LEVEL_STYLE[row.level] ?? ""}`}>
-                        {row.level}
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${LEVEL_STYLE[level] ?? ""}`}>
+                        {level}
                       </span>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

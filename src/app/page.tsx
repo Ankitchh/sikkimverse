@@ -8,8 +8,33 @@ import {
   Globe, Heart, ArrowRight, Volume2, Trophy, Zap,
   Calendar, MapPin, Check, Sparkles
 } from 'lucide-react'
-import { COMMUNITIES } from '@/lib/constants'
 import { SikkimMapSection } from '@/components/features/SikkimMap'
+
+// Static cultural metadata — icons and languages are known facts, not DB fields
+const COMMUNITY_ICONS: Record<string, string> = {
+  lepcha: '🌿', bhutia: '🏔️', limbu: '🌄', tamang: '🥁',
+  rai: '🌾', gurung: '🏞️', sherpa: '⛰️', magar: '🌺',
+  newar: '🏛️', sunwar: '🎶', subba: '🌊',
+}
+const COMMUNITY_LANGUAGES: Record<string, string[]> = {
+  lepcha: ['Lepcha (Róng)', 'Róng script'],
+  bhutia: ['Drenjongke', 'Tibetan script'],
+  limbu: ['Yakthung Pan', 'Sirijonga script'],
+  tamang: ['Tamang', 'Tibetan script'],
+  rai: ['Bantawa', 'Chamling'],
+  gurung: ['Tamu Kyui', 'Tamu Pye'],
+  sherpa: ['Sherpali', 'Tibetan script'],
+  magar: ['Eastern Magar', 'Western Magar'],
+  newar: ['Nepal Bhasa', 'Pracalit script'],
+  sunwar: ['Koĩts', 'Sunuwar script'],
+  subba: ['Limbu', 'Sirijonga script'],
+}
+
+interface HomepageCommunity {
+  id: string; slug: string; name: string; description: string
+  colorPrimary: string; colorSecondary: string
+  totalSpeakers: number; preservationScore: number
+}
 
 // ─── Animated Counter ─────────────────────────────────────────────────────────
 
@@ -194,10 +219,18 @@ const TYPE_ICONS: Record<string, string> = {
 }
 
 export default function HomePage() {
+  const [communities, setCommunities] = useState<HomepageCommunity[]>([])
   const [activities, setActivities] = useState<LiveActivity[]>(
     ACTIVITY_ITEMS.map(a => ({ icon: a.icon, text: a.text, time: a.time }))
   )
   const [activeActivity, setActiveActivity] = useState(0)
+
+  useEffect(() => {
+    fetch('/api/communities?limit=11')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (Array.isArray(data?.data)) setCommunities(data.data) })
+      .catch(() => {})
+  }, [])
 
   // Connect SSE for live activity
   useEffect(() => {
@@ -577,7 +610,10 @@ export default function HomePage() {
           </FadeInSection>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {COMMUNITIES.map((community, i) => (
+            {communities.map((community, i) => {
+              const icon = COMMUNITY_ICONS[community.slug] ?? '🏔️'
+              const langs = COMMUNITY_LANGUAGES[community.slug] ?? []
+              return (
               <FadeInSection key={community.slug} delay={i * 0.06}>
                 <Link href={`/communities/${community.slug}`}>
                   <motion.div
@@ -598,7 +634,7 @@ export default function HomePage() {
                     />
                     <div className="relative z-10 p-5 flex flex-col h-full">
                       <div className="flex items-start justify-between mb-3">
-                        <div className="text-4xl">{community.icon}</div>
+                        <div className="text-4xl">{icon}</div>
                         <div
                           className="text-xs px-2 py-1 rounded-full font-semibold"
                           style={{ background: `${community.colorPrimary}30`, color: community.colorPrimary }}
@@ -636,7 +672,7 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div className="mt-3 flex flex-wrap gap-1">
-                        {community.languages.slice(0, 2).map(lang => (
+                        {langs.slice(0, 2).map(lang => (
                           <span
                             key={lang}
                             className="text-[10px] px-1.5 py-0.5 rounded-md"
@@ -656,7 +692,8 @@ export default function HomePage() {
                   </motion.div>
                 </Link>
               </FadeInSection>
-            ))}
+              )
+            })}
           </div>
 
           <FadeInSection delay={0.3}>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
@@ -23,11 +23,10 @@ import {
   Mic,
   Video,
   Star,
-  Download,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-type ContentType = 'all' | 'story' | 'song' | 'recording' | 'video' | 'ritual' | 'oral'
+type ContentType = 'all' | 'story' | 'song' | 'recording' | 'video'
 type SortOption = 'newest' | 'oldest' | 'most-listened'
 
 interface ArchiveItem {
@@ -42,178 +41,16 @@ interface ArchiveItem {
   views: number
   featured: boolean
   color: string
+  audioUrl: string | null
 }
 
-const ARCHIVE_ITEMS: ArchiveItem[] = [
-  {
-    id: '1',
-    type: 'story',
-    community: 'Bhutia',
-    title: 'Tashiding Monastery Stories',
-    excerpt:
-      'Ancient tales of the sacred Tashiding monastery, perched above the Rathong Chu river — stories passed down by monks over centuries, speaking of miracles, divine encounters, and the founding of Sikkim.',
-    duration: '5 min read',
-    dateAdded: '2025-11-12',
-    contributor: 'Lama Tenzin Norbu',
-    views: 3847,
-    featured: true,
-    color: 'from-blue-500 to-indigo-600',
-  },
-  {
-    id: '2',
-    type: 'song',
-    community: 'Lepcha',
-    title: 'Lepcha Creation Song',
-    excerpt:
-      'The primordial song of the Róng people — sung at dawn rituals, telling the story of how the creator Itbu-mu shaped the mountains, rivers, and the first Lepcha ancestors from the snows of Kanchendzonga.',
-    duration: '3:42',
-    dateAdded: '2025-10-28',
-    contributor: 'Ama Choden Rongbül',
-    views: 5102,
-    featured: true,
-    color: 'from-emerald-500 to-teal-600',
-  },
-  {
-    id: '3',
-    type: 'recording',
-    community: 'Sherpa',
-    title: "Elder Karma's Himalayan Tales",
-    excerpt:
-      'A riveting oral history session with 84-year-old Elder Karma Wangchuk, sharing stories of the high mountain passes, trade routes to Tibet, and the old ways of the Sherpa people before the world changed.',
-    duration: '12:15',
-    dateAdded: '2025-10-05',
-    contributor: 'Elder Karma Wangchuk',
-    views: 7293,
-    featured: true,
-    color: 'from-orange-500 to-red-600',
-  },
-  {
-    id: '4',
-    type: 'song',
-    community: 'Limbu',
-    title: 'Limbu Warrior Ballad',
-    excerpt:
-      'A traditional Limbu ballad commemorating the bravery of the Kiphat kingdom — sung by warrior descendants, preserving the memory of Limbu sovereignty and the founding of the Kirati nation.',
-    duration: '4:20',
-    dateAdded: '2025-09-14',
-    contributor: 'Subash Limbu',
-    views: 2164,
-    featured: false,
-    color: 'from-purple-500 to-violet-600',
-  },
-  {
-    id: '5',
-    type: 'video',
-    community: 'Tamang',
-    title: 'Tamang New Year Ceremony',
-    excerpt:
-      'A rare video documentation of the Tamang Lhosar ceremony, featuring traditional Tamang dress, Damphu drum performances, and the sacred lighting of butter lamps at sunrise.',
-    duration: '8:30',
-    dateAdded: '2025-08-22',
-    contributor: 'Pasang Tamang',
-    views: 4511,
-    featured: false,
-    color: 'from-pink-500 to-rose-600',
-  },
-  {
-    id: '6',
-    type: 'recording',
-    community: 'Rai',
-    title: 'Rai Shamanic Ritual Chant',
-    excerpt:
-      'A sacred recording of a Rai Bijuwa (shaman) performing the Sakela Sili ceremony — invoking ancestral spirits to bless the community, heal the sick, and usher in the harvest season.',
-    duration: '6:45',
-    dateAdded: '2025-07-30',
-    contributor: 'Bijuwa Dhansing Rai',
-    views: 3208,
-    featured: false,
-    color: 'from-amber-500 to-yellow-600',
-  },
-  {
-    id: '7',
-    type: 'song',
-    community: 'Gurung',
-    title: 'Gurung Tamu Lhosar Song',
-    excerpt:
-      'A festive Gurung New Year song performed during Tamu Lhosar, celebrating the Gurung calendar and the clan\'s ancestral connection to the mountains of Nepal and Sikkim.',
-    duration: '3:15',
-    dateAdded: '2025-07-01',
-    contributor: 'Ganga Maya Gurung',
-    views: 1893,
-    featured: false,
-    color: 'from-teal-500 to-cyan-600',
-  },
-  {
-    id: '8',
-    type: 'story',
-    community: 'Mangar',
-    title: 'Mangar Origin Story',
-    excerpt:
-      'The founding mythology of the Mangar (Magar) people — a rich cosmological narrative about the first ancestors who descended from the heavens to settle in the hills, and how they learned from the earth and sky.',
-    duration: '8 min read',
-    dateAdded: '2025-06-15',
-    contributor: 'Teacher Hari Magar',
-    views: 1420,
-    featured: false,
-    color: 'from-green-500 to-emerald-600',
-  },
-  {
-    id: '9',
-    type: 'song',
-    community: 'Newar',
-    title: 'Newar Festival Hymn',
-    excerpt:
-      'A devotional hymn sung during the Indra Jatra festival by the Newar community of Sikkim, praising the rain deity and celebrating the harvest. Features traditional Newar instruments and call-and-response singing.',
-    duration: '5:10',
-    dateAdded: '2025-05-20',
-    contributor: 'Shyam Sunder Newar',
-    views: 2677,
-    featured: false,
-    color: 'from-red-500 to-orange-600',
-  },
-  {
-    id: '10',
-    type: 'story',
-    community: 'Sunwar',
-    title: 'Sunwar Creation Myth',
-    excerpt:
-      'The Sunwar (Surel) people\'s ancient creation narrative — how the universe was woven from cosmic light, how the mountains were raised by the gods, and how the Sunwar people were chosen to be their guardians.',
-    duration: '10 min read',
-    dateAdded: '2025-04-08',
-    contributor: 'Elder Dil Kumar Sunwar',
-    views: 987,
-    featured: false,
-    color: 'from-violet-500 to-purple-600',
-  },
-  {
-    id: '11',
-    type: 'video',
-    community: 'Lepcha',
-    title: 'Lepcha Script Tutorial',
-    excerpt:
-      'An instructional video by a Lepcha language scholar demonstrating the Sirijonga script — covering the 30 consonants, vowel signs, and how to write common Lepcha words. Essential resource for language revival efforts.',
-    duration: '15:20',
-    dateAdded: '2025-03-14',
-    contributor: 'Dr. Norden Lepcha',
-    views: 8940,
-    featured: false,
-    color: 'from-emerald-600 to-green-700',
-  },
-  {
-    id: '12',
-    type: 'recording',
-    community: 'Bhutia',
-    title: 'Bhutia Monastery Chant',
-    excerpt:
-      'Deep throat chanting recorded at dawn in a Bhutia monastery in East Sikkim — the ancient tones of monks reciting the Kanjur texts, accompanied by ceremonial horns and drums that echo across the mountain valleys.',
-    duration: '8:00',
-    dateAdded: '2025-02-28',
-    contributor: 'Monastery of Ralang',
-    views: 6132,
-    featured: false,
-    color: 'from-blue-600 to-cyan-700',
-  },
-]
+// Gradient palettes per type, cycled by index
+const TYPE_GRADIENTS: Record<string, string[]> = {
+  story: ['from-blue-500 to-indigo-600', 'from-violet-500 to-purple-600', 'from-sky-500 to-blue-600'],
+  song: ['from-emerald-500 to-teal-600', 'from-green-500 to-emerald-600', 'from-teal-500 to-cyan-600'],
+  recording: ['from-orange-500 to-red-600', 'from-amber-500 to-yellow-600', 'from-red-500 to-orange-600'],
+  video: ['from-purple-500 to-violet-600', 'from-pink-500 to-rose-600', 'from-indigo-500 to-blue-600'],
+}
 
 const TYPE_FILTERS: { value: ContentType; label: string; icon: React.ReactNode }[] = [
   { value: 'all', label: 'All', icon: <Star size={14} /> },
@@ -221,20 +58,6 @@ const TYPE_FILTERS: { value: ContentType; label: string; icon: React.ReactNode }
   { value: 'song', label: 'Songs', icon: <Music size={14} /> },
   { value: 'recording', label: 'Recordings', icon: <Mic size={14} /> },
   { value: 'video', label: 'Videos', icon: <Video size={14} /> },
-]
-
-const COMMUNITIES = [
-  'All Communities',
-  'Lepcha',
-  'Bhutia',
-  'Limbu',
-  'Sherpa',
-  'Tamang',
-  'Rai',
-  'Gurung',
-  'Mangar',
-  'Newar',
-  'Sunwar',
 ]
 
 const TYPE_COLORS: Record<string, string> = {
@@ -249,6 +72,12 @@ const TYPE_ICONS: Record<string, React.ReactNode> = {
   song: <Music size={12} />,
   recording: <Mic size={12} />,
   video: <Video size={12} />,
+}
+
+function formatSeconds(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${String(s).padStart(2, '0')}`
 }
 
 function WaveformAnimation({ isActive }: { isActive: boolean }) {
@@ -278,7 +107,27 @@ function WaveformAnimation({ isActive }: { isActive: boolean }) {
   )
 }
 
+function SkeletonCard() {
+  return (
+    <div className="break-inside-avoid bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm animate-pulse">
+      <div className="h-16 bg-gray-200" />
+      <div className="p-4 space-y-3">
+        <div className="flex gap-2">
+          <div className="h-5 w-16 bg-gray-200 rounded-full" />
+          <div className="h-5 w-20 bg-gray-200 rounded-full" />
+        </div>
+        <div className="h-4 w-full bg-gray-200 rounded" />
+        <div className="h-3 w-4/5 bg-gray-200 rounded" />
+        <div className="h-3 w-3/5 bg-gray-200 rounded" />
+        <div className="h-9 w-full bg-gray-200 rounded-xl" />
+      </div>
+    </div>
+  )
+}
+
 export default function ArchivePage() {
+  const [items, setItems] = useState<ArchiveItem[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<ContentType>('all')
   const [selectedCommunity, setSelectedCommunity] = useState('All Communities')
@@ -290,73 +139,215 @@ export default function ArchivePage() {
   const [isMuted, setIsMuted] = useState(false)
   const [progress, setProgress] = useState(0)
   const [showFilters, setShowFilters] = useState(false)
-  const progressRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const ITEMS_PER_PAGE = 9
 
-  const filteredItems = ARCHIVE_ITEMS.filter((item) => {
-    const matchesSearch =
-      searchQuery === '' ||
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.community.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.contributor.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesType = activeFilter === 'all' || item.type === activeFilter
-    const matchesCommunity =
-      selectedCommunity === 'All Communities' || item.community === selectedCommunity
-    return matchesSearch && matchesType && matchesCommunity
-  }).sort((a, b) => {
-    if (sortBy === 'newest') return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime()
-    if (sortBy === 'oldest') return new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime()
-    return b.views - a.views
-  })
+  // Fetch all archive content in parallel on mount
+  useEffect(() => {
+    async function load() {
+      try {
+        const [storiesRes, songsRes, recordingsRes, videosRes] = await Promise.all([
+          fetch('/api/stories?limit=50&status=APPROVED'),
+          fetch('/api/songs?limit=50'),
+          fetch('/api/recordings?limit=50'),
+          fetch('/api/videos?limit=50'),
+        ])
 
-  const featuredItems = ARCHIVE_ITEMS.filter((i) => i.featured)
+        const [storiesData, songsData, recordingsData, videosData] = await Promise.all([
+          storiesRes.ok ? storiesRes.json() : { stories: [] },
+          songsRes.ok ? songsRes.json() : { songs: [] },
+          recordingsRes.ok ? recordingsRes.json() : { recordings: [] },
+          videosRes.ok ? videosRes.json() : { videos: [] },
+        ])
+
+        const normalized: ArchiveItem[] = []
+
+        ;(storiesData.stories ?? []).forEach((s: Record<string, unknown>, i: number) => {
+          const content = String(s.content ?? '')
+          const readMins = Math.max(1, Math.ceil(content.split(/\s+/).length / 200))
+          normalized.push({
+            id: `story-${s.id}`,
+            type: 'story',
+            community: (s.community as Record<string, string>)?.name ?? 'Community',
+            title: String(s.title ?? ''),
+            excerpt: String(s.summary ?? content.slice(0, 200) ?? ''),
+            duration: `${readMins} min read`,
+            dateAdded: String(s.createdAt ?? ''),
+            contributor: (s.contributor as Record<string, string>)?.name ?? 'Contributor',
+            views: Number(s.viewCount ?? 0),
+            featured: false,
+            color: TYPE_GRADIENTS.story[i % TYPE_GRADIENTS.story.length],
+            audioUrl: s.audioUrl ? String(s.audioUrl) : null,
+          })
+        })
+
+        ;(songsData.songs ?? []).forEach((s: Record<string, unknown>, i: number) => {
+          normalized.push({
+            id: `song-${s.id}`,
+            type: 'song',
+            community: (s.community as Record<string, string>)?.name ?? 'Community',
+            title: String(s.title ?? ''),
+            excerpt: String(s.occasion ? `${s.occasion} — ${s.lyrics ?? ''}` : s.lyrics ?? '').slice(0, 200),
+            duration: '—',
+            dateAdded: String(s.createdAt ?? ''),
+            contributor: (s.contributor as Record<string, string>)?.name ?? 'Contributor',
+            views: Number(s.viewCount ?? 0),
+            featured: false,
+            color: TYPE_GRADIENTS.song[i % TYPE_GRADIENTS.song.length],
+            audioUrl: s.audioUrl ? String(s.audioUrl) : null,
+          })
+        })
+
+        ;(recordingsData.recordings ?? []).forEach((r: Record<string, unknown>, i: number) => {
+          normalized.push({
+            id: `recording-${r.id}`,
+            type: 'recording',
+            community: (r.community as Record<string, string>)?.name ?? 'Community',
+            title: String(r.title ?? ''),
+            excerpt: String(r.description ?? r.transcription ?? '').slice(0, 200),
+            duration: r.duration ? formatSeconds(Number(r.duration)) : '—',
+            dateAdded: String(r.createdAt ?? ''),
+            contributor: (r.contributor as Record<string, string>)?.name ?? 'Contributor',
+            views: 0,
+            featured: false,
+            color: TYPE_GRADIENTS.recording[i % TYPE_GRADIENTS.recording.length],
+            audioUrl: r.audioUrl ? String(r.audioUrl) : null,
+          })
+        })
+
+        ;(videosData.videos ?? []).forEach((v: Record<string, unknown>, i: number) => {
+          normalized.push({
+            id: `video-${v.id}`,
+            type: 'video',
+            community: (v.community as Record<string, string>)?.name ?? 'Community',
+            title: String(v.title ?? ''),
+            excerpt: String(v.description ?? '').slice(0, 200),
+            duration: v.duration ? formatSeconds(Number(v.duration)) : '—',
+            dateAdded: String(v.createdAt ?? ''),
+            contributor: (v.contributor as Record<string, string>)?.name ?? 'Contributor',
+            views: Number(v.viewCount ?? 0),
+            featured: false,
+            color: TYPE_GRADIENTS.video[i % TYPE_GRADIENTS.video.length],
+            audioUrl: null,
+          })
+        })
+
+        // Mark top 3 by views as featured
+        const sorted = [...normalized].sort((a, b) => b.views - a.views)
+        const featuredIds = new Set(sorted.slice(0, 3).map((x) => x.id))
+        normalized.forEach((item) => {
+          item.featured = featuredIds.has(item.id)
+        })
+
+        setItems(normalized)
+      } catch (err) {
+        console.error('[ArchivePage] Failed to load archive:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  // Real audio player
+  useEffect(() => {
+    if (!playerItem?.audioUrl) return
+    if (!audioRef.current) {
+      audioRef.current = new Audio()
+    }
+    const audio = audioRef.current
+    if (audio.src !== playerItem.audioUrl) {
+      audio.src = playerItem.audioUrl
+      audio.load()
+    }
+    audio.volume = isMuted ? 0 : volume / 100
+
+    const onTimeUpdate = () => {
+      if (audio.duration) setProgress((audio.currentTime / audio.duration) * 100)
+    }
+    const onEnded = () => {
+      setIsPlaying(false)
+      setProgress(0)
+    }
+
+    audio.addEventListener('timeupdate', onTimeUpdate)
+    audio.addEventListener('ended', onEnded)
+
+    if (isPlaying) audio.play().catch(() => setIsPlaying(false))
+    else audio.pause()
+
+    return () => {
+      audio.removeEventListener('timeupdate', onTimeUpdate)
+      audio.removeEventListener('ended', onEnded)
+    }
+  }, [playerItem, isPlaying, volume, isMuted])
+
+  // Sync volume without reloading audio
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume / 100
+    }
+  }, [volume, isMuted])
+
+  const communities = useMemo(() => {
+    const names = Array.from(new Set(items.map((i) => i.community))).sort()
+    return ['All Communities', ...names]
+  }, [items])
+
+  const filteredItems = useMemo(() => {
+    return items
+      .filter((item) => {
+        const q = searchQuery.toLowerCase()
+        const matchesSearch =
+          q === '' ||
+          item.title.toLowerCase().includes(q) ||
+          item.community.toLowerCase().includes(q) ||
+          item.contributor.toLowerCase().includes(q)
+        const matchesType = activeFilter === 'all' || item.type === activeFilter
+        const matchesCommunity =
+          selectedCommunity === 'All Communities' || item.community === selectedCommunity
+        return matchesSearch && matchesType && matchesCommunity
+      })
+      .sort((a, b) => {
+        if (sortBy === 'newest') return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime()
+        if (sortBy === 'oldest') return new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime()
+        return b.views - a.views
+      })
+  }, [items, searchQuery, activeFilter, selectedCommunity, sortBy])
+
+  const featuredItems = useMemo(() => items.filter((i) => i.featured), [items])
+
   const paginatedItems = filteredItems.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
+    currentPage * ITEMS_PER_PAGE,
   )
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE)
 
   const playItem = useCallback((item: ArchiveItem) => {
-    if (item.type === 'story') return
+    if (item.type === 'story' && !item.audioUrl) return
     setPlayerItem(item)
     setIsPlaying(true)
     setProgress(0)
   }, [])
 
-  useEffect(() => {
-    if (isPlaying && playerItem) {
-      progressRef.current = setInterval(() => {
-        setProgress((p) => {
-          if (p >= 100) {
-            clearInterval(progressRef.current!)
-            setIsPlaying(false)
-            return 0
-          }
-          return p + 0.5
-        })
-      }, 200)
-    } else {
-      if (progressRef.current) clearInterval(progressRef.current)
-    }
-    return () => {
-      if (progressRef.current) clearInterval(progressRef.current)
-    }
-  }, [isPlaying, playerItem])
-
   const handlePrev = () => {
     if (!playerItem) return
-    const idx = ARCHIVE_ITEMS.findIndex((i) => i.id === playerItem.id)
-    const prevItem = ARCHIVE_ITEMS.slice(0, idx).reverse().find((i) => i.type !== 'story')
-    if (prevItem) playItem(prevItem)
+    const playable = filteredItems.filter((i) => i.audioUrl)
+    const idx = playable.findIndex((i) => i.id === playerItem.id)
+    const prev = playable[idx - 1]
+    if (prev) playItem(prev)
   }
 
   const handleNext = () => {
     if (!playerItem) return
-    const idx = ARCHIVE_ITEMS.findIndex((i) => i.id === playerItem.id)
-    const nextItem = ARCHIVE_ITEMS.slice(idx + 1).find((i) => i.type !== 'story')
-    if (nextItem) playItem(nextItem)
+    const playable = filteredItems.filter((i) => i.audioUrl)
+    const idx = playable.findIndex((i) => i.id === playerItem.id)
+    const next = playable[idx + 1]
+    if (next) playItem(next)
   }
+
+  const totalViews = useMemo(() => items.reduce((sum, i) => sum + i.views, 0), [items])
 
   return (
     <div className={cn('min-h-screen bg-stone-50', playerItem ? 'pb-28' : '')}>
@@ -394,15 +385,15 @@ export default function ArchivePage() {
             <div className="flex flex-wrap justify-center gap-6 pt-4 text-sm text-stone-400">
               <span className="flex items-center gap-1.5">
                 <BookOpen size={14} />
-                342 items archived
+                {loading ? '—' : `${items.length} items archived`}
               </span>
               <span className="flex items-center gap-1.5">
                 <User size={14} />
-                127 contributors
+                {loading ? '—' : `${new Set(items.map((i) => i.contributor)).size} contributors`}
               </span>
               <span className="flex items-center gap-1.5">
                 <Eye size={14} />
-                48,173 views
+                {loading ? '—' : `${totalViews.toLocaleString()} views`}
               </span>
             </div>
           </motion.div>
@@ -436,7 +427,7 @@ export default function ArchivePage() {
                 'flex items-center gap-2 px-4 py-3 border rounded-xl text-sm font-medium transition-all',
                 showFilters
                   ? 'bg-amber-500 text-white border-amber-500'
-                  : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                  : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50',
               )}
             >
               <SlidersHorizontal size={16} />
@@ -457,7 +448,7 @@ export default function ArchivePage() {
                   'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border',
                   activeFilter === f.value
                     ? 'bg-amber-500 text-white border-amber-500 shadow-md'
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50',
                 )}
               >
                 {f.icon}
@@ -488,7 +479,7 @@ export default function ArchivePage() {
                       }}
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/30"
                     >
-                      {COMMUNITIES.map((c) => (
+                      {communities.map((c) => (
                         <option key={c}>{c}</option>
                       ))}
                     </select>
@@ -514,61 +505,67 @@ export default function ArchivePage() {
         </motion.section>
 
         {/* Featured Archive Items */}
-        <section>
-          <div className="flex items-center gap-2 mb-5">
-            <Star size={18} className="text-amber-500" fill="currentColor" />
-            <h2 className="text-xl font-bold text-gray-900">Featured Heritage</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {featuredItems.map((item, i) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className={cn(
-                  'relative rounded-2xl overflow-hidden bg-gradient-to-br text-white p-5 cursor-pointer group shadow-lg hover:shadow-xl transition-shadow',
-                  item.color
-                )}
-                onClick={() => playItem(item)}
-              >
-                <div className="absolute top-3 left-3">
-                  <span className="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-2 py-1 rounded-full">
-                    ⭐ Featured
-                  </span>
-                </div>
-                <div className="mt-8 mb-3">
-                  <WaveformAnimation isActive={playerItem?.id === item.id && isPlaying} />
-                </div>
-                <h3 className="font-bold text-base leading-snug mb-1">{item.title}</h3>
-                <div className="flex items-center gap-2 text-xs text-white/70 mb-3">
-                  <span>{item.community}</span>
-                  <span>•</span>
-                  <span>{item.duration}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/60 flex items-center gap-1">
-                    <Eye size={11} />
-                    {item.views.toLocaleString()}
-                  </span>
-                  {item.type !== 'story' && (
+        {(loading || featuredItems.length > 0) && (
+          <section>
+            <div className="flex items-center gap-2 mb-5">
+              <Star size={18} className="text-amber-500" fill="currentColor" />
+              <h2 className="text-xl font-bold text-gray-900">Featured Heritage</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {loading
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-44 rounded-2xl bg-gray-200 animate-pulse" />
+                  ))
+                : featuredItems.map((item, i) => (
                     <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-9 h-9 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
-                    >
-                      {playerItem?.id === item.id && isPlaying ? (
-                        <Pause size={16} />
-                      ) : (
-                        <Play size={16} className="translate-x-0.5" />
+                      key={item.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className={cn(
+                        'relative rounded-2xl overflow-hidden bg-gradient-to-br text-white p-5 cursor-pointer group shadow-lg hover:shadow-xl transition-shadow',
+                        item.color,
                       )}
+                      onClick={() => playItem(item)}
+                    >
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-2 py-1 rounded-full">
+                          ⭐ Featured
+                        </span>
+                      </div>
+                      <div className="mt-8 mb-3">
+                        <WaveformAnimation isActive={playerItem?.id === item.id && isPlaying} />
+                      </div>
+                      <h3 className="font-bold text-base leading-snug mb-1">{item.title}</h3>
+                      <div className="flex items-center gap-2 text-xs text-white/70 mb-3">
+                        <span>{item.community}</span>
+                        <span>•</span>
+                        <span>{item.duration}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-white/60 flex items-center gap-1">
+                          <Eye size={11} />
+                          {item.views.toLocaleString()}
+                        </span>
+                        {item.audioUrl && (
+                          <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="w-9 h-9 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+                          >
+                            {playerItem?.id === item.id && isPlaying ? (
+                              <Pause size={16} />
+                            ) : (
+                              <Play size={16} className="translate-x-0.5" />
+                            )}
+                          </motion.div>
+                        )}
+                      </div>
                     </motion.div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+                  ))}
+            </div>
+          </section>
+        )}
 
         {/* Archive Grid */}
         <section>
@@ -581,7 +578,13 @@ export default function ArchivePage() {
             </h2>
           </div>
 
-          {paginatedItems.length === 0 ? (
+          {loading ? (
+            <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          ) : paginatedItems.length === 0 ? (
             <div className="text-center py-16 text-gray-400">
               <Filter size={40} className="mx-auto mb-3 opacity-40" />
               <p className="text-lg font-medium">No items found</p>
@@ -608,7 +611,7 @@ export default function ArchivePage() {
                       <span
                         className={cn(
                           'flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border capitalize',
-                          TYPE_COLORS[item.type]
+                          TYPE_COLORS[item.type],
                         )}
                       >
                         {TYPE_ICONS[item.type]}
@@ -625,7 +628,7 @@ export default function ArchivePage() {
                         {item.title}
                       </h3>
                       <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">
-                        {item.excerpt}
+                        {item.excerpt || 'No description available.'}
                       </p>
                     </div>
 
@@ -636,12 +639,21 @@ export default function ArchivePage() {
                           <Clock size={10} />
                           {item.duration}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Eye size={10} />
-                          {item.views.toLocaleString()}
-                        </span>
+                        {item.views > 0 && (
+                          <span className="flex items-center gap-1">
+                            <Eye size={10} />
+                            {item.views.toLocaleString()}
+                          </span>
+                        )}
                       </div>
-                      <span>{new Date(item.dateAdded).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
+                      <span>
+                        {item.dateAdded
+                          ? new Date(item.dateAdded).toLocaleDateString('en-IN', {
+                              month: 'short',
+                              year: 'numeric',
+                            })
+                          : ''}
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -649,18 +661,20 @@ export default function ArchivePage() {
                       {item.contributor}
                     </div>
 
-                    {/* Play Button */}
+                    {/* Play / Read Button */}
                     <button
                       onClick={() => playItem(item)}
-                      disabled={item.type === 'story'}
+                      disabled={item.type === 'story' && !item.audioUrl}
                       className={cn(
                         'w-full py-2 rounded-xl text-sm font-medium flex items-center justify-center gap-2 transition-all',
-                        item.type !== 'story'
+                        item.audioUrl
                           ? 'bg-gray-900 hover:bg-gray-700 text-white'
-                          : 'bg-gray-100 text-gray-400 cursor-default'
+                          : item.type === 'story'
+                            ? 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                            : 'bg-gray-100 text-gray-400 cursor-default',
                       )}
                     >
-                      {item.type === 'story' ? (
+                      {item.type === 'story' && !item.audioUrl ? (
                         <>
                           <BookOpen size={14} />
                           Read Story
@@ -670,10 +684,15 @@ export default function ArchivePage() {
                           <Pause size={14} />
                           Playing...
                         </>
-                      ) : (
+                      ) : item.audioUrl ? (
                         <>
                           <Play size={14} className="translate-x-0.5" />
                           Play
+                        </>
+                      ) : (
+                        <>
+                          <Video size={14} />
+                          Watch
                         </>
                       )}
                     </button>
@@ -701,7 +720,7 @@ export default function ArchivePage() {
                     'w-9 h-9 rounded-lg text-sm font-medium transition-all',
                     currentPage === i + 1
                       ? 'bg-amber-500 text-white shadow-md'
-                      : 'border border-gray-200 hover:bg-gray-50 text-gray-600'
+                      : 'border border-gray-200 hover:bg-gray-50 text-gray-600',
                   )}
                 >
                   {i + 1}
@@ -721,7 +740,7 @@ export default function ArchivePage() {
 
       {/* Floating Audio Player */}
       <AnimatePresence>
-        {playerItem && (
+        {playerItem && playerItem.audioUrl && (
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -733,7 +752,11 @@ export default function ArchivePage() {
               className="h-1 bg-gray-700 cursor-pointer"
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect()
-                setProgress(((e.clientX - rect.left) / rect.width) * 100)
+                const pct = ((e.clientX - rect.left) / rect.width) * 100
+                setProgress(pct)
+                if (audioRef.current?.duration) {
+                  audioRef.current.currentTime = (pct / 100) * audioRef.current.duration
+                }
               }}
             >
               <motion.div
@@ -796,6 +819,10 @@ export default function ArchivePage() {
               {/* Close */}
               <button
                 onClick={() => {
+                  if (audioRef.current) {
+                    audioRef.current.pause()
+                    audioRef.current.src = ''
+                  }
                   setPlayerItem(null)
                   setIsPlaying(false)
                   setProgress(0)
