@@ -40,6 +40,13 @@ async function main() {
   await prisma.communityEarning.deleteMany()
   await prisma.dialect.deleteMany()
   await prisma.language.deleteMany()
+  await prisma.paymentEvent.deleteMany()
+  await prisma.userSubscription.deleteMany()
+  await prisma.subscriptionPlan.deleteMany()
+  await prisma.revenueShare.deleteMany()
+  await prisma.emailVerificationToken.deleteMany()
+  await prisma.passwordReset.deleteMany()
+  await prisma.contentEmbedding.deleteMany()
   await prisma.session.deleteMany()
   await prisma.account.deleteMany()
   await prisma.user.deleteMany()
@@ -1481,6 +1488,47 @@ Guide the lost ones safely home`,
   }
 
   console.log(`  ✅ Created ${globalTags.length + lepchaTags.length} tags`)
+
+  // ─── Create Subscription Plans ───────────────────────────────────────────────
+  console.log('\n💳 Creating subscription plans...')
+
+  const subscriptionPlans = [
+    {
+      name: 'Heritage Monthly',
+      slug: 'heritage-monthly',
+      description: 'Full access to all languages, communities, and AI features. 45% supports communities.',
+      priceInr: 199,
+      interval: 'MONTHLY' as const,
+      trialDays: 7,
+      features: {
+        communities: 'all', courses: 'unlimited', aiTutor: true,
+        aiSearch: true, voicePractice: true, writingPractice: true,
+        downloads: true, badge: 'Heritage Supporter',
+      },
+    },
+    {
+      name: 'Heritage Annual',
+      slug: 'heritage-annual',
+      description: 'Full access for a full year — save ₹590 vs monthly. Funds indigenous preservation.',
+      priceInr: 1799,
+      interval: 'ANNUAL' as const,
+      trialDays: 7,
+      features: {
+        communities: 'all', courses: 'unlimited', aiTutor: true,
+        aiSearch: true, voicePractice: true, writingPractice: true,
+        downloads: true, badge: 'Heritage Guardian', annualBonus: '200 bonus XP',
+      },
+    },
+  ]
+
+  for (const plan of subscriptionPlans) {
+    await prisma.subscriptionPlan.upsert({
+      where: { slug: plan.slug },
+      update: {},
+      create: plan,
+    })
+    console.log(`  ✅ Plan: ${plan.name} (₹${plan.priceInr})`)
+  }
 
   console.log('\n🎉 Seed completed successfully!')
   console.log('\n📋 Summary:')

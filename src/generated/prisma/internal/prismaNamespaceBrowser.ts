@@ -76,7 +76,14 @@ export const ModelName = {
   Submission: 'Submission',
   CommunityEarning: 'CommunityEarning',
   Festival: 'Festival',
-  Tag: 'Tag'
+  Tag: 'Tag',
+  SubscriptionPlan: 'SubscriptionPlan',
+  UserSubscription: 'UserSubscription',
+  PaymentEvent: 'PaymentEvent',
+  RevenueShare: 'RevenueShare',
+  EmailVerificationToken: 'EmailVerificationToken',
+  PasswordReset: 'PasswordReset',
+  ContentEmbedding: 'ContentEmbedding'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -483,6 +490,111 @@ export const TagScalarFieldEnum = {
 } as const
 
 export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
+
+
+export const SubscriptionPlanScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  priceInr: 'priceInr',
+  interval: 'interval',
+  trialDays: 'trialDays',
+  isActive: 'isActive',
+  features: 'features',
+  gatewayPlanId: 'gatewayPlanId',
+  createdAt: 'createdAt'
+} as const
+
+export type SubscriptionPlanScalarFieldEnum = (typeof SubscriptionPlanScalarFieldEnum)[keyof typeof SubscriptionPlanScalarFieldEnum]
+
+
+export const UserSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  planId: 'planId',
+  status: 'status',
+  trialStart: 'trialStart',
+  trialEnd: 'trialEnd',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  cancelAt: 'cancelAt',
+  canceledAt: 'canceledAt',
+  gatewaySubId: 'gatewaySubId',
+  gatewayCustomerId: 'gatewayCustomerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserSubscriptionScalarFieldEnum = (typeof UserSubscriptionScalarFieldEnum)[keyof typeof UserSubscriptionScalarFieldEnum]
+
+
+export const PaymentEventScalarFieldEnum = {
+  id: 'id',
+  subscriptionId: 'subscriptionId',
+  gatewayEventId: 'gatewayEventId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type PaymentEventScalarFieldEnum = (typeof PaymentEventScalarFieldEnum)[keyof typeof PaymentEventScalarFieldEnum]
+
+
+export const RevenueShareScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  period: 'period',
+  totalRevenue: 'totalRevenue',
+  communityShare: 'communityShare',
+  platformShare: 'platformShare',
+  engagementScore: 'engagementScore',
+  isPaid: 'isPaid',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+} as const
+
+export type RevenueShareScalarFieldEnum = (typeof RevenueShareScalarFieldEnum)[keyof typeof RevenueShareScalarFieldEnum]
+
+
+export const EmailVerificationTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expires: 'expires',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailVerificationTokenScalarFieldEnum = (typeof EmailVerificationTokenScalarFieldEnum)[keyof typeof EmailVerificationTokenScalarFieldEnum]
+
+
+export const PasswordResetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expires: 'expires',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetScalarFieldEnum = (typeof PasswordResetScalarFieldEnum)[keyof typeof PasswordResetScalarFieldEnum]
+
+
+export const ContentEmbeddingScalarFieldEnum = {
+  id: 'id',
+  contentType: 'contentType',
+  contentId: 'contentId',
+  communityId: 'communityId',
+  text: 'text',
+  embeddingJson: 'embeddingJson',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContentEmbeddingScalarFieldEnum = (typeof ContentEmbeddingScalarFieldEnum)[keyof typeof ContentEmbeddingScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -8,7 +8,18 @@ const PROTECTED_PATTERNS = [
   /^\/profile$/,
   /^\/learn\/lesson(\/.*)?$/,
   /^\/practice(\/.*)?$/,
+  /^\/settings\/billing$/,
+  /^\/contribute$/,
 ]
+
+// Routes that also require an active subscription
+const SUBSCRIPTION_PATTERNS = [
+  /^\/practice\/(voice|writing)(\/.*)?$/,
+]
+
+function requiresSubscription(pathname: string): boolean {
+  return SUBSCRIPTION_PATTERNS.some((p) => p.test(pathname))
+}
 
 function isProtectedRoute(pathname: string): boolean {
   return PROTECTED_PATTERNS.some((pattern) => pattern.test(pathname))

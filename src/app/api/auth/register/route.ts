@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
+import { sendVerificationEmail, sendWelcomeEmail } from '@/lib/email'
 
 // ─── Rate limiting ────────────────────────────────────────────────────────────
 
@@ -183,17 +185,33 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
     })
 
-    // Welcome notification
-    await prisma.notification.create({
-      data: {
-        userId: user.id,
-        type: 'WELCOME',
-        title: 'Welcome to SIKKIMVERSE!',
-        message:
-          'Thank you for joining our platform dedicated to preserving indigenous languages and culture. Start your journey by exploring communities and learning lessons.',
-        link: '/learn',
-      },
-    })
+    // Welcome notification + email verification token
+    const verifyToken = crypto.randomBytes(32).toString('hex')
+    await Promise.all([
+      prisma.notification.create({
+        data: {
+          userId: user.id,
+          type: 'WELCOME',
+          title: 'Welcome to SIKKIMVERSE!',
+          message:
+            'Thank you for joining. Verify your email to unlock full access and earn 25 bonus XP.',
+          link: '/settings',
+        },
+      }),
+      prisma.emailVerificationToken.create({
+        data: {
+          userId: user.id,
+          token: verifyToken,
+          expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        },
+      }),
+    ])
+
+    // Send emails non-blocking — don't fail registration if email fails
+    Promise.all([
+      sendWelcomeEmail(user.email, user.name ?? ''),
+      sendVerificationEmail(user.email, user.name ?? '', verifyToken),
+    ]).catch((err) => console.error('[Register] Email error:', err))
 
     return NextResponse.json(
       {

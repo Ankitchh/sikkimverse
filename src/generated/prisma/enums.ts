@@ -127,3 +127,23 @@ export const HandwritingGrade = {
 } as const
 
 export type HandwritingGrade = (typeof HandwritingGrade)[keyof typeof HandwritingGrade]
+
+
+export const SubscriptionStatus = {
+  TRIALING: 'TRIALING',
+  ACTIVE: 'ACTIVE',
+  PAST_DUE: 'PAST_DUE',
+  CANCELED: 'CANCELED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
+
+export const SubscriptionInterval = {
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  ANNUAL: 'ANNUAL'
+} as const
+
+export type SubscriptionInterval = (typeof SubscriptionInterval)[keyof typeof SubscriptionInterval]

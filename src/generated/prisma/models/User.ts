@@ -300,6 +300,9 @@ export type UserWhereInput = {
   submissions?: Prisma.SubmissionListRelationFilter
   pronunciationAttempts?: Prisma.PronunciationAttemptListRelationFilter
   handwritingAttempts?: Prisma.HandwritingAttemptListRelationFilter
+  subscription?: Prisma.XOR<Prisma.UserSubscriptionNullableScalarRelationFilter, Prisma.UserSubscriptionWhereInput> | null
+  emailVerifications?: Prisma.EmailVerificationTokenListRelationFilter
+  passwordResets?: Prisma.PasswordResetListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -332,6 +335,9 @@ export type UserOrderByWithRelationInput = {
   submissions?: Prisma.SubmissionOrderByRelationAggregateInput
   pronunciationAttempts?: Prisma.PronunciationAttemptOrderByRelationAggregateInput
   handwritingAttempts?: Prisma.HandwritingAttemptOrderByRelationAggregateInput
+  subscription?: Prisma.UserSubscriptionOrderByWithRelationInput
+  emailVerifications?: Prisma.EmailVerificationTokenOrderByRelationAggregateInput
+  passwordResets?: Prisma.PasswordResetOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -367,6 +373,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   submissions?: Prisma.SubmissionListRelationFilter
   pronunciationAttempts?: Prisma.PronunciationAttemptListRelationFilter
   handwritingAttempts?: Prisma.HandwritingAttemptListRelationFilter
+  subscription?: Prisma.XOR<Prisma.UserSubscriptionNullableScalarRelationFilter, Prisma.UserSubscriptionWhereInput> | null
+  emailVerifications?: Prisma.EmailVerificationTokenListRelationFilter
+  passwordResets?: Prisma.PasswordResetListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -438,6 +447,9 @@ export type UserCreateInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -469,6 +481,9 @@ export type UserUncheckedCreateInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -500,6 +515,9 @@ export type UserUpdateInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -531,6 +549,9 @@ export type UserUncheckedUpdateInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -928,6 +949,48 @@ export type UserUpdateOneWithoutModeratedSubmissionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutModeratedSubmissionInput, Prisma.UserUpdateWithoutModeratedSubmissionInput>, Prisma.UserUncheckedUpdateWithoutModeratedSubmissionInput>
 }
 
+export type UserCreateNestedOneWithoutSubscriptionInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionInput, Prisma.UserUncheckedCreateWithoutSubscriptionInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSubscriptionNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionInput, Prisma.UserUncheckedCreateWithoutSubscriptionInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionInput
+  upsert?: Prisma.UserUpsertWithoutSubscriptionInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSubscriptionInput, Prisma.UserUpdateWithoutSubscriptionInput>, Prisma.UserUncheckedUpdateWithoutSubscriptionInput>
+}
+
+export type UserCreateNestedOneWithoutEmailVerificationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailVerificationsInput, Prisma.UserUncheckedCreateWithoutEmailVerificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailVerificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutEmailVerificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailVerificationsInput, Prisma.UserUncheckedCreateWithoutEmailVerificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailVerificationsInput
+  upsert?: Prisma.UserUpsertWithoutEmailVerificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEmailVerificationsInput, Prisma.UserUpdateWithoutEmailVerificationsInput>, Prisma.UserUncheckedUpdateWithoutEmailVerificationsInput>
+}
+
+export type UserCreateNestedOneWithoutPasswordResetsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPasswordResetsInput, Prisma.UserUncheckedCreateWithoutPasswordResetsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPasswordResetsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPasswordResetsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPasswordResetsInput, Prisma.UserUncheckedCreateWithoutPasswordResetsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPasswordResetsInput
+  upsert?: Prisma.UserUpsertWithoutPasswordResetsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPasswordResetsInput, Prisma.UserUpdateWithoutPasswordResetsInput>, Prisma.UserUncheckedUpdateWithoutPasswordResetsInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   email: string
@@ -956,6 +1019,9 @@ export type UserCreateWithoutAccountsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -986,6 +1052,9 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1032,6 +1101,9 @@ export type UserUpdateWithoutAccountsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1062,6 +1134,9 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1092,6 +1167,9 @@ export type UserCreateWithoutSessionsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1122,6 +1200,9 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1168,6 +1249,9 @@ export type UserUpdateWithoutSessionsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1198,6 +1282,9 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCommunityInput = {
@@ -1228,6 +1315,9 @@ export type UserCreateWithoutCommunityInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCommunityInput = {
@@ -1258,6 +1348,9 @@ export type UserUncheckedCreateWithoutCommunityInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCommunityInput = {
@@ -1333,6 +1426,9 @@ export type UserCreateWithoutProgressInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProgressInput = {
@@ -1363,6 +1459,9 @@ export type UserUncheckedCreateWithoutProgressInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProgressInput = {
@@ -1409,6 +1508,9 @@ export type UserUpdateWithoutProgressInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProgressInput = {
@@ -1439,6 +1541,9 @@ export type UserUncheckedUpdateWithoutProgressInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutQuizAttemptsInput = {
@@ -1469,6 +1574,9 @@ export type UserCreateWithoutQuizAttemptsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutQuizAttemptsInput = {
@@ -1499,6 +1607,9 @@ export type UserUncheckedCreateWithoutQuizAttemptsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutQuizAttemptsInput = {
@@ -1545,6 +1656,9 @@ export type UserUpdateWithoutQuizAttemptsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutQuizAttemptsInput = {
@@ -1575,6 +1689,9 @@ export type UserUncheckedUpdateWithoutQuizAttemptsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAchievementsInput = {
@@ -1605,6 +1722,9 @@ export type UserCreateWithoutAchievementsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAchievementsInput = {
@@ -1635,6 +1755,9 @@ export type UserUncheckedCreateWithoutAchievementsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAchievementsInput = {
@@ -1681,6 +1804,9 @@ export type UserUpdateWithoutAchievementsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAchievementsInput = {
@@ -1711,6 +1837,9 @@ export type UserUncheckedUpdateWithoutAchievementsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutStoriesInput = {
@@ -1741,6 +1870,9 @@ export type UserCreateWithoutStoriesInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutStoriesInput = {
@@ -1771,6 +1903,9 @@ export type UserUncheckedCreateWithoutStoriesInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutStoriesInput = {
@@ -1817,6 +1952,9 @@ export type UserUpdateWithoutStoriesInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStoriesInput = {
@@ -1847,6 +1985,9 @@ export type UserUncheckedUpdateWithoutStoriesInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSongsInput = {
@@ -1877,6 +2018,9 @@ export type UserCreateWithoutSongsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSongsInput = {
@@ -1907,6 +2051,9 @@ export type UserUncheckedCreateWithoutSongsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSongsInput = {
@@ -1953,6 +2100,9 @@ export type UserUpdateWithoutSongsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSongsInput = {
@@ -1983,6 +2133,9 @@ export type UserUncheckedUpdateWithoutSongsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutVideosInput = {
@@ -2013,6 +2166,9 @@ export type UserCreateWithoutVideosInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutVideosInput = {
@@ -2043,6 +2199,9 @@ export type UserUncheckedCreateWithoutVideosInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutVideosInput = {
@@ -2089,6 +2248,9 @@ export type UserUpdateWithoutVideosInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVideosInput = {
@@ -2119,6 +2281,9 @@ export type UserUncheckedUpdateWithoutVideosInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRecordingsInput = {
@@ -2149,6 +2314,9 @@ export type UserCreateWithoutRecordingsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRecordingsInput = {
@@ -2179,6 +2347,9 @@ export type UserUncheckedCreateWithoutRecordingsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRecordingsInput = {
@@ -2225,6 +2396,9 @@ export type UserUpdateWithoutRecordingsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRecordingsInput = {
@@ -2255,6 +2429,9 @@ export type UserUncheckedUpdateWithoutRecordingsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWordsInput = {
@@ -2285,6 +2462,9 @@ export type UserCreateWithoutWordsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWordsInput = {
@@ -2315,6 +2495,9 @@ export type UserUncheckedCreateWithoutWordsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWordsInput = {
@@ -2361,6 +2544,9 @@ export type UserUpdateWithoutWordsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWordsInput = {
@@ -2391,6 +2577,9 @@ export type UserUncheckedUpdateWithoutWordsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPronunciationAttemptsInput = {
@@ -2421,6 +2610,9 @@ export type UserCreateWithoutPronunciationAttemptsInput = {
   moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPronunciationAttemptsInput = {
@@ -2451,6 +2643,9 @@ export type UserUncheckedCreateWithoutPronunciationAttemptsInput = {
   moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPronunciationAttemptsInput = {
@@ -2497,6 +2692,9 @@ export type UserUpdateWithoutPronunciationAttemptsInput = {
   moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPronunciationAttemptsInput = {
@@ -2527,6 +2725,9 @@ export type UserUncheckedUpdateWithoutPronunciationAttemptsInput = {
   moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutHandwritingAttemptsInput = {
@@ -2557,6 +2758,9 @@ export type UserCreateWithoutHandwritingAttemptsInput = {
   moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutHandwritingAttemptsInput = {
@@ -2587,6 +2791,9 @@ export type UserUncheckedCreateWithoutHandwritingAttemptsInput = {
   moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutHandwritingAttemptsInput = {
@@ -2633,6 +2840,9 @@ export type UserUpdateWithoutHandwritingAttemptsInput = {
   moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutHandwritingAttemptsInput = {
@@ -2663,6 +2873,9 @@ export type UserUncheckedUpdateWithoutHandwritingAttemptsInput = {
   moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2693,6 +2906,9 @@ export type UserCreateWithoutNotificationsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2723,6 +2939,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2769,6 +2988,9 @@ export type UserUpdateWithoutNotificationsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -2799,6 +3021,9 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubmissionsInput = {
@@ -2829,6 +3054,9 @@ export type UserCreateWithoutSubmissionsInput = {
   moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubmissionsInput = {
@@ -2859,6 +3087,9 @@ export type UserUncheckedCreateWithoutSubmissionsInput = {
   moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubmissionsInput = {
@@ -2894,6 +3125,9 @@ export type UserCreateWithoutModeratedSubmissionInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutModeratedSubmissionInput = {
@@ -2924,6 +3158,9 @@ export type UserUncheckedCreateWithoutModeratedSubmissionInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutModeratedSubmissionInput = {
@@ -2970,6 +3207,9 @@ export type UserUpdateWithoutSubmissionsInput = {
   moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubmissionsInput = {
@@ -3000,6 +3240,9 @@ export type UserUncheckedUpdateWithoutSubmissionsInput = {
   moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutModeratedSubmissionInput = {
@@ -3041,6 +3284,9 @@ export type UserUpdateWithoutModeratedSubmissionInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutModeratedSubmissionInput = {
@@ -3071,6 +3317,453 @@ export type UserUncheckedUpdateWithoutModeratedSubmissionInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSubscriptionInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutUsersInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSubscriptionInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  communityId?: string | null
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryUncheckedCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongUncheckedCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoUncheckedCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordUncheckedCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSubscriptionInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionInput, Prisma.UserUncheckedCreateWithoutSubscriptionInput>
+}
+
+export type UserUpsertWithoutSubscriptionInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSubscriptionInput, Prisma.UserUncheckedUpdateWithoutSubscriptionInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionInput, Prisma.UserUncheckedCreateWithoutSubscriptionInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSubscriptionInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSubscriptionInput, Prisma.UserUncheckedUpdateWithoutSubscriptionInput>
+}
+
+export type UserUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutUsersNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  communityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUncheckedUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUncheckedUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUncheckedUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUncheckedUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutEmailVerificationsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutUsersInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutEmailVerificationsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  communityId?: string | null
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryUncheckedCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongUncheckedCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoUncheckedCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordUncheckedCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutEmailVerificationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailVerificationsInput, Prisma.UserUncheckedCreateWithoutEmailVerificationsInput>
+}
+
+export type UserUpsertWithoutEmailVerificationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEmailVerificationsInput, Prisma.UserUncheckedUpdateWithoutEmailVerificationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailVerificationsInput, Prisma.UserUncheckedCreateWithoutEmailVerificationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutEmailVerificationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEmailVerificationsInput, Prisma.UserUncheckedUpdateWithoutEmailVerificationsInput>
+}
+
+export type UserUpdateWithoutEmailVerificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutUsersNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutEmailVerificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  communityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUncheckedUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUncheckedUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUncheckedUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUncheckedUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPasswordResetsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutUsersInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPasswordResetsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  communityId?: string | null
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryUncheckedCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongUncheckedCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoUncheckedCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordUncheckedCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPasswordResetsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPasswordResetsInput, Prisma.UserUncheckedCreateWithoutPasswordResetsInput>
+}
+
+export type UserUpsertWithoutPasswordResetsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPasswordResetsInput, Prisma.UserUncheckedUpdateWithoutPasswordResetsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPasswordResetsInput, Prisma.UserUncheckedCreateWithoutPasswordResetsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPasswordResetsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPasswordResetsInput, Prisma.UserUncheckedUpdateWithoutPasswordResetsInput>
+}
+
+export type UserUpdateWithoutPasswordResetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutUsersNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPasswordResetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  communityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUncheckedUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUncheckedUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUncheckedUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUncheckedUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyCommunityInput = {
@@ -3116,6 +3809,9 @@ export type UserUpdateWithoutCommunityInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCommunityInput = {
@@ -3146,6 +3842,9 @@ export type UserUncheckedUpdateWithoutCommunityInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
   pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutCommunityInput = {
@@ -3184,6 +3883,8 @@ export type UserCountOutputType = {
   submissions: number
   pronunciationAttempts: number
   handwritingAttempts: number
+  emailVerifications: number
+  passwordResets: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3202,6 +3903,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   submissions?: boolean | UserCountOutputTypeCountSubmissionsArgs
   pronunciationAttempts?: boolean | UserCountOutputTypeCountPronunciationAttemptsArgs
   handwritingAttempts?: boolean | UserCountOutputTypeCountHandwritingAttemptsArgs
+  emailVerifications?: boolean | UserCountOutputTypeCountEmailVerificationsArgs
+  passwordResets?: boolean | UserCountOutputTypeCountPasswordResetsArgs
 }
 
 /**
@@ -3319,6 +4022,20 @@ export type UserCountOutputTypeCountHandwritingAttemptsArgs<ExtArgs extends runt
   where?: Prisma.HandwritingAttemptWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEmailVerificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailVerificationTokenWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPasswordResetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PasswordResetWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3350,6 +4067,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   submissions?: boolean | Prisma.User$submissionsArgs<ExtArgs>
   pronunciationAttempts?: boolean | Prisma.User$pronunciationAttemptsArgs<ExtArgs>
   handwritingAttempts?: boolean | Prisma.User$handwritingAttemptsArgs<ExtArgs>
+  subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>
+  emailVerifications?: boolean | Prisma.User$emailVerificationsArgs<ExtArgs>
+  passwordResets?: boolean | Prisma.User$passwordResetsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3421,6 +4141,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   submissions?: boolean | Prisma.User$submissionsArgs<ExtArgs>
   pronunciationAttempts?: boolean | Prisma.User$pronunciationAttemptsArgs<ExtArgs>
   handwritingAttempts?: boolean | Prisma.User$handwritingAttemptsArgs<ExtArgs>
+  subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>
+  emailVerifications?: boolean | Prisma.User$emailVerificationsArgs<ExtArgs>
+  passwordResets?: boolean | Prisma.User$passwordResetsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3449,6 +4172,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     submissions: Prisma.$SubmissionPayload<ExtArgs>[]
     pronunciationAttempts: Prisma.$PronunciationAttemptPayload<ExtArgs>[]
     handwritingAttempts: Prisma.$HandwritingAttemptPayload<ExtArgs>[]
+    subscription: Prisma.$UserSubscriptionPayload<ExtArgs> | null
+    emailVerifications: Prisma.$EmailVerificationTokenPayload<ExtArgs>[]
+    passwordResets: Prisma.$PasswordResetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3874,6 +4600,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   submissions<T extends Prisma.User$submissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$submissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pronunciationAttempts<T extends Prisma.User$pronunciationAttemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pronunciationAttemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PronunciationAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   handwritingAttempts<T extends Prisma.User$handwritingAttemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$handwritingAttemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HandwritingAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscription<T extends Prisma.User$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionArgs<ExtArgs>>): Prisma.Prisma__UserSubscriptionClient<runtime.Types.Result.GetResult<Prisma.$UserSubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  emailVerifications<T extends Prisma.User$emailVerificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailVerificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailVerificationTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  passwordResets<T extends Prisma.User$passwordResetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$passwordResetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4693,6 +5422,73 @@ export type User$handwritingAttemptsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.HandwritingAttemptScalarFieldEnum | Prisma.HandwritingAttemptScalarFieldEnum[]
+}
+
+/**
+ * User.subscription
+ */
+export type User$subscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserSubscription
+   */
+  select?: Prisma.UserSubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserSubscription
+   */
+  omit?: Prisma.UserSubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserSubscriptionInclude<ExtArgs> | null
+  where?: Prisma.UserSubscriptionWhereInput
+}
+
+/**
+ * User.emailVerifications
+ */
+export type User$emailVerificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailVerificationToken
+   */
+  select?: Prisma.EmailVerificationTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailVerificationToken
+   */
+  omit?: Prisma.EmailVerificationTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailVerificationTokenInclude<ExtArgs> | null
+  where?: Prisma.EmailVerificationTokenWhereInput
+  orderBy?: Prisma.EmailVerificationTokenOrderByWithRelationInput | Prisma.EmailVerificationTokenOrderByWithRelationInput[]
+  cursor?: Prisma.EmailVerificationTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailVerificationTokenScalarFieldEnum | Prisma.EmailVerificationTokenScalarFieldEnum[]
+}
+
+/**
+ * User.passwordResets
+ */
+export type User$passwordResetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PasswordReset
+   */
+  select?: Prisma.PasswordResetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PasswordReset
+   */
+  omit?: Prisma.PasswordResetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PasswordResetInclude<ExtArgs> | null
+  where?: Prisma.PasswordResetWhereInput
+  orderBy?: Prisma.PasswordResetOrderByWithRelationInput | Prisma.PasswordResetOrderByWithRelationInput[]
+  cursor?: Prisma.PasswordResetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PasswordResetScalarFieldEnum | Prisma.PasswordResetScalarFieldEnum[]
 }
 
 /**

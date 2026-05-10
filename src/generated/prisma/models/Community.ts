@@ -304,6 +304,7 @@ export type CommunityWhereInput = {
   earnings?: Prisma.CommunityEarningListRelationFilter
   festivals?: Prisma.FestivalListRelationFilter
   tags?: Prisma.TagListRelationFilter
+  revenueShares?: Prisma.RevenueShareListRelationFilter
 }
 
 export type CommunityOrderByWithRelationInput = {
@@ -333,6 +334,7 @@ export type CommunityOrderByWithRelationInput = {
   earnings?: Prisma.CommunityEarningOrderByRelationAggregateInput
   festivals?: Prisma.FestivalOrderByRelationAggregateInput
   tags?: Prisma.TagOrderByRelationAggregateInput
+  revenueShares?: Prisma.RevenueShareOrderByRelationAggregateInput
 }
 
 export type CommunityWhereUniqueInput = Prisma.AtLeast<{
@@ -365,6 +367,7 @@ export type CommunityWhereUniqueInput = Prisma.AtLeast<{
   earnings?: Prisma.CommunityEarningListRelationFilter
   festivals?: Prisma.FestivalListRelationFilter
   tags?: Prisma.TagListRelationFilter
+  revenueShares?: Prisma.RevenueShareListRelationFilter
 }, "id" | "slug">
 
 export type CommunityOrderByWithAggregationInput = {
@@ -436,6 +439,7 @@ export type CommunityCreateInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateInput = {
@@ -465,6 +469,7 @@ export type CommunityUncheckedCreateInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUpdateInput = {
@@ -494,6 +499,7 @@ export type CommunityUpdateInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateInput = {
@@ -523,6 +529,7 @@ export type CommunityUncheckedUpdateInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateManyInput = {
@@ -823,6 +830,20 @@ export type CommunityUpdateOneWithoutTagsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityUpdateToOneWithWhereWithoutTagsInput, Prisma.CommunityUpdateWithoutTagsInput>, Prisma.CommunityUncheckedUpdateWithoutTagsInput>
 }
 
+export type CommunityCreateNestedOneWithoutRevenueSharesInput = {
+  create?: Prisma.XOR<Prisma.CommunityCreateWithoutRevenueSharesInput, Prisma.CommunityUncheckedCreateWithoutRevenueSharesInput>
+  connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutRevenueSharesInput
+  connect?: Prisma.CommunityWhereUniqueInput
+}
+
+export type CommunityUpdateOneRequiredWithoutRevenueSharesNestedInput = {
+  create?: Prisma.XOR<Prisma.CommunityCreateWithoutRevenueSharesInput, Prisma.CommunityUncheckedCreateWithoutRevenueSharesInput>
+  connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutRevenueSharesInput
+  upsert?: Prisma.CommunityUpsertWithoutRevenueSharesInput
+  connect?: Prisma.CommunityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityUpdateToOneWithWhereWithoutRevenueSharesInput, Prisma.CommunityUpdateWithoutRevenueSharesInput>, Prisma.CommunityUncheckedUpdateWithoutRevenueSharesInput>
+}
+
 export type CommunityCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -849,6 +870,7 @@ export type CommunityCreateWithoutUsersInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutUsersInput = {
@@ -877,6 +899,7 @@ export type CommunityUncheckedCreateWithoutUsersInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutUsersInput = {
@@ -921,6 +944,7 @@ export type CommunityUpdateWithoutUsersInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutUsersInput = {
@@ -949,6 +973,7 @@ export type CommunityUncheckedUpdateWithoutUsersInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutLanguagesInput = {
@@ -977,6 +1002,7 @@ export type CommunityCreateWithoutLanguagesInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutLanguagesInput = {
@@ -1005,6 +1031,7 @@ export type CommunityUncheckedCreateWithoutLanguagesInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutLanguagesInput = {
@@ -1049,6 +1076,7 @@ export type CommunityUpdateWithoutLanguagesInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutLanguagesInput = {
@@ -1077,6 +1105,7 @@ export type CommunityUncheckedUpdateWithoutLanguagesInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutCoursesInput = {
@@ -1105,6 +1134,7 @@ export type CommunityCreateWithoutCoursesInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutCoursesInput = {
@@ -1133,6 +1163,7 @@ export type CommunityUncheckedCreateWithoutCoursesInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutCoursesInput = {
@@ -1177,6 +1208,7 @@ export type CommunityUpdateWithoutCoursesInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutCoursesInput = {
@@ -1205,6 +1237,7 @@ export type CommunityUncheckedUpdateWithoutCoursesInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutStoriesInput = {
@@ -1233,6 +1266,7 @@ export type CommunityCreateWithoutStoriesInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutStoriesInput = {
@@ -1261,6 +1295,7 @@ export type CommunityUncheckedCreateWithoutStoriesInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutStoriesInput = {
@@ -1305,6 +1340,7 @@ export type CommunityUpdateWithoutStoriesInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutStoriesInput = {
@@ -1333,6 +1369,7 @@ export type CommunityUncheckedUpdateWithoutStoriesInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutSongsInput = {
@@ -1361,6 +1398,7 @@ export type CommunityCreateWithoutSongsInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutSongsInput = {
@@ -1389,6 +1427,7 @@ export type CommunityUncheckedCreateWithoutSongsInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutSongsInput = {
@@ -1433,6 +1472,7 @@ export type CommunityUpdateWithoutSongsInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutSongsInput = {
@@ -1461,6 +1501,7 @@ export type CommunityUncheckedUpdateWithoutSongsInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutVideosInput = {
@@ -1489,6 +1530,7 @@ export type CommunityCreateWithoutVideosInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutVideosInput = {
@@ -1517,6 +1559,7 @@ export type CommunityUncheckedCreateWithoutVideosInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutVideosInput = {
@@ -1561,6 +1604,7 @@ export type CommunityUpdateWithoutVideosInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutVideosInput = {
@@ -1589,6 +1633,7 @@ export type CommunityUncheckedUpdateWithoutVideosInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutRecordingsInput = {
@@ -1617,6 +1662,7 @@ export type CommunityCreateWithoutRecordingsInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutRecordingsInput = {
@@ -1645,6 +1691,7 @@ export type CommunityUncheckedCreateWithoutRecordingsInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutRecordingsInput = {
@@ -1689,6 +1736,7 @@ export type CommunityUpdateWithoutRecordingsInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutRecordingsInput = {
@@ -1717,6 +1765,7 @@ export type CommunityUncheckedUpdateWithoutRecordingsInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutWordsInput = {
@@ -1745,6 +1794,7 @@ export type CommunityCreateWithoutWordsInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutWordsInput = {
@@ -1773,6 +1823,7 @@ export type CommunityUncheckedCreateWithoutWordsInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutWordsInput = {
@@ -1817,6 +1868,7 @@ export type CommunityUpdateWithoutWordsInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutWordsInput = {
@@ -1845,6 +1897,7 @@ export type CommunityUncheckedUpdateWithoutWordsInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutSubmissionsInput = {
@@ -1873,6 +1926,7 @@ export type CommunityCreateWithoutSubmissionsInput = {
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutSubmissionsInput = {
@@ -1901,6 +1955,7 @@ export type CommunityUncheckedCreateWithoutSubmissionsInput = {
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutSubmissionsInput = {
@@ -1945,6 +2000,7 @@ export type CommunityUpdateWithoutSubmissionsInput = {
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutSubmissionsInput = {
@@ -1973,6 +2029,7 @@ export type CommunityUncheckedUpdateWithoutSubmissionsInput = {
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutEarningsInput = {
@@ -2001,6 +2058,7 @@ export type CommunityCreateWithoutEarningsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutEarningsInput = {
@@ -2029,6 +2087,7 @@ export type CommunityUncheckedCreateWithoutEarningsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutEarningsInput = {
@@ -2073,6 +2132,7 @@ export type CommunityUpdateWithoutEarningsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutEarningsInput = {
@@ -2101,6 +2161,7 @@ export type CommunityUncheckedUpdateWithoutEarningsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutFestivalsInput = {
@@ -2129,6 +2190,7 @@ export type CommunityCreateWithoutFestivalsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutCommunityInput
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutFestivalsInput = {
@@ -2157,6 +2219,7 @@ export type CommunityUncheckedCreateWithoutFestivalsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutCommunityInput
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutFestivalsInput = {
@@ -2201,6 +2264,7 @@ export type CommunityUpdateWithoutFestivalsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutCommunityNestedInput
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutFestivalsInput = {
@@ -2229,6 +2293,7 @@ export type CommunityUncheckedUpdateWithoutFestivalsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutCommunityNestedInput
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityCreateWithoutTagsInput = {
@@ -2257,6 +2322,7 @@ export type CommunityCreateWithoutTagsInput = {
   submissions?: Prisma.SubmissionCreateNestedManyWithoutCommunityInput
   earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityUncheckedCreateWithoutTagsInput = {
@@ -2285,6 +2351,7 @@ export type CommunityUncheckedCreateWithoutTagsInput = {
   submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutCommunityInput
   earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
   festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
+  revenueShares?: Prisma.RevenueShareUncheckedCreateNestedManyWithoutCommunityInput
 }
 
 export type CommunityCreateOrConnectWithoutTagsInput = {
@@ -2329,6 +2396,7 @@ export type CommunityUpdateWithoutTagsInput = {
   submissions?: Prisma.SubmissionUpdateManyWithoutCommunityNestedInput
   earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUpdateManyWithoutCommunityNestedInput
 }
 
 export type CommunityUncheckedUpdateWithoutTagsInput = {
@@ -2357,6 +2425,139 @@ export type CommunityUncheckedUpdateWithoutTagsInput = {
   submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutCommunityNestedInput
   earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
   festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
+  revenueShares?: Prisma.RevenueShareUncheckedUpdateManyWithoutCommunityNestedInput
+}
+
+export type CommunityCreateWithoutRevenueSharesInput = {
+  id?: string
+  name: string
+  slug: string
+  description: string
+  coverImage?: string | null
+  logoImage?: string | null
+  colorPrimary?: string
+  colorSecondary?: string
+  region: string
+  totalSpeakers?: number
+  preservationScore?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutCommunityInput
+  languages?: Prisma.LanguageCreateNestedManyWithoutCommunityInput
+  courses?: Prisma.CourseCreateNestedManyWithoutCommunityInput
+  stories?: Prisma.StoryCreateNestedManyWithoutCommunityInput
+  songs?: Prisma.SongCreateNestedManyWithoutCommunityInput
+  videos?: Prisma.VideoCreateNestedManyWithoutCommunityInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutCommunityInput
+  words?: Prisma.WordCreateNestedManyWithoutCommunityInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutCommunityInput
+  earnings?: Prisma.CommunityEarningCreateNestedManyWithoutCommunityInput
+  festivals?: Prisma.FestivalCreateNestedManyWithoutCommunityInput
+  tags?: Prisma.TagCreateNestedManyWithoutCommunityInput
+}
+
+export type CommunityUncheckedCreateWithoutRevenueSharesInput = {
+  id?: string
+  name: string
+  slug: string
+  description: string
+  coverImage?: string | null
+  logoImage?: string | null
+  colorPrimary?: string
+  colorSecondary?: string
+  region: string
+  totalSpeakers?: number
+  preservationScore?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCommunityInput
+  languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCommunityInput
+  courses?: Prisma.CourseUncheckedCreateNestedManyWithoutCommunityInput
+  stories?: Prisma.StoryUncheckedCreateNestedManyWithoutCommunityInput
+  songs?: Prisma.SongUncheckedCreateNestedManyWithoutCommunityInput
+  videos?: Prisma.VideoUncheckedCreateNestedManyWithoutCommunityInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutCommunityInput
+  words?: Prisma.WordUncheckedCreateNestedManyWithoutCommunityInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutCommunityInput
+  earnings?: Prisma.CommunityEarningUncheckedCreateNestedManyWithoutCommunityInput
+  festivals?: Prisma.FestivalUncheckedCreateNestedManyWithoutCommunityInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutCommunityInput
+}
+
+export type CommunityCreateOrConnectWithoutRevenueSharesInput = {
+  where: Prisma.CommunityWhereUniqueInput
+  create: Prisma.XOR<Prisma.CommunityCreateWithoutRevenueSharesInput, Prisma.CommunityUncheckedCreateWithoutRevenueSharesInput>
+}
+
+export type CommunityUpsertWithoutRevenueSharesInput = {
+  update: Prisma.XOR<Prisma.CommunityUpdateWithoutRevenueSharesInput, Prisma.CommunityUncheckedUpdateWithoutRevenueSharesInput>
+  create: Prisma.XOR<Prisma.CommunityCreateWithoutRevenueSharesInput, Prisma.CommunityUncheckedCreateWithoutRevenueSharesInput>
+  where?: Prisma.CommunityWhereInput
+}
+
+export type CommunityUpdateToOneWithWhereWithoutRevenueSharesInput = {
+  where?: Prisma.CommunityWhereInput
+  data: Prisma.XOR<Prisma.CommunityUpdateWithoutRevenueSharesInput, Prisma.CommunityUncheckedUpdateWithoutRevenueSharesInput>
+}
+
+export type CommunityUpdateWithoutRevenueSharesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPrimary?: Prisma.StringFieldUpdateOperationsInput | string
+  colorSecondary?: Prisma.StringFieldUpdateOperationsInput | string
+  region?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpeakers?: Prisma.IntFieldUpdateOperationsInput | number
+  preservationScore?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutCommunityNestedInput
+  languages?: Prisma.LanguageUpdateManyWithoutCommunityNestedInput
+  courses?: Prisma.CourseUpdateManyWithoutCommunityNestedInput
+  stories?: Prisma.StoryUpdateManyWithoutCommunityNestedInput
+  songs?: Prisma.SongUpdateManyWithoutCommunityNestedInput
+  videos?: Prisma.VideoUpdateManyWithoutCommunityNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutCommunityNestedInput
+  words?: Prisma.WordUpdateManyWithoutCommunityNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutCommunityNestedInput
+  earnings?: Prisma.CommunityEarningUpdateManyWithoutCommunityNestedInput
+  festivals?: Prisma.FestivalUpdateManyWithoutCommunityNestedInput
+  tags?: Prisma.TagUpdateManyWithoutCommunityNestedInput
+}
+
+export type CommunityUncheckedUpdateWithoutRevenueSharesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPrimary?: Prisma.StringFieldUpdateOperationsInput | string
+  colorSecondary?: Prisma.StringFieldUpdateOperationsInput | string
+  region?: Prisma.StringFieldUpdateOperationsInput | string
+  totalSpeakers?: Prisma.IntFieldUpdateOperationsInput | number
+  preservationScore?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutCommunityNestedInput
+  languages?: Prisma.LanguageUncheckedUpdateManyWithoutCommunityNestedInput
+  courses?: Prisma.CourseUncheckedUpdateManyWithoutCommunityNestedInput
+  stories?: Prisma.StoryUncheckedUpdateManyWithoutCommunityNestedInput
+  songs?: Prisma.SongUncheckedUpdateManyWithoutCommunityNestedInput
+  videos?: Prisma.VideoUncheckedUpdateManyWithoutCommunityNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutCommunityNestedInput
+  words?: Prisma.WordUncheckedUpdateManyWithoutCommunityNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutCommunityNestedInput
+  earnings?: Prisma.CommunityEarningUncheckedUpdateManyWithoutCommunityNestedInput
+  festivals?: Prisma.FestivalUncheckedUpdateManyWithoutCommunityNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutCommunityNestedInput
 }
 
 
@@ -2377,6 +2578,7 @@ export type CommunityCountOutputType = {
   earnings: number
   festivals: number
   tags: number
+  revenueShares: number
 }
 
 export type CommunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2392,6 +2594,7 @@ export type CommunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensi
   earnings?: boolean | CommunityCountOutputTypeCountEarningsArgs
   festivals?: boolean | CommunityCountOutputTypeCountFestivalsArgs
   tags?: boolean | CommunityCountOutputTypeCountTagsArgs
+  revenueShares?: boolean | CommunityCountOutputTypeCountRevenueSharesArgs
 }
 
 /**
@@ -2488,6 +2691,13 @@ export type CommunityCountOutputTypeCountTagsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.TagWhereInput
 }
 
+/**
+ * CommunityCountOutputType without action
+ */
+export type CommunityCountOutputTypeCountRevenueSharesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RevenueShareWhereInput
+}
+
 
 export type CommunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2516,6 +2726,7 @@ export type CommunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   earnings?: boolean | Prisma.Community$earningsArgs<ExtArgs>
   festivals?: boolean | Prisma.Community$festivalsArgs<ExtArgs>
   tags?: boolean | Prisma.Community$tagsArgs<ExtArgs>
+  revenueShares?: boolean | Prisma.Community$revenueSharesArgs<ExtArgs>
   _count?: boolean | Prisma.CommunityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["community"]>
 
@@ -2584,6 +2795,7 @@ export type CommunityInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   earnings?: boolean | Prisma.Community$earningsArgs<ExtArgs>
   festivals?: boolean | Prisma.Community$festivalsArgs<ExtArgs>
   tags?: boolean | Prisma.Community$tagsArgs<ExtArgs>
+  revenueShares?: boolean | Prisma.Community$revenueSharesArgs<ExtArgs>
   _count?: boolean | Prisma.CommunityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CommunityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2604,6 +2816,7 @@ export type $CommunityPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     earnings: Prisma.$CommunityEarningPayload<ExtArgs>[]
     festivals: Prisma.$FestivalPayload<ExtArgs>[]
     tags: Prisma.$TagPayload<ExtArgs>[]
+    revenueShares: Prisma.$RevenueSharePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3026,6 +3239,7 @@ export interface Prisma__CommunityClient<T, Null = never, ExtArgs extends runtim
   earnings<T extends Prisma.Community$earningsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$earningsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityEarningPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   festivals<T extends Prisma.Community$festivalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$festivalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FestivalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tags<T extends Prisma.Community$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  revenueShares<T extends Prisma.Community$revenueSharesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$revenueSharesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RevenueSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3747,6 +3961,30 @@ export type Community$tagsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.TagScalarFieldEnum | Prisma.TagScalarFieldEnum[]
+}
+
+/**
+ * Community.revenueShares
+ */
+export type Community$revenueSharesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RevenueShare
+   */
+  select?: Prisma.RevenueShareSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RevenueShare
+   */
+  omit?: Prisma.RevenueShareOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RevenueShareInclude<ExtArgs> | null
+  where?: Prisma.RevenueShareWhereInput
+  orderBy?: Prisma.RevenueShareOrderByWithRelationInput | Prisma.RevenueShareOrderByWithRelationInput[]
+  cursor?: Prisma.RevenueShareWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RevenueShareScalarFieldEnum | Prisma.RevenueShareScalarFieldEnum[]
 }
 
 /**

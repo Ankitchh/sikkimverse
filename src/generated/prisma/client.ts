@@ -171,3 +171,38 @@ export type Festival = Prisma.FestivalModel
  * 
  */
 export type Tag = Prisma.TagModel
+/**
+ * Model SubscriptionPlan
+ * 
+ */
+export type SubscriptionPlan = Prisma.SubscriptionPlanModel
+/**
+ * Model UserSubscription
+ * 
+ */
+export type UserSubscription = Prisma.UserSubscriptionModel
+/**
+ * Model PaymentEvent
+ * 
+ */
+export type PaymentEvent = Prisma.PaymentEventModel
+/**
+ * Model RevenueShare
+ * 
+ */
+export type RevenueShare = Prisma.RevenueShareModel
+/**
+ * Model EmailVerificationToken
+ * 
+ */
+export type EmailVerificationToken = Prisma.EmailVerificationTokenModel
+/**
+ * Model PasswordReset
+ * 
+ */
+export type PasswordReset = Prisma.PasswordResetModel
+/**
+ * Model ContentEmbedding
+ * 
+ */
+export type ContentEmbedding = Prisma.ContentEmbeddingModel

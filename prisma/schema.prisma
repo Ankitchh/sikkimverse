@@ -99,6 +99,20 @@ enum HandwritingGrade {
   NEEDS_PRACTICE
 }
 
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+enum SubscriptionInterval {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+}
+
 // ─── Auth Models (NextAuth v5 / @auth/prisma-adapter) ─────────────────────────
 
 model Account {
@@ -157,22 +171,25 @@ model User {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
-  community           Community?           @relation(fields: [communityId], references: [id])
-  accounts            Account[]
-  sessions            Session[]
-  progress            UserProgress[]
-  quizAttempts        QuizAttempt[]
-  achievements        UserAchievement[]
-  notifications       Notification[]
-  stories             Story[]              @relation("StoryContributor")
-  songs               Song[]               @relation("SongContributor")
-  videos              Video[]              @relation("VideoContributor")
-  recordings          Recording[]          @relation("RecordingContributor")
-  words               Word[]               @relation("WordContributor")
-  moderatedSubmission Submission[]         @relation("SubmissionModerator")
-  submissions         Submission[]         @relation("SubmissionContributor")
+  community             Community?           @relation(fields: [communityId], references: [id])
+  accounts              Account[]
+  sessions              Session[]
+  progress              UserProgress[]
+  quizAttempts          QuizAttempt[]
+  achievements          UserAchievement[]
+  notifications         Notification[]
+  stories               Story[]              @relation("StoryContributor")
+  songs                 Song[]               @relation("SongContributor")
+  videos                Video[]              @relation("VideoContributor")
+  recordings            Recording[]          @relation("RecordingContributor")
+  words                 Word[]               @relation("WordContributor")
+  moderatedSubmission   Submission[]         @relation("SubmissionModerator")
+  submissions           Submission[]         @relation("SubmissionContributor")
   pronunciationAttempts PronunciationAttempt[]
-  handwritingAttempts HandwritingAttempt[]
+  handwritingAttempts   HandwritingAttempt[]
+  subscription          UserSubscription?
+  emailVerifications    EmailVerificationToken[]
+  passwordResets        PasswordReset[]
 
   @@index([communityId])
   @@index([role])
@@ -197,18 +214,19 @@ model Community {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  users       User[]
-  languages   Language[]
-  courses     Course[]
-  stories     Story[]
-  songs       Song[]
-  videos      Video[]
-  recordings  Recording[]
-  words       Word[]
-  submissions Submission[]
-  earnings    CommunityEarning[]
-  festivals   Festival[]
-  tags        Tag[]
+  users         User[]
+  languages     Language[]
+  courses       Course[]
+  stories       Story[]
+  songs         Song[]
+  videos        Video[]
+  recordings    Recording[]
+  words         Word[]
+  submissions   Submission[]
+  earnings      CommunityEarning[]
+  festivals     Festival[]
+  tags          Tag[]
+  revenueShares RevenueShare[]
 
   @@index([slug])
   @@index([isActive])
@@ -641,4 +659,139 @@ model Tag {
   @@unique([slug, communityId])
   @@index([communityId])
   @@index([slug])
+}
+
+// ─── Subscriptions ────────────────────────────────────────────────────────────
+
+model SubscriptionPlan {
+  id          String               @id @default(cuid())
+  name        String
+  slug        String               @unique
+  description String               @db.Text
+  priceInr    Decimal              @db.Decimal(10, 2)
+  interval    SubscriptionInterval @default(MONTHLY)
+  trialDays   Int                  @default(7)
+  isActive    Boolean              @default(true)
+  features    Json
+  // Razorpay plan_id (set after plan is created in Razorpay dashboard)
+  gatewayPlanId String?
+  createdAt   DateTime             @default(now())
+
+  subscriptions UserSubscription[]
+
+  @@index([isActive])
+  @@index([slug])
+}
+
+model UserSubscription {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  planId             String
+  status             SubscriptionStatus @default(TRIALING)
+  trialStart         DateTime?
+  trialEnd           DateTime?
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAt           DateTime?
+  canceledAt         DateTime?
+  gatewaySubId       String?            @unique
+  gatewayCustomerId  String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan     SubscriptionPlan @relation(fields: [planId], references: [id])
+  payments PaymentEvent[]
+
+  @@index([status])
+  @@index([currentPeriodEnd])
+  @@index([planId])
+}
+
+model PaymentEvent {
+  id             String   @id @default(cuid())
+  subscriptionId String
+  gatewayEventId String   @unique
+  amount         Decimal  @db.Decimal(10, 2)
+  currency       String   @default("INR")
+  status         String
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  subscription UserSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([createdAt])
+  @@index([status])
+}
+
+// ─── Revenue Sharing ──────────────────────────────────────────────────────────
+
+model RevenueShare {
+  id              String   @id @default(cuid())
+  communityId     String
+  period          String   // "2025-01"
+  totalRevenue    Decimal  @db.Decimal(12, 2)
+  communityShare  Decimal  @db.Decimal(12, 2)
+  platformShare   Decimal  @db.Decimal(12, 2)
+  engagementScore Decimal  @db.Decimal(8, 4)
+  isPaid          Boolean  @default(false)
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([communityId, period])
+  @@index([communityId])
+  @@index([period])
+  @@index([isPaid])
+}
+
+// ─── Auth Tokens ──────────────────────────────────────────────────────────────
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expires])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expires   DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expires])
+}
+
+// ─── AI / Search ──────────────────────────────────────────────────────────────
+
+model ContentEmbedding {
+  id          String   @id @default(cuid())
+  contentType String
+  contentId   String
+  communityId String?
+  text        String   @db.Text
+  // Stored as JSON array of floats — pgvector handled via raw SQL when available
+  embeddingJson Json?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([contentType, contentId])
+  @@index([communityId])
+  @@index([contentType])
+  @@index([createdAt])
 }
