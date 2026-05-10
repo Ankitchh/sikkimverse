@@ -191,7 +191,7 @@ export default function AiTutorPage() {
   }, [])
 
   const sendMessage = useCallback(
-    (text: string) => {
+    async (text: string) => {
       if (!text.trim() || isStreaming) return
       const userMsg: Message = {
         id: `u-${Date.now()}`,
@@ -211,12 +211,81 @@ export default function AiTutorPage() {
       setInputValue('')
       setIsStreaming(true)
 
-      setTimeout(() => {
-        const response = getSimulatedResponse(text)
-        simulateStreaming(response, assistantMsgId)
-      }, 600)
+      try {
+        const history = messages.slice(-10).map((m) => ({ role: m.role, content: m.content }))
+        const res = await fetch('/api/ai/tutor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text.trim(),
+            languageContext: selectedCommunity,
+            conversationHistory: history,
+          }),
+        })
+
+        if (!res.ok) {
+          const err = await res.json() as { error?: string }
+          setMessages((prev) => prev.map((m) =>
+            m.id === assistantMsgId
+              ? { ...m, content: err.error ?? 'Something went wrong. Please try again.', isStreaming: false }
+              : m
+          ))
+          setIsStreaming(false)
+          return
+        }
+
+        const contentType = res.headers.get('content-type') ?? ''
+
+        if (contentType.includes('text/event-stream')) {
+          // Real SSE streaming from OpenAI
+          const reader = res.body?.getReader()
+          const decoder = new TextDecoder()
+          let accumulated = ''
+
+          if (reader) {
+            while (true) {
+              const { done, value } = await reader.read()
+              if (done) break
+              const chunk = decoder.decode(value, { stream: true })
+              const lines = chunk.split('\n').filter(l => l.trim())
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue
+                const data = line.slice(6)
+                if (data === '[DONE]') break
+                try {
+                  const parsed = JSON.parse(data) as { content?: string }
+                  if (parsed.content) {
+                    accumulated += parsed.content
+                    setMessages((prev) => prev.map((m) =>
+                      m.id === assistantMsgId ? { ...m, content: accumulated } : m
+                    ))
+                  }
+                } catch { /* skip malformed */ }
+              }
+            }
+            reader.releaseLock()
+          }
+          setMessages((prev) => prev.map((m) =>
+            m.id === assistantMsgId ? { ...m, isStreaming: false } : m
+          ))
+        } else {
+          // JSON fallback (offline/dev mode)
+          const data = await res.json() as { reply?: string; error?: string }
+          const reply = data.reply ?? data.error ?? 'I encountered an error. Please try again.'
+          simulateStreaming(reply, assistantMsgId)
+          return
+        }
+      } catch {
+        setMessages((prev) => prev.map((m) =>
+          m.id === assistantMsgId
+            ? { ...m, content: 'Network error. Please check your connection and try again.', isStreaming: false }
+            : m
+        ))
+      } finally {
+        setIsStreaming(false)
+      }
     },
-    [isStreaming, simulateStreaming]
+    [isStreaming, messages, selectedCommunity, simulateStreaming]
   )
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, BookOpen, Palette, Bell, Shield, LogOut, Moon, Sun, ChevronRight, Check } from "lucide-react";
+import { User, BookOpen, Palette, Bell, Shield, LogOut, Moon, Sun, Check, Loader2, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 type Tab = "profile" | "learning" | "appearance" | "notifications" | "privacy" | "account";
 
@@ -45,7 +46,16 @@ function loadSettings() {
   }
 }
 
+interface UserProfile {
+  id: string;
+  name: string | null;
+  email: string | null;
+  communityId: string | null;
+  community?: { id: string; name: string; slug: string } | null;
+}
+
 export default function SettingsPage() {
+  const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xl">("normal");
@@ -53,8 +63,39 @@ export default function SettingsPage() {
   const [notifs, setNotifs] = useState({ streak: true, newContent: true, community: true, achievements: true, email: false });
   const [privacy, setPrivacy] = useState({ publicProfile: true, showAchievements: true, shareProgress: false });
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Hydrate from localStorage on mount
+  // Profile controlled state
+  const [profileName, setProfileName] = useState("");
+  const [profileCommunityId, setProfileCommunityId] = useState("");
+  const [communities, setCommunities] = useState<Array<{ id: string; name: string }>>([]);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  // Load real user profile from API
+  useEffect(() => {
+    if (!session?.user) return;
+    fetch("/api/users/me")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (data?.user) {
+          const u = data.user as UserProfile;
+          setProfile(u);
+          setProfileName(u.name ?? "");
+          setProfileCommunityId(u.communityId ?? "");
+        }
+      })
+      .catch(() => {});
+    fetch("/api/communities?limit=50")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (Array.isArray(data?.data)) {
+          setCommunities(data.data.map((c: { id: string; name: string }) => ({ id: c.id, name: c.name })));
+        }
+      })
+      .catch(() => {});
+  }, [session]);
+
+  // Hydrate UI preferences from localStorage on mount
   useEffect(() => {
     const stored = loadSettings();
     if (!stored) return;
@@ -65,12 +106,33 @@ export default function SettingsPage() {
     if (stored.privacy)   setPrivacy(stored.privacy);
   }, []);
 
-  const save = () => {
+  const save = async () => {
+    setSaving(true);
     try {
+      // Persist UI preferences to localStorage
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ theme, fontSize, dailyGoal, notifs, privacy }));
-    } catch { /* quota exceeded — ignore */ }
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+
+      // Persist profile changes to DB
+      if (activeTab === "profile") {
+        const res = await fetch("/api/users/me", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: profileName || undefined,
+            communityId: profileCommunityId || null,
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json() as { user: UserProfile };
+          setProfile(data.user);
+        }
+      }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch { /* network error — localStorage still saved */ } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -110,33 +172,36 @@ export default function SettingsPage() {
               <>
                 <div className="bg-background-secondary rounded-2xl p-5 border border-border space-y-4">
                   <h2 className="font-semibold text-foreground">Personal Information</h2>
-                  {[
-                    { label: "Full Name", value: "Karma Tshering", type: "text" },
-                    { label: "Email", value: "karma@example.com", type: "email" },
-                    { label: "Bio", value: "Learning Lepcha to connect with my roots 🌿", type: "textarea" },
-                  ].map((field) => (
-                    <div key={field.label}>
-                      <label className="text-xs font-medium text-foreground-muted block mb-1.5">{field.label}</label>
-                      {field.type === "textarea" ? (
-                        <textarea
-                          defaultValue={field.value}
-                          rows={3}
-                          className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground resize-none focus:outline-none focus:border-primary"
-                        />
-                      ) : (
-                        <input
-                          type={field.type}
-                          defaultValue={field.value}
-                          className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary"
-                        />
-                      )}
-                    </div>
-                  ))}
+                  <div>
+                    <label className="text-xs font-medium text-foreground-muted block mb-1.5">Full Name</label>
+                    <input
+                      type="text"
+                      value={profileName}
+                      onChange={(e) => setProfileName(e.target.value)}
+                      placeholder={session?.user?.name ?? "Your name"}
+                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-foreground-muted block mb-1.5">Email</label>
+                    <input
+                      type="email"
+                      value={profile?.email ?? session?.user?.email ?? ""}
+                      readOnly
+                      className="w-full px-3 py-2 rounded-xl border border-border bg-background-secondary text-sm text-foreground-muted cursor-not-allowed"
+                    />
+                    <p className="text-xs text-foreground-muted mt-1">Email cannot be changed here. Contact support if needed.</p>
+                  </div>
                   <div>
                     <label className="text-xs font-medium text-foreground-muted block mb-1.5">Primary Community</label>
-                    <select className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary">
-                      {["Lepcha","Bhutia","Limbu","Tamang","Rai","Gurung","Sherpa","Mangar","Newar","Sunwar"].map(c => (
-                        <option key={c}>{c}</option>
+                    <select
+                      value={profileCommunityId}
+                      onChange={(e) => setProfileCommunityId(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary"
+                    >
+                      <option value="">No community selected</option>
+                      {communities.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
                       ))}
                     </select>
                   </div>
@@ -305,12 +370,13 @@ export default function SettingsPage() {
             {activeTab !== "account" && (
               <button
                 onClick={save}
+                disabled={saving}
                 className={cn(
-                  "w-full py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2",
+                  "w-full py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-60",
                   saved ? "bg-green-500 text-white" : "bg-primary text-white hover:bg-primary-hover"
                 )}
               >
-                {saved ? <><Check className="w-4 h-4" /> Saved!</> : "Save Changes"}
+                {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</> : saved ? <><Check className="w-4 h-4" /> Saved!</> : "Save Changes"}
               </button>
             )}
           </motion.div>
