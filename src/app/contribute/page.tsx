@@ -46,8 +46,8 @@ export default function ContributePage() {
     fetch("/api/communities?limit=50")
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
-        if (Array.isArray(data?.communities)) {
-          setCommunities(data.communities.map((c: Community) => ({ id: c.id, name: c.name })));
+        if (Array.isArray(data?.data)) {
+          setCommunities(data.data.map((c: Community) => ({ id: c.id, name: c.name })));
         }
       })
       .catch(() => {});

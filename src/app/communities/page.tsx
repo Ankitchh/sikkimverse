@@ -245,7 +245,7 @@ export default function CommunitiesPage() {
   useEffect(() => {
     fetch('/api/communities?limit=50')
       .then(r => r.ok ? r.json() as Promise<{ data: ApiCommunity[] }> : Promise.resolve({ data: [] }))
-      .then(({ data }) => { setCommunities(data); setLoading(false) })
+      .then(({ data }) => { setCommunities(data ?? []); setLoading(false) })
       .catch(() => setLoading(false))
   }, [])
 
