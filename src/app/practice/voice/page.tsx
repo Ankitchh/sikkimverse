@@ -181,9 +181,38 @@ function Waveform({ active }: { active: boolean }) {
   );
 }
 
+// ── DB Word shape from /api/words ─────────────────────────────────────────────
+interface DbWord {
+  id: string;
+  word: string;
+  pronunciation: string | null;
+  meaning: string;
+  partOfSpeech: string | null;
+  language: { name: string };
+  community: { name: string; slug: string };
+}
+
+function dbWordToEntry(w: DbWord, index: number): WordEntry {
+  const difficulties: WordEntry["difficulty"][] = ["Easy", "Medium", "Hard"];
+  return {
+    id: w.id,
+    word: w.word,
+    phonetic: w.pronunciation ?? w.word,
+    meaning: w.meaning,
+    language: w.language?.name ?? "Unknown",
+    difficulty: difficulties[index % 3],
+    tips: [
+      `Listen to the native audio, then try to match the sounds.`,
+      w.pronunciation ? `Pronunciation guide: "${w.pronunciation}"` : `Say the word clearly into your microphone.`,
+      `Repeat slowly — accuracy matters more than speed.`,
+    ],
+  };
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function VoicePracticePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [words, setWords] = useState<WordEntry[]>(WORDS);  // fallback to built-in set
   const [recordingState, setRecordingState] = useState<RecordingState>("idle");
   const [score, setScore] = useState<number | null>(null);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
@@ -194,7 +223,21 @@ export default function VoicePracticePage() {
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const recordingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const currentWord = WORDS[currentIndex];
+  const currentWord = words[currentIndex] ?? words[0] ?? WORDS[0];
+
+  // Load real words from DB on mount
+  useEffect(() => {
+    fetch("/api/words?limit=30&page=1")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        const dbWords = data?.words as DbWord[] | undefined;
+        if (Array.isArray(dbWords) && dbWords.length > 0) {
+          setWords(dbWords.map((w, i) => dbWordToEntry(w, i)));
+          setCurrentIndex(0);
+        }
+      })
+      .catch(() => {}); // keep fallback WORDS on error
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -256,6 +299,16 @@ export default function VoicePracticePage() {
     return Math.min(95, Math.round(wordScore + bigramScore));
   }, []);
 
+  const persistScore = useCallback((wordId: string, transcription: string) => {
+    // Only persist if wordId looks like a real cuid (not a fallback key like "ayong")
+    if (wordId.length < 20 || wordId.startsWith("ayong") || wordId.startsWith("nong") || wordId.startsWith("mayel") || wordId.startsWith("tashi") || wordId.startsWith("sirij")) return;
+    fetch("/api/pronunciation/score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ wordId, transcription }),
+    }).catch(() => {}); // fire-and-forget
+  }, []);
+
   const startRecording = useCallback(() => {
     setRecordingState("recording");
     setScore(null);
@@ -284,6 +337,7 @@ export default function VoicePracticePage() {
 
           setScore(clamped);
           setRecordingState("done");
+          persistScore(currentWord.id, transcript);
           setAttempts((prev) => [
             { word: currentWord.word, score: clamped, timestamp: new Date(), feedback: generateFeedback(clamped, currentWord) },
             ...prev.slice(0, 9),
@@ -320,6 +374,7 @@ export default function VoicePracticePage() {
         const finalScore = Math.max(30, Math.min(95, base - diffPenalty));
         setScore(finalScore);
         setRecordingState("done");
+        persistScore(currentWord.id, currentWord.phonetic);
         setAttempts((prev) => [
           { word: currentWord.word, score: finalScore, timestamp: new Date(), feedback: generateFeedback(finalScore, currentWord) },
           ...prev.slice(0, 9),
@@ -347,7 +402,7 @@ export default function VoicePracticePage() {
   };
 
   const handleNext = () => {
-    if (currentIndex < WORDS.length - 1) {
+    if (currentIndex < words.length - 1) {
       setCurrentIndex((i) => i + 1);
       setScore(null);
       setRecordingState("idle");
@@ -380,10 +435,10 @@ export default function VoicePracticePage() {
           </Link>
           <div className="flex-1">
             <h1 className="font-bold text-foreground text-sm">Pronunciation Practice</h1>
-            <p className="text-xs text-foreground-muted">Word {currentIndex + 1} of {WORDS.length}</p>
+            <p className="text-xs text-foreground-muted">Word {currentIndex + 1} of {words.length}</p>
           </div>
           <div className="flex items-center gap-1">
-            {WORDS.map((_, i) => (
+            {words.map((_, i) => (
               <div
                 key={i}
                 className={cn(
@@ -610,7 +665,7 @@ export default function VoicePracticePage() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={handleNext}
-                        disabled={currentIndex === WORDS.length - 1}
+                        disabled={currentIndex === words.length - 1}
                         className="flex-1 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                       >
                         Next Word
@@ -634,7 +689,7 @@ export default function VoicePracticePage() {
               </button>
               <button
                 onClick={handleNext}
-                disabled={currentIndex === WORDS.length - 1}
+                disabled={currentIndex === words.length - 1}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-foreground-muted hover:bg-background-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-all text-sm font-medium"
               >
                 Next
