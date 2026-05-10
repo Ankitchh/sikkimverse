@@ -112,18 +112,31 @@ function Skeleton({ className }: { className?: string }) {
   return <div className={`animate-pulse bg-border rounded-xl ${className ?? ""}`} />;
 }
 
+interface HealthStatus {
+  db:   { ok: boolean; latencyMs?: number; error?: string };
+  auth: { ok: boolean; error?: string };
+  ai:   { ok: boolean; error?: string };
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [health, setHealth] = useState<HealthStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/dashboard/stats")
-      .then(async (r) => {
+    Promise.all([
+      fetch("/api/dashboard/stats").then(async (r) => {
         if (!r.ok) throw new Error(await r.text());
         return r.json() as Promise<DashboardStats>;
+      }),
+      fetch("/api/health").then((r) => r.json() as Promise<{ services: HealthStatus }>),
+    ])
+      .then(([data, healthData]) => {
+        setStats(data);
+        setHealth(healthData.services ?? null);
+        setLoading(false);
       })
-      .then((data) => { setStats(data); setLoading(false); })
       .catch((err) => { setError(String(err)); setLoading(false); });
   }, []);
 
@@ -220,16 +233,34 @@ export default function AdminDashboard() {
         {/* System Health */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "API",  status: "Healthy",  icon: Server,   ok: true  },
-            { label: "DB",   status: "Healthy",  icon: Activity, ok: true  },
-            { label: "Auth", status: "Healthy",  icon: Shield,   ok: true  },
-            { label: "Queue",
+            {
+              label: "API",
+              status: "Running",
+              icon: Server,
+              ok: true,
+            },
+            {
+              label: "Database",
+              status: health ? (health.db.ok ? `${health.db.latencyMs ?? 0}ms` : "Error") : "…",
+              icon: Activity,
+              ok: health?.db.ok ?? true,
+              tooltip: health?.db.error,
+            },
+            {
+              label: "Auth",
+              status: health ? (health.auth.ok ? "Configured" : "Missing key") : "…",
+              icon: Shield,
+              ok: health?.auth.ok ?? true,
+              tooltip: health?.auth.error,
+            },
+            {
+              label: "Queue",
               status: stats ? `${stats.submissions.byStatus.pending} pending` : "…",
               icon: Clock,
-              ok: (stats?.submissions.byStatus.pending ?? 0) === 0
+              ok: (stats?.submissions.byStatus.pending ?? 0) === 0,
             },
           ].map((s) => (
-            <div key={s.label} className="bg-background-secondary border border-border rounded-xl p-3 flex items-center gap-3">
+            <div key={s.label} className="bg-background-secondary border border-border rounded-xl p-3 flex items-center gap-3" title={s.tooltip}>
               <div className={`p-2 rounded-lg ${s.ok ? "bg-green-500/10" : "bg-amber-500/10"}`}>
                 <s.icon className={`w-4 h-4 ${s.ok ? "text-green-500" : "text-amber-500"}`} />
               </div>
