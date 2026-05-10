@@ -4,42 +4,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Globe, TrendingUp, AlertTriangle, Download, BookOpen, Users, FileText, Activity, RefreshCw } from "lucide-react";
 import {
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, BarChart, Bar,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, Legend
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 
-const RADAR_DATA = [
-  { metric: "Speakers",    Lepcha: 35, Bhutia: 48, Limbu: 75, Sherpa: 80, Tamang: 62 },
-  { metric: "Oral Hist.",  Lepcha: 45, Bhutia: 60, Limbu: 80, Sherpa: 70, Tamang: 55 },
-  { metric: "Script",      Lepcha: 25, Bhutia: 55, Limbu: 65, Sherpa: 40, Tamang: 30 },
-  { metric: "Songs",       Lepcha: 55, Bhutia: 65, Limbu: 78, Sherpa: 72, Tamang: 60 },
-  { metric: "Rituals",     Lepcha: 40, Bhutia: 70, Limbu: 75, Sherpa: 75, Tamang: 65 },
-  { metric: "Youth Eng.",  Lepcha: 30, Bhutia: 45, Limbu: 68, Sherpa: 55, Tamang: 50 },
-];
-
-const MONTHLY_UPLOADS = [
-  { month: "Dec", Lepcha: 28, Bhutia: 35, Limbu: 45, Tamang: 22 },
-  { month: "Jan", Lepcha: 34, Bhutia: 42, Limbu: 52, Tamang: 28 },
-  { month: "Feb", Lepcha: 38, Bhutia: 48, Limbu: 58, Tamang: 31 },
-  { month: "Mar", Lepcha: 42, Bhutia: 55, Limbu: 64, Tamang: 38 },
-  { month: "Apr", Lepcha: 50, Bhutia: 60, Limbu: 72, Tamang: 44 },
-  { month: "May", Lepcha: 56, Bhutia: 68, Limbu: 80, Tamang: 52 },
-];
-
-const PLATFORM_GROWTH = [
-  { month: "Dec", users: 820,  content: 1200 },
-  { month: "Jan", users: 1100, content: 1560 },
-  { month: "Feb", users: 1450, content: 2000 },
-  { month: "Mar", users: 1900, content: 2450 },
-  { month: "Apr", users: 2600, content: 2780 },
-  { month: "May", users: 3427, content: 2814 },
-];
 
 interface CommunityRow {
   id: string; name: string; region: string; slug: string; colorPrimary: string;
   totalSpeakers: number; memberCount: number; totalApprovedContent: number;
   preservationScore: number; pendingSubmissions: number;
+  approvedStories?: number; approvedSongs?: number; approvedWords?: number;
 }
 
 const LEVEL_STYLE: Record<string, string> = {
@@ -48,7 +21,6 @@ const LEVEL_STYLE: Record<string, string> = {
   Endangered:  "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
 };
 
-const RADAR_COLORS = ["#16A34A","#DC2626","#92400E","#2C3E50","#7B3F00"];
 
 function endangermentLevel(score: number): string {
   if (score >= 70) return 'Safe';
@@ -167,58 +139,63 @@ export default function GovernmentDashboard() {
 
         {/* Charts Row */}
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Radar — Community Comparison */}
+          {/* Community Preservation Scores */}
           <div className="bg-background-secondary rounded-2xl p-5 border border-border">
             <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-primary" /> Community Comparison (Top 5)
+              <Activity className="w-4 h-4 text-primary" /> Preservation Score by Community
             </h2>
             <ResponsiveContainer width="100%" height={280}>
-              <RadarChart data={RADAR_DATA}>
-                <PolarGrid stroke="var(--border)" />
-                <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10, fill: "var(--foreground-muted)" }} />
-                {["Lepcha","Bhutia","Limbu","Sherpa","Tamang"].map((key, i) => (
-                  <Radar key={key} name={key} dataKey={key}
-                    stroke={RADAR_COLORS[i]} fill={RADAR_COLORS[i]} fillOpacity={0.1} />
-                ))}
-                <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
-                <Legend />
-              </RadarChart>
+              <BarChart data={(stats?.communities ?? []).slice(0, 8).map(c => ({ name: c.name.length > 10 ? c.name.slice(0, 9) + '…' : c.name, score: c.preservationScore, color: c.colorPrimary }))} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
+                <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
+                <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} formatter={(v: unknown) => [`${v}%`, "Preservation"]} />
+                <Bar dataKey="score" fill="#16A34A" radius={[0,3,3,0]} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Platform Growth */}
+          {/* Content Breakdown */}
           <div className="bg-background-secondary rounded-2xl p-5 border border-border">
             <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" /> Platform Growth
+              <TrendingUp className="w-4 h-4 text-primary" /> Archived Content Breakdown
             </h2>
             <ResponsiveContainer width="100%" height={280}>
-              <LineChart data={PLATFORM_GROWTH}>
+              <BarChart data={stats ? [
+                { type: "Words",      count: stats.content.totalWords },
+                { type: "Stories",    count: stats.content.totalStories },
+                { type: "Songs",      count: stats.content.totalSongs },
+                { type: "Recordings", count: stats.content.totalRecordings },
+                { type: "Videos",     count: stats.content.totalVideos },
+              ] : []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
+                <XAxis dataKey="type" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
                 <YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
                 <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
-                <Legend />
-                <Line type="monotone" dataKey="users"   stroke="#1E4A8C" strokeWidth={2} dot={false} name="Learners" />
-                <Line type="monotone" dataKey="content" stroke="#16A34A" strokeWidth={2} dot={false} name="Content Items" />
-              </LineChart>
+                <Bar dataKey="count" name="Items" fill="#1E4A8C" radius={[3,3,0,0]} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Monthly Uploads by Community */}
+        {/* Content per Community */}
         <div className="bg-background-secondary rounded-2xl p-5 border border-border">
-          <h2 className="font-semibold text-foreground mb-4">Content Uploaded per Community (Monthly)</h2>
+          <h2 className="font-semibold text-foreground mb-4">Approved Content per Community</h2>
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={MONTHLY_UPLOADS}>
+            <BarChart data={(stats?.communities ?? []).slice(0, 8).map(c => ({
+              name: c.name.length > 8 ? c.name.slice(0, 7) + '…' : c.name,
+              Stories: c.approvedStories ?? 0,
+              Songs: c.approvedSongs ?? 0,
+              Words: c.approvedWords ?? 0,
+            }))}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
               <YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
               <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
               <Legend />
-              <Bar dataKey="Lepcha" fill="#16A34A" radius={[3,3,0,0]} />
-              <Bar dataKey="Bhutia" fill="#DC2626" radius={[3,3,0,0]} />
-              <Bar dataKey="Limbu"  fill="#92400E" radius={[3,3,0,0]} />
-              <Bar dataKey="Tamang" fill="#7B3F00" radius={[3,3,0,0]} />
+              <Bar dataKey="Stories" fill="#16A34A" radius={[3,3,0,0]} stackId="a" />
+              <Bar dataKey="Songs"   fill="#1E4A8C" radius={[3,3,0,0]} stackId="a" />
+              <Bar dataKey="Words"   fill="#D97706" radius={[3,3,0,0]} stackId="a" />
             </BarChart>
           </ResponsiveContainer>
         </div>
