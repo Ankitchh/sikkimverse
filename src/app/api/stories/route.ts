@@ -8,6 +8,7 @@ const QuerySchema = z.object({
   type:        z.nativeEnum(StoryType).optional(),
   status:      z.enum(['APPROVED', 'PENDING', 'REJECTED']).optional(),
   search:      z.string().optional(),
+  sortBy:      z.enum(['createdAt', 'viewCount']).default('createdAt'),
   page:        z.coerce.number().int().min(1).default(1),
   limit:       z.coerce.number().int().min(1).max(50).default(12),
 })
@@ -47,7 +48,7 @@ export async function GET(request: NextRequest) {
           community: { select: { name: true, slug: true } },
           contributor: { select: { name: true } },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { [query.sortBy]: 'desc' } as Prisma.StoryOrderByWithRelationInput,
         skip,
         take: query.limit,
       }),

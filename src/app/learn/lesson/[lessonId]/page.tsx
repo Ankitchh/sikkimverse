@@ -1,135 +1,111 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  X,
-  Heart,
-  Flame,
-  Volume2,
-  CheckCircle2,
-  XCircle,
-  ChevronRight,
-  Trophy,
-  Star,
-  Zap,
-  ArrowLeft,
-  Mic,
+  X, Heart, Flame, Volume2, CheckCircle2, XCircle,
+  ChevronRight, Trophy, Star, Zap, ArrowLeft, BookOpen,
+  Globe, ChevronLeft,
 } from "lucide-react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
-type ExerciseType = "vocabulary" | "multiple-choice" | "audio-match" | "translation";
-
-interface VocabExercise {
-  type: "vocabulary";
+interface VocabItem {
   word: string;
-  phonetic: string;
   meaning: string;
-  language: string;
-  exampleSentence: string;
-  exampleTranslation: string;
+  pronunciation: string;
+  exampleSentence?: string;
+  exampleTranslation?: string;
 }
 
-interface MultipleChoiceExercise {
-  type: "multiple-choice";
+interface ContentSection {
+  id: string;
+  type: string;
+  content: string;
+}
+
+interface LessonContent {
+  sections?: ContentSection[];
+  vocabulary?: VocabItem[];
+  culturalNotes?: string;
+}
+
+interface QuizItem {
+  id: string;
+  type: string;
   question: string;
-  options: string[];
-  correctIndex: number;
-  explanation: string;
-}
-
-interface AudioMatchExercise {
-  type: "audio-match";
-  word: string;
-  phonetic: string;
-  meaning: string;
-  instruction: string;
-}
-
-interface TranslationExercise {
-  type: "translation";
-  prompt: string;
-  direction: "to-english" | "to-lepcha";
+  options: string[] | null;
   correctAnswer: string;
-  acceptableAnswers: string[];
-  hint: string;
+  explanation: string | null;
+  xpReward: number;
 }
 
-type Exercise = VocabExercise | MultipleChoiceExercise | AudioMatchExercise | TranslationExercise;
+interface LessonData {
+  id: string;
+  title: string;
+  description: string | null;
+  type: string;
+  xpReward: number;
+  estimatedMinutes: number;
+  order: number;
+  content: LessonContent;
+  course: {
+    id: string;
+    title: string;
+    level: string;
+    community: { id: string; name: string; slug: string; colorPrimary: string };
+    language: { id: string; name: string; code: string };
+  };
+  quizzes: QuizItem[];
+  navigation: {
+    prev: { id: string; title: string; order: number } | null;
+    next: { id: string; title: string; order: number } | null;
+    currentIndex: number;
+    total: number;
+  };
+  userProgress: { completed: boolean; score: number | null } | null;
+}
 
-// ── Sample Lesson Data ─────────────────────────────────────────────────────────
-const LESSON_EXERCISES: Exercise[] = [
-  {
-    type: "vocabulary",
-    word: "ᰀᰦᰉᰧ",
-    phonetic: "Ayóng",
-    meaning: "Hello / Greetings",
-    language: "Lepcha (Róng)",
-    exampleSentence: "ᰀᰦᰉᰧ, ᰂᰪᰰ ᰓᰬ ᰖᰬ?",
-    exampleTranslation: "Ayóng, nyu ka ya? (Hello, how are you?)",
-  },
-  {
-    type: "multiple-choice",
-    question: "What does 'Ayóng' mean in Lepcha?",
-    options: ["Goodbye", "Hello / Greetings", "Thank you", "My name is"],
-    correctIndex: 1,
-    explanation: "'Ayóng' (ᰀᰦᰉᰧ) is the standard greeting in Lepcha, used at any time of day.",
-  },
-  {
-    type: "audio-match",
-    word: "ᰃᰪ",
-    phonetic: "Nyu",
-    meaning: "You",
-    instruction: "Listen to the pronunciation and click the play button to hear 'Nyu'",
-  },
-  {
-    type: "translation",
-    prompt: "Translate to English: ᰃᰪᰰ ᰕᰬᰶ ᰒᰦᰞ?",
-    direction: "to-english",
-    correctAnswer: "What is your name?",
-    acceptableAnswers: ["what is your name", "what's your name", "what is your name?"],
-    hint: "This is a common introductory question",
-  },
-  {
-    type: "vocabulary",
-    word: "ᰂᰩᰴᰧ",
-    phonetic: "Nóng",
-    meaning: "Forest / Jungle",
-    language: "Lepcha (Róng)",
-    exampleSentence: "ᰂᰩᰴᰧ ᰅᰬ ᰙᰪᰴ ᰉᰬᰮᰰ",
-    exampleTranslation: "Nóng fa tung kóm. (The forest is very beautiful.)",
-  },
-  {
-    type: "multiple-choice",
-    question: "Which of these is the Lepcha word for 'forest'?",
-    options: ["ᰀᰦᰉᰧ (Ayóng)", "ᰂᰩᰴᰧ (Nóng)", "ᰃᰪ (Nyu)", "ᰕᰬᰶ (Yóng)"],
-    correctIndex: 1,
-    explanation: "'Nóng' (ᰂᰩᰴᰧ) means forest. The Lepcha people have a deep spiritual connection with forests.",
-  },
-  {
-    type: "audio-match",
-    word: "ᰀᰦᰉᰧ",
-    phonetic: "Ayóng",
-    meaning: "Hello",
-    instruction: "Press play and repeat the pronunciation. The tone falls slightly on the second syllable.",
-  },
-  {
-    type: "translation",
-    prompt: "How do you say 'Hello' in Lepcha?",
-    direction: "to-lepcha",
-    correctAnswer: "Ayóng",
-    acceptableAnswers: ["ayong", "ayóng", "ᰀᰦᰉᰧ"],
-    hint: "You learned this in the first card!",
-  },
-];
+// ── Exercise step types ────────────────────────────────────────────────────────
+type Step =
+  | { kind: "text"; section: ContentSection }
+  | { kind: "vocab"; item: VocabItem; language: string }
+  | { kind: "cultural"; notes: string; communityName: string }
+  | { kind: "quiz"; quiz: QuizItem }
+  | { kind: "complete" };
 
-const TOTAL_LESSONS = 20;
-const LESSON_NUMBER = 7;
-const XP_PER_CORRECT = 5;
+function buildSteps(lesson: LessonData): Step[] {
+  const steps: Step[] = [];
+  const lang = lesson.course.language.name;
+  const community = lesson.course.community.name;
 
-// ── XP Burst Component ────────────────────────────────────────────────────────
+  // Text sections first
+  for (const s of lesson.content.sections ?? []) {
+    steps.push({ kind: "text", section: s });
+  }
+
+  // Vocabulary cards
+  for (const v of lesson.content.vocabulary ?? []) {
+    steps.push({ kind: "vocab", item: v, language: lang });
+  }
+
+  // Cultural notes
+  if (lesson.content.culturalNotes) {
+    steps.push({ kind: "cultural", notes: lesson.content.culturalNotes, communityName: community });
+  }
+
+  // Quiz questions
+  for (const q of lesson.quizzes) {
+    steps.push({ kind: "quiz", quiz: q });
+  }
+
+  steps.push({ kind: "complete" });
+  return steps;
+}
+
+// ── XP Burst ─────────────────────────────────────────────────────────────────
 function XpBurst({ xp }: { xp: number }) {
   return (
     <motion.div
@@ -139,545 +115,388 @@ function XpBurst({ xp }: { xp: number }) {
       className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none z-50"
     >
       <div className="flex items-center gap-1 bg-amber-400 text-amber-900 font-bold px-3 py-1 rounded-full text-sm shadow-lg">
-        <Zap className="w-3.5 h-3.5" />
-        +{xp} XP
+        <Zap className="w-3.5 h-3.5" />+{xp} XP
       </div>
     </motion.div>
   );
 }
 
-// ── Vocabulary Card ───────────────────────────────────────────────────────────
-function VocabularyCard({ exercise, onContinue }: { exercise: VocabExercise; onContinue: () => void }) {
-  const [flipped, setFlipped] = useState(false);
-
+// ── Text Step ─────────────────────────────────────────────────────────────────
+function TextStep({ section, color, onNext }: { section: ContentSection; color: string; onNext: () => void }) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <p className="text-foreground-muted text-sm font-medium uppercase tracking-wider">New Word</p>
-        <p className="text-xs text-foreground-muted mt-1">{exercise.language}</p>
+        <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: `${color}20` }}>
+          <Globe className="w-7 h-7" style={{ color }} />
+        </div>
+        <p className="text-foreground-muted text-sm uppercase tracking-wider font-medium">Cultural Context</p>
       </div>
-
-      <motion.div
-        className="relative w-full cursor-pointer"
-        onClick={() => setFlipped((v) => !v)}
-        style={{ perspective: 1000 }}
-      >
-        <motion.div
-          animate={{ rotateY: flipped ? 180 : 0 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          style={{ transformStyle: "preserve-3d" }}
-          className="relative"
-        >
-          {/* Front */}
-          <div
-            className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-10 text-center text-white"
-            style={{ backfaceVisibility: "hidden" }}
-          >
-            <p className="text-6xl font-bold mb-3" style={{ fontFamily: "serif" }}>
-              {exercise.word}
-            </p>
-            <p className="text-white/80 text-xl font-light">[{exercise.phonetic}]</p>
-            <p className="text-white/50 text-sm mt-4">Tap to reveal meaning</p>
-          </div>
-
-          {/* Back */}
-          <div
-            className="absolute inset-0 bg-background-secondary rounded-3xl p-8 text-center border border-border"
-            style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
-          >
-            <p className="text-3xl font-bold text-foreground mb-2">{exercise.meaning}</p>
-            <div className="mt-4 p-3 bg-background-tertiary rounded-xl text-left">
-              <p className="text-xs text-foreground-muted mb-1">Example:</p>
-              <p className="font-medium text-foreground text-sm">{exercise.exampleSentence}</p>
-              <p className="text-foreground-secondary text-sm mt-1 italic">{exercise.exampleTranslation}</p>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={onContinue}
-        className="w-full py-4 bg-primary text-white rounded-2xl font-bold text-lg hover:bg-primary-hover transition-colors flex items-center justify-center gap-2"
-      >
-        Got it! Continue
-        <ChevronRight className="w-5 h-5" />
-      </motion.button>
+      <div className="bg-background-secondary rounded-2xl p-6 border border-border">
+        <p className="text-foreground leading-relaxed text-center">{section.content}</p>
+      </div>
+      <button onClick={onNext}
+        className="w-full py-4 rounded-2xl font-bold text-white transition-colors"
+        style={{ backgroundColor: color }}>
+        Continue <ChevronRight className="inline w-4 h-4" />
+      </button>
     </div>
   );
 }
 
-// ── Multiple Choice ───────────────────────────────────────────────────────────
-function MultipleChoiceCard({
-  exercise,
-  onCorrect,
-  onWrong,
-}: {
-  exercise: MultipleChoiceExercise;
-  onCorrect: () => void;
-  onWrong: () => void;
-}) {
-  const [selected, setSelected] = useState<number | null>(null);
-  const [showResult, setShowResult] = useState(false);
+// ── Vocab Step ────────────────────────────────────────────────────────────────
+function VocabStep({ item, language, color, onNext }: { item: VocabItem; language: string; color: string; onNext: () => void }) {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div className="space-y-5">
+      <div className="text-center">
+        <p className="text-foreground-muted text-sm font-medium uppercase tracking-wider">New Word</p>
+        <p className="text-xs text-foreground-muted mt-1">{language}</p>
+      </div>
+      <motion.div className="relative w-full cursor-pointer" onClick={() => setFlipped(v => !v)} style={{ perspective: 1000 }}>
+        <motion.div animate={{ rotateY: flipped ? 180 : 0 }} transition={{ duration: 0.5 }}
+          style={{ transformStyle: "preserve-3d" }} className="relative">
+          {/* Front */}
+          <div className="rounded-3xl p-10 text-center text-white" style={{ backfaceVisibility: "hidden", background: `linear-gradient(135deg, ${color}, #1e4a8c)` }}>
+            <p className="text-5xl font-bold mb-3">{item.word}</p>
+            <p className="text-white/80 text-lg">[{item.pronunciation}]</p>
+            <p className="text-white/50 text-sm mt-4">Tap to reveal meaning</p>
+          </div>
+          {/* Back */}
+          <div className="absolute inset-0 rounded-3xl p-8 text-center bg-background-secondary border-2 border-border"
+            style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
+            <p className="text-2xl font-bold text-foreground mb-2">{item.meaning}</p>
+            {item.exampleSentence && (
+              <div className="mt-4 text-left bg-background-tertiary rounded-xl p-3">
+                <p className="text-sm text-foreground font-medium">{item.exampleSentence}</p>
+                {item.exampleTranslation && (
+                  <p className="text-xs text-foreground-muted mt-1 italic">{item.exampleTranslation}</p>
+                )}
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+      <div className="flex items-center justify-center gap-1.5 text-foreground-muted text-xs">
+        <Volume2 className="w-3.5 h-3.5" /> Click to flip
+      </div>
+      <button onClick={onNext}
+        className={cn("w-full py-4 rounded-2xl font-bold transition-colors", flipped ? "text-white" : "bg-background-secondary text-foreground-muted border border-border")}
+        style={flipped ? { backgroundColor: color } : undefined}>
+        {flipped ? <>Got it! Continue <ChevronRight className="inline w-4 h-4" /></> : "Skip for now"}
+      </button>
+    </div>
+  );
+}
 
-  const handleSelect = (idx: number) => {
-    if (showResult) return;
-    setSelected(idx);
-    setShowResult(true);
-    if (idx === exercise.correctIndex) {
-      setTimeout(onCorrect, 1400);
-    } else {
-      setTimeout(onWrong, 1400);
-    }
-  };
-
-  const isCorrect = selected === exercise.correctIndex;
-
+// ── Cultural Notes Step ───────────────────────────────────────────────────────
+function CulturalStep({ notes, communityName, color, onNext }: { notes: string; communityName: string; color: string; onNext: () => void }) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <p className="text-foreground-muted text-sm font-medium uppercase tracking-wider mb-3">Choose the correct answer</p>
-        <p className="text-xl font-bold text-foreground">{exercise.question}</p>
+        <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: `${color}15` }}>
+          <BookOpen className="w-7 h-7" style={{ color }} />
+        </div>
+        <p className="text-sm font-semibold text-foreground">{communityName} Cultural Note</p>
       </div>
+      <div className="rounded-2xl p-6 text-white" style={{ background: `linear-gradient(135deg, ${color}dd, ${color}99)` }}>
+        <p className="leading-relaxed italic">"{notes}"</p>
+      </div>
+      <button onClick={onNext}
+        className="w-full py-4 rounded-2xl font-bold text-white transition-colors"
+        style={{ backgroundColor: color }}>
+        Continue <ChevronRight className="inline w-4 h-4" />
+      </button>
+    </div>
+  );
+}
 
-      <div className="grid grid-cols-1 gap-3">
-        {exercise.options.map((option, idx) => {
-          const isSelected = selected === idx;
-          const isRight = idx === exercise.correctIndex;
+// ── Quiz Step ─────────────────────────────────────────────────────────────────
+function QuizStep({ quiz, onAnswer }: { quiz: QuizItem; onAnswer: (correct: boolean) => void }) {
+  const [selected, setSelected] = useState<number | null>(null);
+  const options: string[] = quiz.options ?? [];
+
+  const handleSelect = (i: number) => {
+    if (selected !== null) return;
+    setSelected(i);
+    const correct = options[i] === quiz.correctAnswer || i.toString() === quiz.correctAnswer;
+    setTimeout(() => onAnswer(correct), 1200);
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="text-center">
+        <p className="text-foreground-muted text-sm uppercase tracking-wider font-medium">Quiz</p>
+      </div>
+      <div className="bg-background-secondary rounded-2xl p-5 border border-border">
+        <p className="text-foreground font-semibold text-center">{quiz.question}</p>
+      </div>
+      <div className="space-y-3">
+        {options.map((opt, i) => {
+          const isCorrect = opt === quiz.correctAnswer || i.toString() === quiz.correctAnswer;
+          const isSelected = selected === i;
           return (
             <motion.button
-              key={idx}
-              whileHover={!showResult ? { scale: 1.02 } : {}}
-              whileTap={!showResult ? { scale: 0.98 } : {}}
-              onClick={() => handleSelect(idx)}
+              key={i}
+              whileTap={selected === null ? { scale: 0.98 } : {}}
+              onClick={() => handleSelect(i)}
+              disabled={selected !== null}
               className={cn(
-                "p-4 rounded-xl border-2 text-left font-medium transition-all text-sm",
-                !showResult && "border-border bg-background-secondary hover:border-primary hover:bg-primary/5",
-                showResult && isRight && "border-emerald-500 bg-emerald-50 text-emerald-800",
-                showResult && isSelected && !isRight && "border-red-500 bg-red-50 text-red-800",
-                showResult && !isSelected && !isRight && "border-border bg-background-secondary opacity-60"
+                "w-full p-4 rounded-xl border-2 font-medium text-left transition-all",
+                selected === null && "border-border bg-background-secondary hover:border-primary/40",
+                isSelected && isCorrect && "border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700",
+                isSelected && !isCorrect && "border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700",
+                !isSelected && selected !== null && isCorrect && "border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700",
               )}
             >
               <div className="flex items-center gap-3">
-                <div
-                  className={cn(
-                    "w-7 h-7 rounded-full border-2 flex items-center justify-center shrink-0 text-xs font-bold",
-                    !showResult && "border-border text-foreground-muted",
-                    showResult && isRight && "border-emerald-500 bg-emerald-500 text-white",
-                    showResult && isSelected && !isRight && "border-red-500 bg-red-500 text-white"
-                  )}
-                >
-                  {showResult && isRight ? <CheckCircle2 className="w-4 h-4" /> : showResult && isSelected && !isRight ? <XCircle className="w-4 h-4" /> : String.fromCharCode(65 + idx)}
-                </div>
-                {option}
+                <span className="w-7 h-7 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0 border-current">
+                  {String.fromCharCode(65 + i)}
+                </span>
+                {opt}
+                {selected !== null && isCorrect && <CheckCircle2 className="w-5 h-5 ml-auto text-emerald-600" />}
+                {isSelected && !isCorrect && <XCircle className="w-5 h-5 ml-auto text-red-600" />}
               </div>
             </motion.button>
           );
         })}
       </div>
-
-      <AnimatePresence>
-        {showResult && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={cn(
-              "p-4 rounded-xl border",
-              isCorrect ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
-            )}
-          >
-            <p className="font-bold text-sm mb-1">{isCorrect ? "✓ Correct!" : "✗ Not quite"}</p>
-            <p className="text-sm">{exercise.explanation}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-// ── Audio Match ───────────────────────────────────────────────────────────────
-function AudioMatchCard({ exercise, onContinue }: { exercise: AudioMatchExercise; onContinue: () => void }) {
-  const [played, setPlayed] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const handlePlay = () => {
-    setIsPlaying(true);
-    setPlayed(true);
-    setTimeout(() => setIsPlaying(false), 2000);
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <p className="text-foreground-muted text-sm font-medium uppercase tracking-wider mb-1">Listen & Learn</p>
-        <p className="text-sm text-foreground-secondary">{exercise.instruction}</p>
-      </div>
-
-      <div className="bg-background-secondary rounded-3xl border border-border p-8 text-center">
-        <p className="text-5xl font-bold text-foreground mb-2" style={{ fontFamily: "serif" }}>
-          {exercise.word}
-        </p>
-        <p className="text-foreground-muted text-lg">[{exercise.phonetic}]</p>
-        <p className="text-foreground-secondary font-medium mt-2">{exercise.meaning}</p>
-      </div>
-
-      <div className="flex justify-center">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handlePlay}
-          className={cn(
-            "w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-lg",
-            isPlaying ? "bg-primary text-white scale-110" : "bg-primary/10 text-primary border-2 border-primary/30 hover:bg-primary/20"
-          )}
-        >
-          {isPlaying ? (
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 0.5 }}
-            >
-              <Volume2 className="w-8 h-8" />
-            </motion.div>
-          ) : (
-            <Volume2 className="w-8 h-8" />
-          )}
-        </motion.button>
-      </div>
-
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={onContinue}
-        disabled={!played}
-        className={cn(
-          "w-full py-4 rounded-2xl font-bold text-lg transition-all",
-          played ? "bg-primary text-white hover:bg-primary-hover" : "bg-background-tertiary text-foreground-muted cursor-not-allowed"
-        )}
-      >
-        Continue
-        <ChevronRight className="w-5 h-5 inline ml-2" />
-      </motion.button>
-    </div>
-  );
-}
-
-// ── Translation Exercise ──────────────────────────────────────────────────────
-function TranslationCard({
-  exercise,
-  onCorrect,
-  onWrong,
-}: {
-  exercise: TranslationExercise;
-  onCorrect: () => void;
-  onWrong: () => void;
-}) {
-  const [answer, setAnswer] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-
-  const handleCheck = () => {
-    const normalized = answer.trim().toLowerCase();
-    const correct = exercise.acceptableAnswers.some(
-      (a) => a.toLowerCase() === normalized
-    );
-    setIsCorrect(correct);
-    setChecked(true);
-    if (correct) {
-      setTimeout(onCorrect, 1400);
-    } else {
-      setTimeout(onWrong, 1400);
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <p className="text-foreground-muted text-sm font-medium uppercase tracking-wider mb-1">
-          {exercise.direction === "to-english" ? "Translate to English" : "Translate to Lepcha"}
-        </p>
-      </div>
-
-      <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl border border-primary/20 p-6 text-center">
-        <p className="text-xl font-bold text-foreground">{exercise.prompt}</p>
-        <p className="text-xs text-foreground-muted mt-2 italic">Hint: {exercise.hint}</p>
-      </div>
-
-      <div>
-        <textarea
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          disabled={checked}
-          placeholder="Type your answer here..."
-          rows={3}
-          className={cn(
-            "w-full rounded-xl border p-4 text-foreground bg-background-secondary resize-none outline-none transition-all font-medium",
-            !checked && "border-border focus:border-primary focus:ring-2 focus:ring-primary/20",
-            checked && isCorrect && "border-emerald-500 bg-emerald-50",
-            checked && !isCorrect && "border-red-500 bg-red-50"
-          )}
-        />
-      </div>
-
-      <AnimatePresence>
-        {checked && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={cn(
-              "p-4 rounded-xl border",
-              isCorrect ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"
-            )}
-          >
-            <p className="font-bold text-sm">{isCorrect ? "✓ Correct!" : "✗ Incorrect"}</p>
-            {!isCorrect && (
-              <p className="text-sm mt-1">Correct answer: <span className="font-semibold">{exercise.correctAnswer}</span></p>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {!checked && (
-        <motion.button
-          whileHover={answer.trim() ? { scale: 1.02 } : {}}
-          whileTap={answer.trim() ? { scale: 0.98 } : {}}
-          onClick={handleCheck}
-          disabled={!answer.trim()}
-          className={cn(
-            "w-full py-4 rounded-2xl font-bold text-lg transition-all",
-            answer.trim()
-              ? "bg-primary text-white hover:bg-primary-hover"
-              : "bg-background-tertiary text-foreground-muted cursor-not-allowed"
-          )}
-        >
-          Check Answer
-        </motion.button>
+      {selected !== null && quiz.explanation && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-background-secondary rounded-xl p-4 border border-border">
+          <p className="text-xs text-foreground-muted">{quiz.explanation}</p>
+        </motion.div>
       )}
     </div>
   );
 }
 
-// ── Completion Screen ─────────────────────────────────────────────────────────
-function CompletionScreen({ xpEarned, streak }: { xpEarned: number; streak: number }) {
+// ── Complete Step ─────────────────────────────────────────────────────────────
+function CompleteStep({
+  lesson, xpEarned, nextLesson, courseId,
+}: {
+  lesson: LessonData; xpEarned: number; nextLesson: { id: string; title: string } | null; courseId: string;
+}) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="min-h-screen bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center p-6"
-    >
-      <div className="text-center text-white max-w-sm">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-          className="w-28 h-28 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6"
-        >
-          <Trophy className="w-14 h-14 text-yellow-300" />
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-4xl font-bold mb-2"
-        >
-          Lesson Complete!
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-white/80 text-lg mb-8"
-        >
-          Excellent work on Lesson {LESSON_NUMBER}
-        </motion.p>
-
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-white/15 rounded-2xl p-4"
-          >
-            <Star className="w-7 h-7 text-yellow-300 mx-auto mb-2" />
-            <p className="text-2xl font-bold">+{xpEarned}</p>
-            <p className="text-white/70 text-sm">XP earned</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="bg-white/15 rounded-2xl p-4"
-          >
-            <Flame className="w-7 h-7 text-orange-300 mx-auto mb-2" />
-            <p className="text-2xl font-bold">{streak}</p>
-            <p className="text-white/70 text-sm">Day streak</p>
-          </motion.div>
+    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+      className="text-center space-y-6 py-8">
+      <div className="relative inline-block">
+        <div className="w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto">
+          <Trophy className="w-12 h-12 text-amber-500" />
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="space-y-3"
-        >
-          <Link href="/learn/lepcha-beginners">
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="w-full py-4 bg-white text-emerald-700 font-bold rounded-2xl text-lg hover:bg-white/90 transition-colors"
-            >
-              Continue to Next Lesson
-            </motion.button>
-          </Link>
-          <Link href="/learn">
-            <button className="w-full py-3 text-white/80 hover:text-white font-medium transition-colors text-sm">
-              Back to Learning Hub
-            </button>
-          </Link>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }}
+          className="absolute -top-2 -right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+          <Star className="w-4 h-4 text-white fill-white" />
         </motion.div>
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-bold text-foreground">Lesson Complete! 🎉</h2>
+        <p className="text-foreground-muted mt-1">{lesson.title}</p>
+      </div>
+
+      <div className="flex justify-center gap-4">
+        <div className="bg-background-secondary rounded-2xl p-4 border border-border min-w-[100px]">
+          <p className="text-2xl font-bold text-amber-500 flex items-center justify-center gap-1">
+            <Zap className="w-5 h-5" />{xpEarned}
+          </p>
+          <p className="text-xs text-foreground-muted mt-1">XP Earned</p>
+        </div>
+        <div className="bg-background-secondary rounded-2xl p-4 border border-border min-w-[100px]">
+          <p className="text-2xl font-bold text-primary">{lesson.order}</p>
+          <p className="text-xs text-foreground-muted mt-1">of {lesson.navigation.total}</p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {nextLesson ? (
+          <Link
+            href={`/learn/lesson/${nextLesson.id}`}
+            className="w-full flex items-center justify-center gap-2 py-4 bg-primary text-white rounded-2xl font-bold transition-colors hover:bg-primary-hover"
+          >
+            Next Lesson <ChevronRight className="w-5 h-5" />
+          </Link>
+        ) : (
+          <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-4 border border-emerald-200">
+            <p className="text-emerald-700 dark:text-emerald-400 font-semibold">🏆 Course complete!</p>
+          </div>
+        )}
+        <Link href={`/learn/${courseId}`}
+          className="w-full flex items-center justify-center gap-2 py-3 border-2 border-border rounded-2xl font-semibold text-foreground hover:border-primary/40 transition-colors">
+          Back to Course
+        </Link>
       </div>
     </motion.div>
   );
 }
 
-// ── Main Lesson Page ──────────────────────────────────────────────────────────
+// ── Main Page ──────────────────────────────────────────────────────────────────
 export default function LessonPage() {
-  const [exerciseIndex, setExerciseIndex] = useState(0);
-  const [hearts, setHearts] = useState(3);
+  const params = useParams();
+  const lessonId = params.lessonId as string;
+  const router = useRouter();
+
+  const [lesson, setLesson] = useState<LessonData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [steps, setSteps] = useState<Step[]>([]);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [lives, setLives] = useState(3);
   const [xpEarned, setXpEarned] = useState(0);
   const [showXpBurst, setShowXpBurst] = useState(false);
-  const [completed, setCompleted] = useState(false);
-  const [direction, setDirection] = useState(1);
+  const [progressSaved, setProgressSaved] = useState(false);
 
-  const currentExercise = LESSON_EXERCISES[exerciseIndex];
-  const progress = ((exerciseIndex) / LESSON_EXERCISES.length) * 100;
+  useEffect(() => {
+    fetch(`/api/lessons/${lessonId}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.data) {
+          setLesson(data.data);
+          setSteps(buildSteps(data.data));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [lessonId]);
 
-  const handleCorrect = useCallback(() => {
-    setXpEarned((xp) => xp + XP_PER_CORRECT);
+  const currentStep = steps[stepIndex];
+  const progress = steps.length > 0 ? (stepIndex / (steps.length - 1)) * 100 : 0;
+
+  const awardXP = useCallback((amount: number) => {
+    setXpEarned(x => x + amount);
     setShowXpBurst(true);
-    setTimeout(() => setShowXpBurst(false), 1400);
-    goNext();
-  }, [exerciseIndex]);
+    setTimeout(() => setShowXpBurst(false), 1200);
+  }, []);
 
-  const handleWrong = useCallback(() => {
-    setHearts((h) => Math.max(0, h - 1));
-    goNext();
-  }, [exerciseIndex]);
+  const saveProgress = useCallback(async (score: number) => {
+    if (!lesson || progressSaved) return;
+    setProgressSaved(true);
+    try {
+      await fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lessonId: lesson.id,
+          courseId: lesson.course.id,
+          score,
+          completed: true,
+        }),
+      });
+    } catch {}
+  }, [lesson, progressSaved]);
 
   const goNext = useCallback(() => {
-    setDirection(1);
-    if (exerciseIndex >= LESSON_EXERCISES.length - 1) {
-      setXpEarned((xp) => xp + XP_PER_CORRECT); // bonus for last
-      setCompleted(true);
-    } else {
-      setExerciseIndex((i) => i + 1);
+    if (stepIndex < steps.length - 1) {
+      if (steps[stepIndex + 1]?.kind === "complete") {
+        const score = Math.min(100, Math.round((xpEarned / Math.max(lesson?.xpReward ?? 10, 1)) * 100));
+        saveProgress(score);
+      }
+      setStepIndex(i => i + 1);
     }
-  }, [exerciseIndex]);
+  }, [stepIndex, steps, xpEarned, lesson, saveProgress]);
 
-  if (completed) {
-    return <CompletionScreen xpEarned={xpEarned} streak={13} />;
+  const handleQuizAnswer = useCallback((correct: boolean) => {
+    if (correct) {
+      awardXP(5);
+    } else {
+      setLives(l => Math.max(0, l - 1));
+    }
+    goNext();
+  }, [awardXP, goNext]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Top bar */}
-      <div className="sticky top-0 z-20 bg-background/95 backdrop-blur border-b border-border px-4 py-3">
-        <div className="max-w-xl mx-auto flex items-center gap-3">
-          <Link href="/learn/lepcha-beginners">
-            <button className="p-1.5 rounded-lg text-foreground-muted hover:text-foreground hover:bg-background-secondary transition-colors">
-              <X className="w-5 h-5" />
-            </button>
-          </Link>
+  if (!lesson) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-4xl mb-4">📚</p>
+          <p className="text-foreground font-semibold">Lesson not found</p>
+          <Link href="/learn" className="text-primary text-sm hover:underline mt-2 block">← Back to Learn</Link>
+        </div>
+      </div>
+    );
+  }
 
-          {/* Progress bar */}
-          <div className="flex-1 h-3 bg-background-tertiary rounded-full overflow-hidden">
+  const color = lesson.course.community.colorPrimary;
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Progress Bar */}
+      <div className="sticky top-0 z-20 bg-background border-b border-border px-4 py-3">
+        <div className="max-w-xl mx-auto flex items-center gap-4">
+          <Link href={`/learn/${lesson.course.id}`} className="text-foreground-muted hover:text-foreground transition-colors p-1">
+            <X className="w-5 h-5" />
+          </Link>
+          <div className="flex-1 h-3 bg-border rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-primary rounded-full"
-              initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.4, ease: "easeOut" }}
+              className="h-full rounded-full"
+              style={{ backgroundColor: color }}
             />
           </div>
-
-          {/* Hearts */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             {Array.from({ length: 3 }).map((_, i) => (
-              <Heart
-                key={i}
-                className={cn(
-                  "w-5 h-5 transition-all",
-                  i < hearts ? "text-red-500 fill-red-500" : "text-foreground-muted fill-none"
-                )}
-              />
+              <Heart key={i} className={cn("w-5 h-5", i < lives ? "text-red-500 fill-red-500" : "text-border fill-border")} />
             ))}
-          </div>
-
-          {/* Streak + XP */}
-          <div className="flex items-center gap-1.5 text-sm font-bold text-amber-600">
-            <Flame className="w-4 h-4 text-orange-500" />
-            13
           </div>
         </div>
       </div>
 
-      {/* Exercise area */}
-      <div className="flex-1 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-xl">
-          {/* Exercise counter */}
-          <p className="text-center text-xs text-foreground-muted mb-6 font-medium uppercase tracking-wider">
-            {exerciseIndex + 1} / {LESSON_EXERCISES.length} — Lesson {LESSON_NUMBER} of {TOTAL_LESSONS}
-          </p>
-
-          {/* XP Burst */}
-          <div className="relative">
-            <AnimatePresence>{showXpBurst && <XpBurst xp={XP_PER_CORRECT} />}</AnimatePresence>
+      {/* Lesson Header */}
+      <div className="border-b border-border bg-background-secondary">
+        <div className="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div>
+            <p className="text-xs text-foreground-muted">{lesson.course.community.name} · {lesson.course.language.name}</p>
+            <p className="text-sm font-semibold text-foreground truncate">{lesson.title}</p>
           </div>
+          <div className="flex items-center gap-1 text-amber-600 text-sm font-bold shrink-0">
+            <Flame className="w-4 h-4" />{xpEarned} XP
+          </div>
+        </div>
+      </div>
 
-          {/* Exercise Card */}
-          <AnimatePresence mode="wait">
+      {/* Content */}
+      <div className="max-w-xl mx-auto px-4 py-8 relative">
+        {showXpBurst && <XpBurst xp={5} />}
+
+        <AnimatePresence mode="wait">
+          {currentStep && (
             <motion.div
-              key={exerciseIndex}
-              initial={{ opacity: 0, x: direction * 40 }}
+              key={stepIndex}
+              initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction * -40 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.25 }}
             >
-              {currentExercise.type === "vocabulary" && (
-                <VocabularyCard
-                  exercise={currentExercise as VocabExercise}
-                  onContinue={() => { setXpEarned((xp) => xp + XP_PER_CORRECT); setShowXpBurst(true); setTimeout(() => setShowXpBurst(false), 1400); goNext(); }}
-                />
+              {currentStep.kind === "text" && (
+                <TextStep section={currentStep.section} color={color} onNext={() => { awardXP(2); goNext(); }} />
               )}
-              {currentExercise.type === "multiple-choice" && (
-                <MultipleChoiceCard
-                  exercise={currentExercise as MultipleChoiceExercise}
-                  onCorrect={handleCorrect}
-                  onWrong={handleWrong}
-                />
+              {currentStep.kind === "vocab" && (
+                <VocabStep item={currentStep.item} language={currentStep.language} color={color} onNext={() => { awardXP(3); goNext(); }} />
               )}
-              {currentExercise.type === "audio-match" && (
-                <AudioMatchCard
-                  exercise={currentExercise as AudioMatchExercise}
-                  onContinue={() => { setXpEarned((xp) => xp + XP_PER_CORRECT); goNext(); }}
-                />
+              {currentStep.kind === "cultural" && (
+                <CulturalStep notes={currentStep.notes} communityName={currentStep.communityName} color={color} onNext={() => { awardXP(2); goNext(); }} />
               )}
-              {currentExercise.type === "translation" && (
-                <TranslationCard
-                  exercise={currentExercise as TranslationExercise}
-                  onCorrect={handleCorrect}
-                  onWrong={handleWrong}
+              {currentStep.kind === "quiz" && (
+                <QuizStep quiz={currentStep.quiz} onAnswer={handleQuizAnswer} />
+              )}
+              {currentStep.kind === "complete" && (
+                <CompleteStep
+                  lesson={lesson}
+                  xpEarned={xpEarned}
+                  nextLesson={lesson.navigation.next}
+                  courseId={lesson.course.id}
                 />
               )}
             </motion.div>
-          </AnimatePresence>
-
-          {/* XP counter */}
-          <div className="mt-6 flex items-center justify-center gap-2 text-sm text-foreground-muted">
-            <Star className="w-4 h-4 text-amber-500" />
-            <span className="font-bold text-foreground">{xpEarned}</span> XP earned this lesson
-          </div>
-        </div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

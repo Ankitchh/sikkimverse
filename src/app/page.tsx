@@ -218,8 +218,30 @@ const TYPE_ICONS: Record<string, string> = {
   learner_joined: '🎓', achievement_earned: '🏆', moderation_approved: '✅',
 }
 
+interface HomepageFestival {
+  id: string; name: string; month: number; description: string;
+  emoji?: string; significance?: string;
+  community: { name: string; slug: string } | null;
+}
+
+interface HomepageStory {
+  id: string; title: string; summary: string | null; type: string;
+  language: string | null; audioUrl: string | null;
+  community: { name: string; slug: string; colorPrimary: string } | null;
+  contributor: { name: string | null } | null;
+}
+
+const COMMUNITY_EMOJI: Record<string, string> = {
+  lepcha: '🌿', bhutia: '🏔️', limbu: '🎋', tamang: '🥁',
+  rai: '🌾', gurung: '🏞️', sherpa: '⛰️', magar: '🌺', newar: '🏛️', sunwar: '🎶',
+}
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+
 export default function HomePage() {
   const [communities, setCommunities] = useState<HomepageCommunity[]>([])
+  const [festivals, setFestivals] = useState<HomepageFestival[]>([])
+  const [featuredStories, setFeaturedStories] = useState<HomepageStory[]>([])
   const [activities, setActivities] = useState<LiveActivity[]>(
     ACTIVITY_ITEMS.map(a => ({ icon: a.icon, text: a.text, time: a.time }))
   )
@@ -229,6 +251,20 @@ export default function HomePage() {
     fetch('/api/communities?limit=11')
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (Array.isArray(data?.data)) setCommunities(data.data) })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/festivals')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (Array.isArray(data?.festivals)) setFestivals(data.festivals) })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/stories?limit=6&sortBy=viewCount')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (Array.isArray(data?.stories)) setFeaturedStories(data.stories) })
       .catch(() => {})
   }, [])
 
@@ -752,56 +788,52 @@ export default function HomePage() {
             className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {FEATURED_STORIES.map((story, i) => (
-              <motion.div
-                key={story.title}
-                initial={{ opacity: 0, x: 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                whileHover={{ scale: 1.02, y: -4 }}
-                className="flex-none w-72 snap-start rounded-3xl p-6 cursor-pointer relative overflow-hidden"
-                style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.07)',
-                  backdropFilter: 'blur(10px)',
-                }}
-              >
-                <div
-                  className="absolute top-0 left-0 right-0 h-0.5 rounded-t-3xl"
-                  style={{ background: story.color }}
-                />
-                <div className="flex items-center justify-between mb-4">
-                  <span
-                    className="text-xs px-2.5 py-1 rounded-full font-medium"
-                    style={{ background: `${story.color}20`, color: story.color }}
-                  >
-                    {story.type}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {story.hasAudio && (
-                      <div className="flex items-center gap-1 text-xs">
-                        <Volume2 size={12} style={{ color: story.color }} />
-                        <span style={{ color: story.color }}>Audio</span>
-                      </div>
-                    )}
-                    <span className="text-lg">{story.emoji}</span>
+            {(featuredStories.length > 0 ? featuredStories : FEATURED_STORIES).map((story, i) => {
+              const isFeatured = 'community' in story && typeof story.community === 'object' && story.community !== null && 'colorPrimary' in story.community;
+              const color = isFeatured ? (story as HomepageStory).community?.colorPrimary ?? '#16A34A' : (story as typeof FEATURED_STORIES[0]).color;
+              const communityName = isFeatured ? (story as HomepageStory).community?.name : (story as typeof FEATURED_STORIES[0]).community;
+              const storyType = isFeatured ? (story as HomepageStory).type.replace(/_/g, ' ') : (story as typeof FEATURED_STORIES[0]).type;
+              const title = story.title;
+              const excerpt = isFeatured ? ((story as HomepageStory).summary ?? '') : (story as typeof FEATURED_STORIES[0]).excerpt;
+              const hasAudio = isFeatured ? !!(story as HomepageStory).audioUrl : (story as typeof FEATURED_STORIES[0]).hasAudio;
+              const emoji = isFeatured ? (COMMUNITY_EMOJI[(story as HomepageStory).community?.slug ?? ''] ?? '🏔️') : (story as typeof FEATURED_STORIES[0]).emoji;
+              return (
+                <motion.div
+                  key={isFeatured ? (story as HomepageStory).id : title}
+                  initial={{ opacity: 0, x: 40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  className="flex-none w-72 snap-start rounded-3xl p-6 cursor-pointer relative overflow-hidden"
+                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(10px)' }}
+                >
+                  <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-3xl" style={{ background: color }} />
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs px-2.5 py-1 rounded-full font-medium capitalize" style={{ background: `${color}20`, color }}>
+                      {storyType.toLowerCase()}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {hasAudio && (
+                        <div className="flex items-center gap-1 text-xs">
+                          <Volume2 size={12} style={{ color }} />
+                          <span style={{ color }}>Audio</span>
+                        </div>
+                      )}
+                      <span className="text-lg">{emoji}</span>
+                    </div>
                   </div>
-                </div>
-                <h3 className="text-base font-bold text-white mb-3 leading-snug">{story.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed mb-4">{story.excerpt}</p>
-                <div className="flex items-center justify-between mt-auto">
-                  <span className="text-xs text-white/30">{story.community} Community</span>
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    className="w-8 h-8 rounded-full flex items-center justify-center"
-                    style={{ background: `${story.color}25` }}
-                  >
-                    <Play size={12} style={{ color: story.color }} />
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
+                  <h3 className="text-base font-bold text-white mb-3 leading-snug">{title}</h3>
+                  <p className="text-sm text-white/40 leading-relaxed mb-4 line-clamp-3">{excerpt}</p>
+                  <div className="flex items-center justify-between mt-auto">
+                    <span className="text-xs text-white/30">{communityName} Community</span>
+                    <motion.div whileHover={{ scale: 1.1 }} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: `${color}25` }}>
+                      <Play size={12} style={{ color }} />
+                    </motion.div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -977,33 +1009,38 @@ export default function HomePage() {
           </FadeInSection>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {FESTIVALS.map((festival, i) => (
-              <FadeInSection key={festival.name} delay={i * 0.1}>
-                <motion.div
-                  whileHover={{ scale: 1.03, y: -4 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  className="rounded-3xl p-6 cursor-pointer"
-                  style={{
-                    background: `linear-gradient(145deg, ${festival.color}15, ${festival.color}08)`,
-                    border: `1px solid ${festival.color}25`,
-                  }}
-                >
-                  <div className="text-4xl mb-4">{festival.emoji}</div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Calendar size={12} style={{ color: festival.color }} />
-                    <span className="text-xs font-semibold" style={{ color: festival.color }}>
-                      {festival.month}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-black text-white mb-2">{festival.name}</h3>
-                  <p className="text-xs text-white/40 leading-relaxed mb-4">{festival.description}</p>
-                  <div className="text-xs text-white/30 flex items-center gap-1">
-                    <MapPin size={10} />
-                    {festival.community}
-                  </div>
-                </motion.div>
-              </FadeInSection>
-            ))}
+            {(festivals.length > 0 ? festivals : FESTIVALS).map((festival, i) => {
+              const isReal = 'month' in festival && typeof festival.month === 'number';
+              const color = isReal ? '#16A34A' : (festival as typeof FESTIVALS[0]).color;
+              const monthLabel = isReal
+                ? (MONTHS[(festival as HomepageFestival).month - 1] ?? '')
+                : (festival as typeof FESTIVALS[0]).month;
+              const community = isReal
+                ? (festival as HomepageFestival).community?.name ?? 'Sikkim'
+                : (festival as typeof FESTIVALS[0]).community;
+              const emoji = isReal ? '🎭' : (festival as typeof FESTIVALS[0]).emoji;
+              return (
+                <FadeInSection key={festival.name} delay={i * 0.1}>
+                  <motion.div
+                    whileHover={{ scale: 1.03, y: -4 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="rounded-3xl p-6 cursor-pointer"
+                    style={{ background: `linear-gradient(145deg, ${color}15, ${color}08)`, border: `1px solid ${color}25` }}
+                  >
+                    <div className="text-4xl mb-4">{emoji}</div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Calendar size={12} style={{ color }} />
+                      <span className="text-xs font-semibold" style={{ color }}>{monthLabel}</span>
+                    </div>
+                    <h3 className="text-lg font-black text-white mb-2">{festival.name}</h3>
+                    <p className="text-xs text-white/40 leading-relaxed mb-4 line-clamp-3">{festival.description}</p>
+                    <div className="text-xs text-white/30 flex items-center gap-1">
+                      <MapPin size={10} />{community}
+                    </div>
+                  </motion.div>
+                </FadeInSection>
+              );
+            })}
           </div>
         </div>
       </section>
