@@ -2,42 +2,150 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, BookOpen, Music, Video, Camera, Radio, Upload, CheckCircle2, ChevronRight, Info } from "lucide-react";
+import { Mic, BookOpen, Music, Video, Camera, Radio, Upload, CheckCircle2, ChevronRight, Info, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 type ContribType = "word" | "story" | "song" | "video" | "photo" | "oral";
 
 const TYPES: { id: ContribType; icon: React.ComponentType<{className?: string}>; label: string; desc: string; color: string }[] = [
-  { id: "word",  icon: Mic,     label: "Teach a Word",    desc: "Record pronunciation + meaning",     color: "bg-emerald-500" },
-  { id: "story", icon: BookOpen, label: "Share a Story",  desc: "Folk tales, legends, history",       color: "bg-blue-500" },
-  { id: "song",  icon: Music,   label: "Upload a Song",   desc: "Traditional songs with lyrics",      color: "bg-purple-500" },
-  { id: "video", icon: Video,   label: "Record a Video",  desc: "Cultural practices, rituals",        color: "bg-red-500" },
-  { id: "photo", icon: Camera,  label: "Share a Photo",   desc: "Cultural attire, festivals, art",    color: "bg-amber-500" },
-  { id: "oral",  icon: Radio,   label: "Oral History",    desc: "Elder stories, community memories",  color: "bg-teal-500" },
+  { id: "word",  icon: Mic,      label: "Teach a Word",   desc: "Record pronunciation + meaning",    color: "bg-emerald-500" },
+  { id: "story", icon: BookOpen, label: "Share a Story",  desc: "Folk tales, legends, history",      color: "bg-blue-500" },
+  { id: "song",  icon: Music,    label: "Upload a Song",  desc: "Traditional songs with lyrics",     color: "bg-purple-500" },
+  { id: "video", icon: Video,    label: "Record a Video", desc: "Cultural practices, rituals",       color: "bg-red-500" },
+  { id: "photo", icon: Camera,   label: "Share a Photo",  desc: "Cultural attire, festivals, art",   color: "bg-amber-500" },
+  { id: "oral",  icon: Radio,    label: "Oral History",   desc: "Elder stories, community memories", color: "bg-teal-500" },
 ];
 
-const LANGUAGES = ["Lepcha (Róng)","Sikkimese (Drenjongke)","Limbu (Sirijonga)","Tamang","Rai (various)","Gurung","Sherpa","Mangar","Newari","Sunwar"];
+interface Community { id: string; name: string }
+interface Language  { id: string; name: string; code: string }
 
 export default function ContributePage() {
+  const { data: session } = useSession();
   const [selected, setSelected] = useState<ContribType | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
-  const [communities, setCommunities] = useState<{ id: string; name: string }[]>([]);
+
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [languages, setLanguages] = useState<Language[]>([]);
+
+  // Form state
+  const [communityId, setCommunityId] = useState("");
+  const [languageId, setLanguageId] = useState("");
+  const [languageName, setLanguageName] = useState("");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [meaning, setMeaning] = useState("");
+  const [exampleSentence, setExampleSentence] = useState("");
+  const [lyrics, setLyrics] = useState("");
+  const [consent, setConsent] = useState(false);
 
   useEffect(() => {
-    fetch('/api/communities?limit=50')
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (Array.isArray(data?.data)) {
-          setCommunities(data.data.map((c: { id: string; name: string }) => ({ id: c.id, name: c.name })));
+    fetch("/api/communities?limit=50")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (Array.isArray(data?.communities)) {
+          setCommunities(data.communities.map((c: Community) => ({ id: c.id, name: c.name })));
         }
       })
       .catch(() => {});
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!communityId) { setLanguages([]); setLanguageId(""); setLanguageName(""); return; }
+    fetch(`/api/languages?communityId=${communityId}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (Array.isArray(data?.languages)) {
+          setLanguages(data.languages);
+          if (data.languages.length > 0) {
+            setLanguageId(data.languages[0].id);
+            setLanguageName(data.languages[0].name);
+          }
+        }
+      })
+      .catch(() => {});
+  }, [communityId]);
+
+  const resetForm = () => {
+    setCommunityId(""); setLanguageId(""); setLanguageName("");
+    setTitle(""); setContent(""); setMeaning(""); setExampleSentence(""); setLyrics("");
+    setConsent(false); setSubmitError(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!session?.user) { setSubmitError("Please sign in to contribute."); return; }
+    if (!communityId)   { setSubmitError("Please select a community."); return; }
+    if (!selected)      return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      let type: string;
+      let data: Record<string, unknown>;
+
+      if (selected === "word") {
+        if (!languageId) { setSubmitError("Please select a language."); setSubmitting(false); return; }
+        type = "WORD";
+        data = {
+          word: title,
+          meaning,
+          communityId,
+          languageId,
+          exampleSentence: exampleSentence || undefined,
+        };
+      } else if (selected === "story" || selected === "oral") {
+        type = selected === "oral" ? "STORY" : "STORY";
+        data = {
+          title,
+          content,
+          communityId,
+          language: languageName || "Unknown",
+          type: "ORAL_HISTORY",
+        };
+      } else if (selected === "song") {
+        type = "SONG";
+        data = {
+          title,
+          lyrics: lyrics || undefined,
+          communityId,
+          language: languageName || "Unknown",
+        };
+      } else {
+        // video / photo — same structure as story for now
+        type = "STORY";
+        data = {
+          title,
+          content: content || title,
+          communityId,
+          language: languageName || "Unknown",
+          type: "ORAL_HISTORY",
+        };
+      }
+
+      const res = await fetch("/api/submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, data }),
+      });
+
+      const responseData = await res.json() as { error?: string };
+      if (!res.ok) {
+        setSubmitError(responseData.error ?? "Submission failed. Please try again.");
+        return;
+      }
+
+      setSubmitted(true);
+      resetForm();
+    } catch {
+      setSubmitError("Network error. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -77,7 +185,6 @@ export default function ContributePage() {
                 <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-md">
                   {s.step}
                 </div>
-                {i < 2 && <div className="absolute" />}
                 <p className="font-medium text-foreground text-sm mt-2">{s.label}</p>
                 <p className="text-xs text-foreground-muted mt-1 leading-tight">{s.desc}</p>
               </div>
@@ -119,7 +226,7 @@ export default function ContributePage() {
                     key={t.id}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelected(t.id)}
+                    onClick={() => { setSelected(t.id); setSubmitError(null); }}
                     className={cn(
                       "flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all",
                       selected === t.id
@@ -151,25 +258,46 @@ export default function ContributePage() {
                     {TYPES.find(t => t.id === selected)?.label}
                   </h3>
 
+                  {submitError && (
+                    <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 text-sm text-red-700 dark:text-red-400">
+                      <Info className="w-4 h-4 shrink-0" />
+                      {submitError}
+                    </div>
+                  )}
+
                   {/* Community + Language */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-medium text-foreground-muted block mb-1.5">Community</label>
-                      <select required className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary">
+                      <select
+                        required
+                        value={communityId}
+                        onChange={(e) => setCommunityId(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary"
+                      >
                         <option value="">Select…</option>
                         {communities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                       </select>
                     </div>
                     <div>
                       <label className="text-xs font-medium text-foreground-muted block mb-1.5">Language</label>
-                      <select required className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary">
+                      <select
+                        required
+                        value={selected === "word" ? languageId : languageName}
+                        onChange={(e) => {
+                          const lang = languages.find(l => l.id === e.target.value);
+                          setLanguageId(e.target.value);
+                          setLanguageName(lang?.name ?? e.target.value);
+                        }}
+                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary"
+                      >
                         <option value="">Select…</option>
-                        {LANGUAGES.map(l => <option key={l}>{l}</option>)}
+                        {languages.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                       </select>
                     </div>
                   </div>
 
-                  {/* Title */}
+                  {/* Title / Word */}
                   <div>
                     <label className="text-xs font-medium text-foreground-muted block mb-1.5">
                       {selected === "word" ? "Word / Phrase" : "Title"}
@@ -177,18 +305,22 @@ export default function ContributePage() {
                     <input
                       required
                       type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
                       placeholder={selected === "word" ? "e.g. Rum (Spirit of Nature)" : "Enter a descriptive title"}
                       className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary"
                     />
                   </div>
 
                   {/* Content area */}
-                  {(selected === "story" || selected === "oral") && (
+                  {(selected === "story" || selected === "oral" || selected === "video" || selected === "photo") && (
                     <div>
-                      <label className="text-xs font-medium text-foreground-muted block mb-1.5">Content / Transcription</label>
+                      <label className="text-xs font-medium text-foreground-muted block mb-1.5">Content / Description</label>
                       <textarea
                         rows={5}
-                        placeholder="Write the story or transcription here…"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Write the story, description, or transcription here…"
                         className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground resize-none focus:outline-none focus:border-primary"
                       />
                     </div>
@@ -199,6 +331,8 @@ export default function ContributePage() {
                       <label className="text-xs font-medium text-foreground-muted block mb-1.5">Lyrics</label>
                       <textarea
                         rows={4}
+                        value={lyrics}
+                        onChange={(e) => setLyrics(e.target.value)}
                         placeholder="Traditional lyrics (in original script or transliteration)…"
                         className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground resize-none focus:outline-none focus:border-primary"
                       />
@@ -209,20 +343,34 @@ export default function ContributePage() {
                     <>
                       <div>
                         <label className="text-xs font-medium text-foreground-muted block mb-1.5">Meaning / Definition</label>
-                        <input type="text" placeholder="What does it mean?" className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary" />
+                        <input
+                          required
+                          type="text"
+                          value={meaning}
+                          onChange={(e) => setMeaning(e.target.value)}
+                          placeholder="What does it mean?"
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary"
+                        />
                       </div>
                       <div>
-                        <label className="text-xs font-medium text-foreground-muted block mb-1.5">Example Sentence</label>
-                        <input type="text" placeholder="Use the word in a sentence" className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary" />
+                        <label className="text-xs font-medium text-foreground-muted block mb-1.5">Example Sentence <span className="text-foreground-muted">(optional)</span></label>
+                        <input
+                          type="text"
+                          value={exampleSentence}
+                          onChange={(e) => setExampleSentence(e.target.value)}
+                          placeholder="Use the word in a sentence"
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary"
+                        />
                       </div>
                     </>
                   )}
 
-                  {/* File upload */}
-                  {(selected !== "story") && (
+                  {/* File upload (UI only — audio/video upload requires signed URL endpoint) */}
+                  {selected !== "story" && (
                     <div>
                       <label className="text-xs font-medium text-foreground-muted block mb-1.5">
                         {selected === "word" || selected === "song" || selected === "oral" ? "Audio File" : selected === "video" ? "Video File" : "Image File"}
+                        <span className="text-foreground-muted ml-1">(optional)</span>
                       </label>
                       <div
                         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
@@ -247,15 +395,24 @@ export default function ContributePage() {
 
                   {/* Consent */}
                   <label className="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" required className="mt-0.5 accent-primary" />
+                    <input
+                      type="checkbox"
+                      required
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      className="mt-0.5 accent-primary"
+                    />
                     <span className="text-xs text-foreground-muted leading-relaxed">
                       I confirm this content belongs to my community&apos;s cultural heritage and I give SIKKIMVERSE permission to preserve and share it for educational purposes.
                     </span>
                   </label>
 
-                  <button type="submit" className="w-full py-3 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-hover transition-colors flex items-center justify-center gap-2">
-                    Submit for Review
-                    <ChevronRight className="w-4 h-4" />
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full py-3 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                  >
+                    {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : <>Submit for Review <ChevronRight className="w-4 h-4" /></>}
                   </button>
                 </motion.form>
               )}
@@ -281,6 +438,8 @@ export default function ContributePage() {
             ))}
           </ul>
         </div>
+
+        <div className="h-8" />
       </div>
     </div>
   );
