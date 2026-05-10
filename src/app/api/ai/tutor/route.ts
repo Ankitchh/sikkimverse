@@ -145,13 +145,75 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       })
     }
 
+    // ── Inject community-specific context from database ──────────────────────
+    let communityContext = ''
+    if (communityId) {
+      try {
+        const { prisma } = await import('@/lib/prisma')
+
+        const [community, words, stories, songs] = await Promise.all([
+          prisma.community.findUnique({
+            where: { id: communityId },
+            select: { name: true, region: true, preservationScore: true },
+          }),
+          prisma.word.findMany({
+            where: { communityId, status: 'APPROVED' },
+            select: { word: true, meaning: true, pronunciation: true, partOfSpeech: true },
+            orderBy: { createdAt: 'desc' },
+            take: 20,
+          }),
+          prisma.story.findMany({
+            where: { communityId, status: 'APPROVED' },
+            select: { title: true, summary: true, type: true },
+            orderBy: { createdAt: 'desc' },
+            take: 5,
+          }),
+          prisma.song.findMany({
+            where: { communityId, status: 'APPROVED' },
+            select: { title: true, occasion: true },
+            orderBy: { createdAt: 'desc' },
+            take: 5,
+          }),
+        ])
+
+        if (community) {
+          communityContext += `\n\n## Active Community: ${community.name}`
+          communityContext += `\nRegion: ${community.region}. Preservation score: ${community.preservationScore}%.`
+
+          if (words.length > 0) {
+            communityContext += `\n\n### Documented Vocabulary (${words.length} approved words):`
+            words.slice(0, 15).forEach((w) => {
+              communityContext += `\n- ${w.word}: ${w.meaning}`
+              if (w.pronunciation) communityContext += ` (pronunciation: ${w.pronunciation})`
+              if (w.partOfSpeech) communityContext += ` [${w.partOfSpeech}]`
+            })
+          }
+
+          if (stories.length > 0) {
+            communityContext += `\n\n### Archived Cultural Stories:`
+            stories.forEach((s) => {
+              communityContext += `\n- "${s.title}" (${s.type})${s.summary ? `: ${s.summary.slice(0, 120)}` : ''}`
+            })
+          }
+
+          if (songs.length > 0) {
+            communityContext += `\n\n### Cultural Songs in Archive:`
+            songs.forEach((s) => {
+              communityContext += `\n- "${s.title}"${s.occasion ? ` (occasion: ${s.occasion})` : ''}`
+            })
+          }
+
+          communityContext += `\n\nWhen answering questions, draw on this community's documented language and cultural data above. Prioritize accuracy over guessing.`
+        }
+      } catch (err) {
+        console.warn('[AI Tutor] Could not fetch community context:', err)
+      }
+    }
+
     // Build context-aware system prompt
-    let contextualSystem = SYSTEM_PROMPT
+    let contextualSystem = SYSTEM_PROMPT + communityContext
     if (languageContext) {
       contextualSystem += `\n\nThe user is currently focusing on: ${languageContext}.`
-    }
-    if (communityId) {
-      contextualSystem += `\n\nContext: Community ID ${communityId} is selected.`
     }
 
     // Build messages array for OpenAI

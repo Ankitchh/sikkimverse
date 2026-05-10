@@ -99,6 +99,29 @@ enum HandwritingGrade {
   NEEDS_PRACTICE
 }
 
+enum ScriptLessonType {
+  INTRODUCTION
+  STROKE_ORDER
+  TRACE
+  PRACTICE
+  COMBINE
+  WORD_BUILD
+  SENTENCE
+  EXAM
+}
+
+enum ScriptLessonStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum KeyboardLayoutType {
+  MOBILE
+  DESKTOP
+  BOTH
+}
+
 enum SubscriptionStatus {
   TRIALING
   ACTIVE
@@ -190,6 +213,9 @@ model User {
   subscription          UserSubscription?
   emailVerifications    EmailVerificationToken[]
   passwordResets        PasswordReset[]
+  scriptProgress        ScriptLessonProgress[]
+  writingScores         WritingScore[]
+  keyboardsCreated      KeyboardLayout[]         @relation("KeyboardCreator")
 
   @@index([communityId])
   @@index([role])
@@ -214,19 +240,22 @@ model Community {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  users         User[]
-  languages     Language[]
-  courses       Course[]
-  stories       Story[]
-  songs         Song[]
-  videos        Video[]
-  recordings    Recording[]
-  words         Word[]
-  submissions   Submission[]
-  earnings      CommunityEarning[]
-  festivals     Festival[]
-  tags          Tag[]
-  revenueShares RevenueShare[]
+  users            User[]
+  languages        Language[]
+  courses          Course[]
+  stories          Story[]
+  songs            Song[]
+  videos           Video[]
+  recordings       Recording[]
+  words            Word[]
+  submissions      Submission[]
+  earnings         CommunityEarning[]
+  festivals        Festival[]
+  tags             Tag[]
+  revenueShares    RevenueShare[]
+  scriptCharacters ScriptCharacter[]
+  scriptLessons    ScriptLesson[]
+  keyboardLayouts  KeyboardLayout[]
 
   @@index([slug])
   @@index([isActive])
@@ -243,10 +272,11 @@ model Language {
   endangermentLevel EndangermentLevel @default(VULNERABLE)
   createdAt        DateTime          @default(now())
 
-  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  dialects  Dialect[]
-  courses   Course[]
-  words     Word[]
+  community        Community       @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  dialects         Dialect[]
+  courses          Course[]
+  words            Word[]
+  scriptCharacters ScriptCharacter[]
 
   @@index([communityId])
   @@index([endangermentLevel])
@@ -794,4 +824,140 @@ model ContentEmbedding {
   @@index([communityId])
   @@index([contentType])
   @@index([createdAt])
+}
+
+// ─── Script & Keyboard Infrastructure ────────────────────────────────────────
+
+model ScriptCharacter {
+  id           String  @id @default(cuid())
+  communityId  String
+  languageId   String?
+  character    String
+  unicode      String
+  phonetic     String
+  ipa          String?
+  meaning      String?
+  strokeCount  Int     @default(1)
+  strokeData   Json?   // SVG path data for each stroke in order
+  audioUrl     String?
+  sortOrder    Int     @default(0)
+  group        String? // e.g. "Vowels", "Velars", "Palatals"
+  isPublished  Boolean @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  community    Community      @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  language     Language?      @relation(fields: [languageId], references: [id])
+  lessons      ScriptLesson[]
+  writingScores WritingScore[]
+
+  @@index([communityId])
+  @@index([languageId])
+  @@index([sortOrder])
+}
+
+model ScriptLesson {
+  id           String             @id @default(cuid())
+  communityId  String
+  characterId  String
+  type         ScriptLessonType   @default(INTRODUCTION)
+  status       ScriptLessonStatus @default(DRAFT)
+  title        String
+  instructions String             @db.Text
+  stepOrder    Int                @default(0)
+  xpReward     Int                @default(10)
+  // For TRACE type: reference image/SVG
+  referenceData Json?
+  // For STROKE_ORDER: animated stroke paths
+  strokeAnimation Json?
+  audioUrl     String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  community  Community   @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  character  ScriptCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  progress   ScriptLessonProgress[]
+
+  @@index([communityId])
+  @@index([characterId])
+  @@index([stepOrder])
+}
+
+model ScriptLessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  lessonId    String
+  completed   Boolean  @default(false)
+  score       Int?
+  attempts    Int      @default(0)
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson ScriptLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+}
+
+model WritingScore {
+  id          String          @id @default(cuid())
+  userId      String
+  characterId String
+  score       Int             @default(0)
+  grade       HandwritingGrade @default(NEEDS_PRACTICE)
+  accuracy    Float           @default(0)
+  strokeScore Float           @default(0)
+  imageData   String?         @db.Text
+  feedback    String?         @db.Text
+  createdAt   DateTime        @default(now())
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  character ScriptCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([characterId])
+  @@index([createdAt])
+}
+
+model KeyboardLayout {
+  id          String             @id @default(cuid())
+  communityId String
+  name        String
+  slug        String
+  description String?
+  layoutType  KeyboardLayoutType @default(BOTH)
+  isActive    Boolean            @default(false)
+  version     Int                @default(1)
+  createdById String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  community Community    @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  createdBy User         @relation("KeyboardCreator", fields: [createdById], references: [id])
+  keys      KeyboardKey[]
+
+  @@unique([communityId, slug])
+  @@index([communityId])
+  @@index([isActive])
+}
+
+model KeyboardKey {
+  id           String   @id @default(cuid())
+  layoutId     String
+  row          Int
+  col          Int
+  width        Float    @default(1)
+  primaryChar  String
+  primaryLabel String
+  altChars     Json?    // long-press variants: [{char, label}]
+  phoneticHint String?
+  audioUrl     String?
+  sortOrder    Int      @default(0)
+
+  layout KeyboardLayout @relation(fields: [layoutId], references: [id], onDelete: Cascade)
+
+  @@index([layoutId])
+  @@index([row, col])
 }

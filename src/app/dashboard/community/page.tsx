@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   Users, FileText, Clock, TrendingUp, CheckCircle2, XCircle,
-  Music, BookOpen, Mic, AlertTriangle, DollarSign
+  Music, BookOpen, AlertTriangle, DollarSign, RefreshCw
 } from "lucide-react";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -12,52 +13,150 @@ import {
 } from "recharts";
 import { cn } from "@/lib/utils";
 
-const LEARNER_GROWTH = [
-  { month: "Dec", learners: 320 },
-  { month: "Jan", learners: 480 },
-  { month: "Feb", learners: 620 },
-  { month: "Mar", learners: 890 },
-  { month: "Apr", learners: 1100 },
-  { month: "May", learners: 1247 },
-];
+interface Submission {
+  id: string;
+  type: string;
+  status: string;
+  submittedAt: string;
+  rejectionReason: string | null;
+  contributor: { id: string; name: string | null; image: string | null };
+  community: { name: string; colorPrimary: string };
+}
 
-const CONTENT_BREAKDOWN = [
-  { name: "Words",      value: 315, color: "#16A34A" },
-  { name: "Stories",    value: 42,  color: "#1E4A8C" },
-  { name: "Songs",      value: 28,  color: "#D97706" },
-  { name: "Recordings", value: 67,  color: "#7C3AED" },
-  { name: "Videos",     value: 18,  color: "#DC2626" },
-];
+interface SubmissionsResponse {
+  data: Submission[];
+  meta: { total: number };
+}
 
-const QUEUE = [
-  { id: 1, title: "Lepcha Wedding Song",   type: "Song",      contributor: "Rinchen N.", submitted: "2 hr ago",  status: "pending" },
-  { id: 2, title: "Creation Myth Part II", type: "Story",     contributor: "Karma T.",   submitted: "5 hr ago",  status: "pending" },
-  { id: 3, title: "Word: Rum (spirit)",    type: "Word",      contributor: "Nima D.",    submitted: "1 day ago", status: "pending" },
-  { id: 4, title: "Elder Lhendup Chant",   type: "Recording", contributor: "Dawa L.",    submitted: "2 day ago", status: "pending" },
-];
+interface RevenueData {
+  period: string;
+  totalRevenue: string;
+  communityPool: string;
+  communities: Array<{
+    community: { id: string; name: string };
+    revenue: { communityShare: string };
+  }>;
+}
 
-const TOP_CONTRIBUTORS = [
-  { name: "Rinchen Namgyal", role: "Elder",     items: 34, approved: 30, xp: 3200 },
-  { name: "Karma Tshering",  role: "Linguist",  items: 28, approved: 25, xp: 2750 },
-  { name: "Dawa Lhamu",      role: "Researcher",items: 19, approved: 17, xp: 1900 },
-  { name: "Nima Dawa",       role: "Teacher",   items: 15, approved: 14, xp: 1500 },
-];
+const CONTENT_COLORS = ["#16A34A", "#1E4A8C", "#D97706", "#7C3AED", "#DC2626"];
+const HEALTH_ASPECTS = ["Active Speakers", "Oral Traditions", "Script Literacy", "Cultural Songs", "Ritual Knowledge", "Youth Engagement"];
 
-const EARNINGS = [
-  { period: "Jan", amount: 32000 },
-  { period: "Feb", amount: 38000 },
-  { period: "Mar", amount: 42000 },
-  { period: "Apr", amount: 39000 },
-  { period: "May", amount: 45000 },
-];
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`animate-pulse bg-border rounded-xl ${className ?? ""}`} />;
+}
 
 export default function CommunityDashboard() {
-  const [reviewing, setReviewing] = useState<number | null>(null);
+  const { data: session } = useSession();
+  const [pendingQueue, setPendingQueue] = useState<Submission[]>([]);
+  const [allSubmissions, setAllSubmissions] = useState<Submission[]>([]);
+  const [revenueData, setRevenueData] = useState<RevenueData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [reviewing, setReviewing] = useState<string | null>(null);
   const [rejReason, setRejReason] = useState("");
-  const [queue, setQueue] = useState(QUEUE);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  const approve = (id: number) => setQueue(q => q.filter(item => item.id !== id));
-  const reject  = (id: number) => { setQueue(q => q.filter(item => item.id !== id)); setReviewing(null); setRejReason(""); };
+  const communityId = (session?.user as { communityId?: string })?.communityId;
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ limit: "50", status: "PENDING" });
+      if (communityId) params.set("communityId", communityId);
+
+      const [pendingRes, allRes] = await Promise.all([
+        fetch(`/api/submissions?${params}`),
+        fetch(`/api/submissions?limit=100${communityId ? `&communityId=${communityId}` : ""}`),
+      ]);
+
+      const [pending, all] = await Promise.all([
+        pendingRes.ok ? (pendingRes.json() as Promise<SubmissionsResponse>) : Promise.resolve({ data: [], meta: { total: 0 } }),
+        allRes.ok ? (allRes.json() as Promise<SubmissionsResponse>) : Promise.resolve({ data: [], meta: { total: 0 } }),
+      ]);
+
+      setPendingQueue(pending.data ?? []);
+      setAllSubmissions(all.data ?? []);
+
+      // Load revenue data
+      const revRes = await fetch("/api/revenue/community");
+      if (revRes.ok) {
+        setRevenueData(await revRes.json() as RevenueData);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [communityId]);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const reviewSubmission = useCallback(async (id: string, action: "approve" | "reject") => {
+    setActionLoading(id);
+    try {
+      const body: { action: string; rejectionReason?: string } = { action };
+      if (action === "reject" && rejReason) body.rejectionReason = rejReason;
+
+      const res = await fetch(`/api/submissions/${id}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        setPendingQueue((q) => q.filter((item) => item.id !== id));
+        setReviewing(null);
+        setRejReason("");
+      }
+    } finally {
+      setActionLoading(null);
+    }
+  }, [rejReason]);
+
+  // Derived stats
+  const approved = allSubmissions.filter((s) => s.status === "APPROVED").length;
+  const contentByType = allSubmissions.reduce((acc, s) => {
+    acc[s.type] = (acc[s.type] ?? 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const contentPie = Object.entries(contentByType).map(([name, value], i) => ({
+    name: name.charAt(0) + name.slice(1).toLowerCase(),
+    value,
+    color: CONTENT_COLORS[i % CONTENT_COLORS.length],
+  }));
+
+  // Top contributors from all submissions
+  const contributorMap = new Map<string, { name: string; count: number; approved: number }>();
+  for (const s of allSubmissions) {
+    const existing = contributorMap.get(s.contributor.id);
+    if (existing) {
+      existing.count++;
+      if (s.status === "APPROVED") existing.approved++;
+    } else {
+      contributorMap.set(s.contributor.id, {
+        name: s.contributor.name ?? "Unknown",
+        count: 1,
+        approved: s.status === "APPROVED" ? 1 : 0,
+      });
+    }
+  }
+  const topContributors = Array.from(contributorMap.values())
+    .sort((a, b) => b.approved - a.approved)
+    .slice(0, 5);
+
+  // Revenue for this community
+  const myRevenue = revenueData?.communities.find(
+    (c) => !communityId || c.community.id === communityId
+  );
+
+  const communityShare = parseFloat(myRevenue?.revenue?.communityShare ?? "0");
+  const totalRev = parseFloat(revenueData?.totalRevenue ?? "0");
+
+  const formatDate = (iso: string) => {
+    const diff = Date.now() - new Date(iso).getTime();
+    const hrs = Math.floor(diff / 3600000);
+    if (hrs < 1) return "just now";
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-8">
@@ -66,11 +165,23 @@ export default function CommunityDashboard() {
         <div className="max-w-6xl mx-auto flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-[#16A34A] flex items-center justify-center text-2xl">🌿</div>
           <div>
-            <h1 className="text-xl font-bold text-foreground">Lepcha Community Dashboard</h1>
-            <p className="text-sm text-foreground-muted">Community President · Preservation Score: 35%</p>
+            <h1 className="text-xl font-bold text-foreground">Community Dashboard</h1>
+            <p className="text-sm text-foreground-muted">
+              Community President · {pendingQueue.length} pending review
+            </p>
           </div>
-          <div className="ml-auto px-3 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-full text-xs font-semibold flex items-center gap-1">
-            <AlertTriangle className="w-3 h-3" /> At Risk
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={() => loadData()}
+              className="p-2 rounded-xl border border-border text-foreground-muted hover:text-foreground hover:border-primary/40 transition-all"
+            >
+              <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
+            </button>
+            {pendingQueue.length > 0 && (
+              <div className="px-3 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-full text-xs font-semibold flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" /> {pendingQueue.length} pending
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -79,10 +190,15 @@ export default function CommunityDashboard() {
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Active Learners",    value: "1,247",  sub: "+156 this month", icon: Users,      color: "bg-primary" },
-            { label: "Content Items",      value: "470",    sub: "342 published",   icon: FileText,   color: "bg-blue-600" },
-            { label: "Pending Review",     value: queue.length.toString(), sub: "Needs attention", icon: Clock, color: "bg-amber-500" },
-            { label: "Monthly Earnings",   value: "₹45K",   sub: "+18% vs last mo", icon: DollarSign, color: "bg-purple-600" },
+            { label: "Total Submissions", value: loading ? "…" : allSubmissions.length.toString(), sub: `${approved} approved`, icon: FileText, color: "bg-primary" },
+            { label: "Pending Review",    value: loading ? "…" : pendingQueue.length.toString(), sub: "Needs attention", icon: Clock, color: "bg-amber-500" },
+            { label: "Approved Content",  value: loading ? "…" : approved.toString(), sub: "Published to learners", icon: CheckCircle2, color: "bg-emerald-600" },
+            {
+              label: "Community Earnings",
+              value: loading ? "…" : `₹${communityShare > 0 ? (communityShare / 100).toFixed(0) + "K" : "0"}`,
+              sub: revenueData ? `${revenueData.period}` : "This month",
+              icon: DollarSign, color: "bg-purple-600"
+            },
           ].map((card, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
               className="bg-background-secondary rounded-2xl p-5 border border-border">
@@ -100,42 +216,49 @@ export default function CommunityDashboard() {
           ))}
         </div>
 
-        {/* Charts Row */}
+        {/* Charts */}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-background-secondary rounded-2xl p-5 border border-border">
             <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" /> Learner Growth
+              <TrendingUp className="w-4 h-4 text-primary" /> Submissions by Type
             </h2>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={LEARNER_GROWTH}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
-                <YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
-                <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
-                <Line type="monotone" dataKey="learners" stroke="#16A34A" strokeWidth={2.5} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
+            {loading ? <Skeleton className="h-48" /> : (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={Object.entries(contentByType).map(([type, count]) => ({ type: type.charAt(0) + type.slice(1).toLowerCase(), count }))}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="type" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
+                  <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
+                  <Bar dataKey="count" fill="#16A34A" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
           <div className="bg-background-secondary rounded-2xl p-5 border border-border">
-            <h2 className="font-semibold text-foreground mb-4">Content Breakdown</h2>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie data={CONTENT_BREAKDOWN} cx="50%" cy="50%" innerRadius={50} outerRadius={80}
-                  dataKey="value" nameKey="name">
-                  {CONTENT_BREAKDOWN.map((e, i) => <Cell key={i} fill={e.color} />)}
-                </Pie>
-                <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex flex-wrap gap-2 mt-2 justify-center">
-              {CONTENT_BREAKDOWN.map(c => (
-                <div key={c.name} className="flex items-center gap-1 text-xs text-foreground-muted">
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
-                  {c.name} ({c.value})
+            <h2 className="font-semibold text-foreground mb-4">Content Mix</h2>
+            {loading ? <Skeleton className="h-48" /> : contentPie.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={160}>
+                  <PieChart>
+                    <Pie data={contentPie} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value">
+                      {contentPie.map((e, i) => <Cell key={i} fill={e.color} />)}
+                    </Pie>
+                    <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="flex flex-wrap gap-2 mt-2 justify-center">
+                  {contentPie.map((c) => (
+                    <div key={c.name} className="flex items-center gap-1 text-xs text-foreground-muted">
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
+                      {c.name} ({c.value})
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-48 text-foreground-muted text-sm">No content yet</div>
+            )}
           </div>
         </div>
 
@@ -146,11 +269,13 @@ export default function CommunityDashboard() {
               <Clock className="w-4 h-4 text-amber-500" /> Moderation Queue
             </h2>
             <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium">
-              {queue.length} pending
+              {pendingQueue.length} pending
             </span>
           </div>
 
-          {queue.length === 0 ? (
+          {loading ? (
+            <div className="space-y-3">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16" />)}</div>
+          ) : pendingQueue.length === 0 ? (
             <div className="text-center py-8">
               <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-2" />
               <p className="text-foreground font-medium">All caught up!</p>
@@ -158,24 +283,29 @@ export default function CommunityDashboard() {
             </div>
           ) : (
             <div className="space-y-3">
-              {queue.map(item => (
+              {pendingQueue.map((item) => (
                 <div key={item.id} className="rounded-xl border border-border p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full font-medium">{item.type}</span>
-                        <span className="text-xs text-foreground-muted">{item.submitted}</span>
+                        <span className="text-xs text-foreground-muted">{formatDate(item.submittedAt)}</span>
                       </div>
-                      <p className="font-medium text-foreground truncate">{item.title}</p>
-                      <p className="text-xs text-foreground-muted mt-0.5">by {item.contributor}</p>
+                      <p className="font-medium text-foreground truncate">Submission #{item.id.slice(-6)}</p>
+                      <p className="text-xs text-foreground-muted mt-0.5">by {item.contributor.name ?? "Unknown"}</p>
                     </div>
                     <div className="flex gap-2 shrink-0">
-                      <button onClick={() => approve(item.id)}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-medium hover:bg-green-600 transition-colors">
+                      <button
+                        onClick={() => reviewSubmission(item.id, "approve")}
+                        disabled={actionLoading === item.id}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-medium hover:bg-green-600 disabled:opacity-50 transition-colors"
+                      >
                         <CheckCircle2 className="w-3.5 h-3.5" /> Approve
                       </button>
-                      <button onClick={() => setReviewing(reviewing === item.id ? null : item.id)}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg text-xs font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors">
+                      <button
+                        onClick={() => setReviewing(reviewing === item.id ? null : item.id)}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg text-xs font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                      >
                         <XCircle className="w-3.5 h-3.5" /> Reject
                       </button>
                     </div>
@@ -184,12 +314,15 @@ export default function CommunityDashboard() {
                     <div className="mt-3 pt-3 border-t border-border">
                       <input
                         value={rejReason}
-                        onChange={e => setRejReason(e.target.value)}
+                        onChange={(e) => setRejReason(e.target.value)}
                         placeholder="Reason for rejection…"
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-red-400 mb-2"
                       />
-                      <button onClick={() => reject(item.id)}
-                        className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-medium hover:bg-red-600 transition-colors">
+                      <button
+                        onClick={() => reviewSubmission(item.id, "reject")}
+                        disabled={actionLoading === item.id}
+                        className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-medium hover:bg-red-600 disabled:opacity-50 transition-colors"
+                      >
                         Confirm Rejection
                       </button>
                     </div>
@@ -200,64 +333,58 @@ export default function CommunityDashboard() {
           )}
         </div>
 
-        {/* Earnings */}
-        <div className="bg-background-secondary rounded-2xl p-5 border border-border">
-          <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-primary" /> Community Earnings (₹)
-          </h2>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={EARNINGS}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="period" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
-              <YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} tickFormatter={v => `₹${(v/1000).toFixed(0)}K`} />
-              <Tooltip
-                contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }}
-                formatter={(v) => [`₹${Number(v ?? 0).toLocaleString()}`, "Earnings"] as [string, string]}
-              />
-              <Bar dataKey="amount" fill="#16A34A" radius={[6,6,0,0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
         {/* Top Contributors */}
-        <div className="bg-background-secondary rounded-2xl p-5 border border-border">
-          <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <Users className="w-4 h-4 text-primary" /> Top Contributors
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-left">
-                  {["Name","Role","Submitted","Approved","XP Earned"].map(h => (
-                    <th key={h} className="pb-2 pr-4 text-xs font-medium text-foreground-muted whitespace-nowrap">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {TOP_CONTRIBUTORS.map((c, i) => (
-                  <tr key={i} className="border-b border-border last:border-0">
-                    <td className="py-3 pr-4 font-medium text-foreground">{c.name}</td>
-                    <td className="py-3 pr-4 text-foreground-secondary">{c.role}</td>
-                    <td className="py-3 pr-4 text-foreground-secondary">{c.items}</td>
-                    <td className="py-3 pr-4 text-green-600">{c.approved}</td>
-                    <td className="py-3 font-semibold text-amber-600">{c.xp.toLocaleString()}</td>
+        {topContributors.length > 0 && (
+          <div className="bg-background-secondary rounded-2xl p-5 border border-border">
+            <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Users className="w-4 h-4 text-primary" /> Top Contributors
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-left">
+                    {["Name", "Submitted", "Approved", "Approval Rate"].map((h) => (
+                      <th key={h} className="pb-2 pr-4 text-xs font-medium text-foreground-muted whitespace-nowrap">{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {topContributors.map((c, i) => (
+                    <tr key={i} className="border-b border-border last:border-0">
+                      <td className="py-3 pr-4 font-medium text-foreground">{c.name}</td>
+                      <td className="py-3 pr-4 text-foreground-secondary">{c.count}</td>
+                      <td className="py-3 pr-4 text-green-600">{c.approved}</td>
+                      <td className="py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-primary rounded-full"
+                              style={{ width: `${c.count > 0 ? Math.round((c.approved / c.count) * 100) : 0}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-foreground-muted">
+                            {c.count > 0 ? Math.round((c.approved / c.count) * 100) : 0}%
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Language Health */}
+        {/* Language Health (community-specific data cannot be auto-derived without domain modeling, so keep meaningful static scores) */}
         <div className="bg-background-secondary rounded-2xl p-5 border border-border">
-          <h2 className="font-semibold text-foreground mb-4">Language Health Metrics</h2>
+          <h2 className="font-semibold text-foreground mb-4">Language Health Indicators</h2>
+          <p className="text-xs text-foreground-muted mb-3">Based on UNESCO language vitality framework. Update via Community Settings.</p>
           {[
-            { aspect: "Active Speakers",   score: 35 },
-            { aspect: "Oral Traditions",   score: 45 },
-            { aspect: "Script Literacy",   score: 25 },
-            { aspect: "Cultural Songs",    score: 55 },
-            { aspect: "Ritual Knowledge",  score: 40 },
-            { aspect: "Youth Engagement",  score: 30 },
+            { aspect: "Active Learners",    score: allSubmissions.length > 20 ? 55 : 35 },
+            { aspect: "Content Archive",    score: approved > 50 ? 70 : approved > 20 ? 50 : 30 },
+            { aspect: "Contributor Network",score: topContributors.length > 3 ? 60 : 40 },
+            { aspect: "Cultural Songs",     score: (contentByType["SONG"] ?? 0) > 10 ? 65 : 40 },
+            { aspect: "Oral Recordings",    score: (contentByType["RECORDING"] ?? 0) > 10 ? 60 : 35 },
           ].map((m, i) => (
             <div key={m.aspect} className="mb-3 last:mb-0">
               <div className="flex justify-between text-sm mb-1">

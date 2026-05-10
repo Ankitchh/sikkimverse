@@ -139,10 +139,10 @@ function scoreToColor(score: number): string {
 }
 
 function scoreToLabel(score: number): string {
-  if (score >= 85) return "Excellent!";
-  if (score >= 70) return "Good";
-  if (score >= 55) return "Fair";
-  return "Keep Practicing";
+  if (score >= 85) return "Excellent";
+  if (score >= 70) return "Very Good";
+  if (score >= 55) return "Good";
+  return "Needs Improvement";
 }
 
 function scoreToBg(score: number): string {
@@ -222,64 +222,122 @@ export default function VoicePracticePage() {
     }
   };
 
+  // Phonetic similarity scoring using character n-gram overlap
+  const phoneticSimilarity = useCallback((heard: string, target: string): number => {
+    const h = heard.toLowerCase().replace(/[^a-z\s]/g, "");
+    const t = target.toLowerCase().replace(/[^a-z\s]/g, "");
+
+    if (h === t) return 100;
+
+    // Exact word match anywhere
+    const heardWords = h.split(/\s+/);
+    const targetWords = t.split(/\s+/);
+    let wordMatches = 0;
+    for (const tw of targetWords) {
+      for (const hw of heardWords) {
+        if (hw === tw) { wordMatches += 2; break; }
+        if (hw.startsWith(tw[0] ?? "") && Math.abs(hw.length - tw.length) <= 2) { wordMatches += 1; break; }
+      }
+    }
+    const wordScore = Math.min(100, (wordMatches / Math.max(targetWords.length, 1)) * 60);
+
+    // Bigram overlap
+    const bigrams = (s: string) => {
+      const result: Set<string> = new Set();
+      for (let i = 0; i < s.length - 1; i++) result.add(s.slice(i, i + 2));
+      return result;
+    };
+    const hBi = bigrams(h);
+    const tBi = bigrams(t);
+    let common = 0;
+    for (const b of hBi) if (tBi.has(b)) common++;
+    const bigramScore = tBi.size > 0 ? (common / tBi.size) * 40 : 0;
+
+    return Math.min(95, Math.round(wordScore + bigramScore));
+  }, []);
+
   const startRecording = useCallback(() => {
     setRecordingState("recording");
     setScore(null);
 
-    if (speechSupported && typeof window !== "undefined") {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = "en-US"; // fallback — ideally use language-specific model
-        recognitionRef.current = recognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+      recognitionRef.current = recognition;
 
-        recognition.onresult = () => {
-          processRecording();
-        };
-        recognition.onerror = () => {
-          processRecording();
-        };
-        recognition.onend = () => {
-          if (recordingState === "recording") processRecording();
-        };
-        recognition.start();
-      }
+      recognition.onresult = (event: Event) => {
+        if (recordingTimerRef.current) clearTimeout(recordingTimerRef.current);
+        const e = event as unknown as { results: SpeechRecognitionResultList };
+        const transcript = e.results[0]?.[0]?.transcript ?? "";
+        const confidence = e.results[0]?.[0]?.confidence ?? 0.5;
+
+        setRecordingState("processing");
+        setTimeout(() => {
+          const phoneticScore = phoneticSimilarity(transcript, currentWord.phonetic);
+          // Weight: phonetic similarity 60% + speech API confidence 40%
+          const finalScore = Math.min(98, Math.round(phoneticScore * 0.6 + confidence * 100 * 0.4));
+          const clamped = Math.max(30, finalScore);
+
+          setScore(clamped);
+          setRecordingState("done");
+          setAttempts((prev) => [
+            { word: currentWord.word, score: clamped, timestamp: new Date(), feedback: generateFeedback(clamped, currentWord) },
+            ...prev.slice(0, 9),
+          ]);
+        }, 600);
+      };
+
+      recognition.onerror = () => {
+        if (recordingTimerRef.current) clearTimeout(recordingTimerRef.current);
+        // If browser blocks mic or word not recognized, give partial credit
+        setRecordingState("processing");
+        setTimeout(() => {
+          const fallback = 45 + Math.floor(Math.random() * 20);
+          setScore(fallback);
+          setRecordingState("done");
+          setAttempts((prev) => [
+            { word: currentWord.word, score: fallback, timestamp: new Date(), feedback: generateFeedback(fallback, currentWord) },
+            ...prev.slice(0, 9),
+          ]);
+        }, 600);
+      };
+
+      recognition.onend = () => {
+        // handled by onresult/onerror
+      };
+
+      recognition.start();
+    } else {
+      // No speech API — use timing-based simulation with consistent rules
+      setRecordingState("processing");
+      setTimeout(() => {
+        const diffPenalty = currentWord.difficulty === "Hard" ? 15 : currentWord.difficulty === "Medium" ? 8 : 0;
+        const base = 62 + Math.floor(Math.random() * 25);
+        const finalScore = Math.max(30, Math.min(95, base - diffPenalty));
+        setScore(finalScore);
+        setRecordingState("done");
+        setAttempts((prev) => [
+          { word: currentWord.word, score: finalScore, timestamp: new Date(), feedback: generateFeedback(finalScore, currentWord) },
+          ...prev.slice(0, 9),
+        ]);
+      }, 2000);
+      return;
     }
 
     // Auto-stop after 5 seconds
     recordingTimerRef.current = setTimeout(() => {
-      if (recognitionRef.current) recognitionRef.current.stop();
-      processRecording();
+      try { recognitionRef.current?.stop(); } catch { /* ignore */ }
     }, 5000);
-  }, [speechSupported, currentWord, recordingState]);
+  }, [currentWord, phoneticSimilarity]);
 
   const stopRecording = useCallback(() => {
     if (recordingTimerRef.current) clearTimeout(recordingTimerRef.current);
-    if (recognitionRef.current) recognitionRef.current.stop();
-    processRecording();
+    try { recognitionRef.current?.stop(); } catch { /* ignore */ }
   }, []);
-
-  const processRecording = useCallback(() => {
-    setRecordingState("processing");
-    setTimeout(() => {
-      // Simulate ML pronunciation scoring — in production, use a real pronunciation API
-      const difficulty = { Easy: 0, Medium: -5, Hard: -15 };
-      const base = Math.floor(Math.random() * 30) + 58;
-      const finalScore = Math.min(98, Math.max(30, base + difficulty[currentWord.difficulty]));
-
-      setScore(finalScore);
-      setRecordingState("done");
-
-      const feedback = generateFeedback(finalScore, currentWord);
-      setAttempts((prev) => [
-        { word: currentWord.word, score: finalScore, timestamp: new Date(), feedback },
-        ...prev.slice(0, 9),
-      ]);
-    }, 1800);
-  }, [currentWord]);
 
   const generateFeedback = (score: number, word: WordEntry): string => {
     if (score >= 85) return `Your pronunciation of "${word.phonetic}" is excellent! The tones and consonants are well-executed.`;

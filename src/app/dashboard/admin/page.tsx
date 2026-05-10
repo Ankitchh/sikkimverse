@@ -1,54 +1,88 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Users, BookOpen, FileText, Music, TrendingUp, Shield,
-  Activity, Globe, AlertTriangle, CheckCircle2, Clock, Server
+  Activity, Globe, AlertTriangle, CheckCircle2, Clock, Server,
+  Keyboard
 } from "lucide-react";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend
 } from "recharts";
+import Link from "next/link";
 
-const GROWTH_DATA = [
-  { month: "Dec", users: 820,  content: 210 },
-  { month: "Jan", users: 1100, content: 340 },
-  { month: "Feb", users: 1450, content: 510 },
-  { month: "Mar", users: 1900, content: 720 },
-  { month: "Apr", users: 2600, content: 980 },
-  { month: "May", users: 3400, content: 1340 },
-];
+// ── Types ──────────────────────────────────────────────────────────────────────
+interface DashboardStats {
+  overview: {
+    totalUsers: number;
+    activeUsersLast7Days: number;
+    newUsersThisMonth: number;
+    pendingSubmissions: number;
+  };
+  usersByRole: Array<{ role: string; count: number }>;
+  content: {
+    totalStories: number;
+    totalSongs: number;
+    totalVideos: number;
+    totalRecordings: number;
+    totalWords: number;
+    totalCourses: number;
+    total: number;
+  };
+  submissions: {
+    byStatus: { pending: number; approved: number; rejected: number };
+    recent: Array<{
+      id: string;
+      type: string;
+      status: string;
+      submittedAt: string;
+      contributor: { name: string | null; image: string | null };
+      community: { name: string; colorPrimary: string };
+    }>;
+  };
+  communities: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    colorPrimary: string;
+    preservationScore: number;
+    memberCount: number;
+    totalApprovedContent: number;
+    pendingSubmissions: number;
+    approvedStories: number;
+    approvedSongs: number;
+    approvedWords: number;
+  }>;
+  xpDistribution: Array<{ bucket: string; count: number }>;
+}
 
-const COMMUNITY_CONTENT = [
-  { name: "Lepcha",  stories: 42, songs: 28, words: 315, videos: 18 },
-  { name: "Bhutia",  stories: 38, songs: 45, words: 280, videos: 22 },
-  { name: "Limbu",   stories: 55, songs: 32, words: 420, videos: 15 },
-  { name: "Tamang",  stories: 29, songs: 38, words: 195, videos: 10 },
-  { name: "Rai",     stories: 34, songs: 21, words: 260, videos: 8  },
-  { name: "Others",  stories: 48, songs: 56, words: 380, videos: 27 },
-];
+const ROLE_COLORS: Record<string, string> = {
+  PUBLIC_USER: "#16A34A",
+  CONTRIBUTOR: "#D97706",
+  MODERATOR: "#1E4A8C",
+  COMMUNITY_PRESIDENT: "#7C3AED",
+  GOVERNMENT_OFFICER: "#DC2626",
+  ADMIN: "#0891B2",
+  SUPER_ADMIN: "#374151",
+};
 
-const ROLE_PIE = [
-  { name: "Learners",     value: 3120, color: "#16A34A" },
-  { name: "Contributors", value: 248,  color: "#D97706" },
-  { name: "Moderators",   value: 42,   color: "#1E4A8C" },
-  { name: "Presidents",   value: 11,   color: "#7C3AED" },
-  { name: "Government",   value: 6,    color: "#DC2626" },
-];
+const ROLE_LABELS: Record<string, string> = {
+  PUBLIC_USER: "Learners",
+  CONTRIBUTOR: "Contributors",
+  MODERATOR: "Moderators",
+  COMMUNITY_PRESIDENT: "Presidents",
+  GOVERNMENT_OFFICER: "Government",
+  ADMIN: "Admins",
+  SUPER_ADMIN: "Super Admins",
+};
 
-const RECENT_USERS = [
-  { name: "Karma Tshering", email: "karma@example.com", role: "Contributor", community: "Bhutia",  joined: "2 min ago" },
-  { name: "Nima Sherpa",    email: "nima@example.com",  role: "Learner",     community: "Sherpa",  joined: "14 min ago" },
-  { name: "Dawa Lhamu",     email: "dawa@example.com",  role: "Contributor", community: "Tamang",  joined: "1 hr ago" },
-  { name: "Tashi Doma",     email: "tashi@example.com", role: "Moderator",   community: "Lepcha",  joined: "3 hr ago" },
-];
-
-const MODERATION_QUEUE = [
-  { title: "Lepcha Wedding Song",       type: "Song",       community: "Lepcha", submittedBy: "Rinchen N.", time: "45 min ago" },
-  { title: "Bhutia Creation Myth",      type: "Story",      community: "Bhutia", submittedBy: "Sonam T.",   time: "2 hr ago"  },
-  { title: "Tamang Word: Damphu",       type: "Word",       community: "Tamang", submittedBy: "Pema Y.",    time: "3 hr ago"  },
-  { title: "Limbu Elder Recording",     type: "Recording",  community: "Limbu",  submittedBy: "Jigme W.",   time: "5 hr ago"  },
-];
+const PRESERVATION_STATUS = (score: number) =>
+  score >= 70 ? { label: "Stable", cls: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" } :
+  score >= 50 ? { label: "Moderate", cls: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400" } :
+  score >= 30 ? { label: "Vulnerable", cls: "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400" } :
+  { label: "At Risk", cls: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400" };
 
 function StatCard({ label, value, sub, icon: Icon, color }: {
   label: string; value: string; sub: string;
@@ -74,37 +108,127 @@ function StatCard({ label, value, sub, icon: Icon, color }: {
   );
 }
 
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`animate-pulse bg-border rounded-xl ${className ?? ""}`} />;
+}
+
 export default function AdminDashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/dashboard/stats")
+      .then(async (r) => {
+        if (!r.ok) throw new Error(await r.text());
+        return r.json() as Promise<DashboardStats>;
+      })
+      .then((data) => { setStats(data); setLoading(false); })
+      .catch((err) => { setError(String(err)); setLoading(false); });
+  }, []);
+
+  // Build pie data from real role counts
+  const rolePie = stats?.usersByRole.map((r) => ({
+    name: ROLE_LABELS[r.role] ?? r.role,
+    value: r.count,
+    color: ROLE_COLORS[r.role] ?? "#888",
+  })) ?? [];
+
+  // Build community bar data
+  const communityContent = stats?.communities.map((c) => ({
+    name: c.name.length > 8 ? c.name.slice(0, 8) + "…" : c.name,
+    stories: c.approvedStories,
+    songs: c.approvedSongs,
+    words: c.approvedWords,
+  })) ?? [];
+
+  const formatTimeAgo = (iso: string) => {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
+
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-8">
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-900 to-slate-800 px-6 py-8 border-b border-border">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-3 mb-1">
-            <Shield className="w-6 h-6 text-primary" />
-            <h1 className="text-2xl font-bold text-white">Super Admin Dashboard</h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <Shield className="w-6 h-6 text-primary" />
+                <h1 className="text-2xl font-bold text-white">Super Admin Dashboard</h1>
+              </div>
+              <p className="text-slate-400 text-sm">Full platform control — SIKKIMVERSE</p>
+            </div>
+            <Link
+              href="/dashboard/admin/keyboards"
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-xl text-sm font-medium hover:bg-white/20 transition-all"
+            >
+              <Keyboard className="w-4 h-4" /> Keyboard Builder
+            </Link>
           </div>
-          <p className="text-slate-400 text-sm">Full platform control — SIKKIMVERSE</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-400 text-sm">
+            Failed to load stats: {error}
+          </div>
+        )}
+
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total Users"      value="3,427"  sub="+124 this week"     icon={Users}    color="bg-primary"      />
-          <StatCard label="Content Items"    value="2,814"  sub="342 pending review"  icon={FileText} color="bg-amber-500"    />
-          <StatCard label="Active Today"     value="847"    sub="24.7% of all users"  icon={Activity} color="bg-blue-600"     />
-          <StatCard label="Communities"      value="10"     sub="All active"          icon={Globe}    color="bg-purple-600"   />
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28" />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              label="Total Users"
+              value={(stats?.overview.totalUsers ?? 0).toLocaleString()}
+              sub={`+${stats?.overview.newUsersThisMonth ?? 0} this month`}
+              icon={Users} color="bg-primary"
+            />
+            <StatCard
+              label="Content Items"
+              value={(stats?.content.total ?? 0).toLocaleString()}
+              sub={`${stats?.submissions.byStatus.pending ?? 0} pending review`}
+              icon={FileText} color="bg-amber-500"
+            />
+            <StatCard
+              label="Active (7 days)"
+              value={(stats?.overview.activeUsersLast7Days ?? 0).toLocaleString()}
+              sub={stats?.overview.totalUsers
+                ? `${Math.round((stats.overview.activeUsersLast7Days / stats.overview.totalUsers) * 100)}% of all users`
+                : "Loading…"}
+              icon={Activity} color="bg-blue-600"
+            />
+            <StatCard
+              label="Communities"
+              value={String(stats?.communities.length ?? 0)}
+              sub="All active"
+              icon={Globe} color="bg-purple-600"
+            />
+          </div>
+        )}
 
         {/* System Health */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "API", status: "Healthy", icon: Server,        ok: true  },
-            { label: "DB",  status: "Healthy", icon: Activity,      ok: true  },
-            { label: "Auth",status: "Healthy", icon: Shield,        ok: true  },
-            { label: "Jobs",status: "1 queued",icon: Clock,         ok: false },
-          ].map(s => (
+            { label: "API",  status: "Healthy",  icon: Server,   ok: true  },
+            { label: "DB",   status: "Healthy",  icon: Activity, ok: true  },
+            { label: "Auth", status: "Healthy",  icon: Shield,   ok: true  },
+            { label: "Queue",
+              status: stats ? `${stats.submissions.byStatus.pending} pending` : "…",
+              icon: Clock,
+              ok: (stats?.submissions.byStatus.pending ?? 0) === 0
+            },
+          ].map((s) => (
             <div key={s.label} className="bg-background-secondary border border-border rounded-xl p-3 flex items-center gap-3">
               <div className={`p-2 rounded-lg ${s.ok ? "bg-green-500/10" : "bg-amber-500/10"}`}>
                 <s.icon className={`w-4 h-4 ${s.ok ? "text-green-500" : "text-amber-500"}`} />
@@ -119,171 +243,209 @@ export default function AdminDashboard() {
 
         {/* Charts Row */}
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* User Growth */}
-          <div className="bg-background-secondary rounded-2xl p-5 border border-border">
-            <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" /> User & Content Growth
-            </h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={GROWTH_DATA}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
-                <YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
-                <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
-                <Legend />
-                <Line type="monotone" dataKey="users"   stroke="#16A34A" strokeWidth={2} dot={false} name="Users" />
-                <Line type="monotone" dataKey="content" stroke="#D97706" strokeWidth={2} dot={false} name="Content" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* User Roles Pie */}
+          {/* Users by Role Pie */}
           <div className="bg-background-secondary rounded-2xl p-5 border border-border">
             <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
               <Users className="w-4 h-4 text-primary" /> Users by Role
             </h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie data={ROLE_PIE} cx="50%" cy="50%" innerRadius={55} outerRadius={85}
-                  dataKey="value" nameKey="name">
-                  {ROLE_PIE.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                </Pie>
-                <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+            {loading ? <Skeleton className="h-52" /> : (
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie data={rolePie} cx="50%" cy="50%" innerRadius={55} outerRadius={85} dataKey="value" nameKey="name">
+                    {rolePie.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+
+          {/* Submission Status */}
+          <div className="bg-background-secondary rounded-2xl p-5 border border-border">
+            <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-primary" /> Content Breakdown
+            </h2>
+            {loading ? <Skeleton className="h-52" /> : (
+              <div className="space-y-3">
+                {[
+                  { label: "Words", value: stats?.content.totalWords ?? 0, color: "bg-primary" },
+                  { label: "Stories", value: stats?.content.totalStories ?? 0, color: "bg-blue-500" },
+                  { label: "Songs", value: stats?.content.totalSongs ?? 0, color: "bg-amber-500" },
+                  { label: "Recordings", value: stats?.content.totalRecordings ?? 0, color: "bg-purple-500" },
+                  { label: "Videos", value: stats?.content.totalVideos ?? 0, color: "bg-red-500" },
+                ].map(({ label, value, color }) => {
+                  const pct = stats?.content.total ? Math.round((value / stats.content.total) * 100) : 0;
+                  return (
+                    <div key={label}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-foreground">{label}</span>
+                        <span className="text-foreground-muted">{value.toLocaleString()} ({pct}%)</span>
+                      </div>
+                      <div className="h-2 bg-border rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 0.6 }}
+                          className={`h-full rounded-full ${color}`}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Content by Community */}
-        <div className="bg-background-secondary rounded-2xl p-5 border border-border">
-          <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-primary" /> Content by Community
-          </h2>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={COMMUNITY_CONTENT}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
-              <YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
-              <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
-              <Legend />
-              <Bar dataKey="stories" fill="#16A34A" name="Stories" radius={[4,4,0,0]} />
-              <Bar dataKey="songs"   fill="#D97706" name="Songs"   radius={[4,4,0,0]} />
-              <Bar dataKey="words"   fill="#1E4A8C" name="Words"   radius={[4,4,0,0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Recent Users */}
+        {communityContent.length > 0 && (
           <div className="bg-background-secondary rounded-2xl p-5 border border-border">
             <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" /> Recent Registrations
+              <BookOpen className="w-4 h-4 text-primary" /> Content by Community
             </h2>
-            <div className="space-y-3">
-              {RECENT_USERS.map((u, i) => (
-                <div key={i} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
-                    {u.name[0]}
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={communityContent}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
+                <YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} />
+                <Tooltip contentStyle={{ background: "var(--background-secondary)", border: "1px solid var(--border)", borderRadius: 12 }} />
+                <Legend />
+                <Bar dataKey="stories" fill="#16A34A" name="Stories" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="songs"   fill="#D97706" name="Songs"   radius={[4, 4, 0, 0]} />
+                <Bar dataKey="words"   fill="#1E4A8C" name="Words"   radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Recent Submissions */}
+          <div className="bg-background-secondary rounded-2xl p-5 border border-border">
+            <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-primary" /> Recent Submissions
+            </h2>
+            {loading ? (
+              <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+            ) : (
+              <div className="space-y-3">
+                {(stats?.submissions.recent ?? []).slice(0, 5).map((s) => (
+                  <div key={s.id} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+                      style={{ background: s.community.colorPrimary }}
+                    >
+                      {s.community.name[0]}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{s.contributor.name ?? "Unknown"}</p>
+                      <p className="text-xs text-foreground-muted">{s.community.name} · {s.type}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        s.status === "APPROVED" ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" :
+                        s.status === "PENDING"  ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400" :
+                        "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                      }`}>{s.status.toLowerCase()}</span>
+                      <p className="text-[10px] text-foreground-muted mt-1">{formatTimeAgo(s.submittedAt)}</p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{u.name}</p>
-                    <p className="text-xs text-foreground-muted">{u.email}</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">{u.role}</span>
-                    <p className="text-[10px] text-foreground-muted mt-1">{u.joined}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+                {(stats?.submissions.recent ?? []).length === 0 && (
+                  <p className="text-sm text-foreground-muted text-center py-4">No recent submissions</p>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Moderation Queue Summary */}
+          {/* Pending Moderation count */}
           <div className="bg-background-secondary rounded-2xl p-5 border border-border">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-foreground flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-500" /> Pending Moderation
+                <AlertTriangle className="w-4 h-4 text-amber-500" /> Moderation
               </h2>
-              <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium">
-                {MODERATION_QUEUE.length} pending
-              </span>
+              {!loading && (
+                <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium">
+                  {stats?.submissions.byStatus.pending ?? 0} pending
+                </span>
+              )}
             </div>
-            <div className="space-y-3">
-              {MODERATION_QUEUE.map((item, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{item.title}</p>
-                    <p className="text-xs text-foreground-muted">{item.community} · by {item.submittedBy} · {item.time}</p>
+            {loading ? <Skeleton className="h-40" /> : (
+              <div className="space-y-3">
+                {[
+                  { label: "Pending", value: stats?.submissions.byStatus.pending ?? 0, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-900/20" },
+                  { label: "Approved", value: stats?.submissions.byStatus.approved ?? 0, color: "text-green-600", bg: "bg-green-50 dark:bg-green-900/20" },
+                  { label: "Rejected", value: stats?.submissions.byStatus.rejected ?? 0, color: "text-red-500", bg: "bg-red-50 dark:bg-red-900/20" },
+                ].map(({ label, value, color, bg }) => (
+                  <div key={label} className={`flex items-center justify-between p-3 rounded-xl ${bg}`}>
+                    <span className="text-sm text-foreground">{label}</span>
+                    <span className={`text-2xl font-bold ${color}`}>{value}</span>
                   </div>
-                  <span className="ml-3 shrink-0 text-xs px-2 py-0.5 bg-background-tertiary border border-border rounded-full text-foreground-muted">
-                    {item.type}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <button className="mt-3 w-full py-2 text-xs text-primary font-medium border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors">
-              View Full Queue →
-            </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Community Management Table */}
+        {/* Community Overview Table */}
         <div className="bg-background-secondary rounded-2xl p-5 border border-border">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-foreground">Community Overview</h2>
-            <button className="text-xs text-primary hover:underline">Export CSV</button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-left">
-                  {["Community","Learners","Content","Contributors","Preservation","Status"].map(h => (
-                    <th key={h} className="pb-2 pr-4 text-xs font-medium text-foreground-muted whitespace-nowrap">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { name: "Lepcha",  learners: 1240, content: 385, contributors: 42, score: 35, status: "At Risk" },
-                  { name: "Bhutia",  learners: 1820, content: 385, contributors: 58, score: 48, status: "Vulnerable" },
-                  { name: "Limbu",   learners: 2100, content: 507, contributors: 71, score: 75, status: "Stable" },
-                  { name: "Tamang",  learners: 2450, content: 272, contributors: 39, score: 62, status: "Moderate" },
-                  { name: "Rai",     learners: 1890, content: 323, contributors: 47, score: 58, status: "Moderate" },
-                  { name: "Sherpa",  learners: 890,  content: 198, contributors: 28, score: 80, status: "Stable" },
-                ].map((row, i) => (
-                  <tr key={i} className="border-b border-border last:border-0 hover:bg-background-tertiary transition-colors">
-                    <td className="py-3 pr-4 font-medium text-foreground">{row.name}</td>
-                    <td className="py-3 pr-4 text-foreground-secondary">{row.learners.toLocaleString()}</td>
-                    <td className="py-3 pr-4 text-foreground-secondary">{row.content}</td>
-                    <td className="py-3 pr-4 text-foreground-secondary">{row.contributors}</td>
-                    <td className="py-3 pr-4">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
-                          <div
-                            className="h-full rounded-full"
-                            style={{
-                              width: `${row.score}%`,
-                              backgroundColor: row.score >= 70 ? "#16A34A" : row.score >= 50 ? "#D97706" : "#DC2626"
-                            }}
-                          />
-                        </div>
-                        <span className="text-xs text-foreground-muted w-8 shrink-0">{row.score}%</span>
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        row.status === "Stable"     ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" :
-                        row.status === "Moderate"   ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400" :
-                        row.status === "Vulnerable" ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400" :
-                        "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
-                      }`}>{row.status}</span>
-                    </td>
+          {loading ? <Skeleton className="h-48" /> : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-left">
+                    {["Community", "Members", "Content", "Pending", "Preservation", "Status"].map((h) => (
+                      <th key={h} className="pb-2 pr-4 text-xs font-medium text-foreground-muted whitespace-nowrap">{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {(stats?.communities ?? []).map((c) => {
+                    const { label, cls } = PRESERVATION_STATUS(c.preservationScore);
+                    return (
+                      <tr key={c.id} className="border-b border-border last:border-0 hover:bg-background-tertiary transition-colors">
+                        <td className="py-3 pr-4 font-medium text-foreground">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full shrink-0" style={{ background: c.colorPrimary }} />
+                            {c.name}
+                          </div>
+                        </td>
+                        <td className="py-3 pr-4 text-foreground-secondary">{c.memberCount.toLocaleString()}</td>
+                        <td className="py-3 pr-4 text-foreground-secondary">{c.totalApprovedContent}</td>
+                        <td className="py-3 pr-4">
+                          {c.pendingSubmissions > 0 ? (
+                            <span className="text-amber-500 font-semibold">{c.pendingSubmissions}</span>
+                          ) : (
+                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          )}
+                        </td>
+                        <td className="py-3 pr-4">
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
+                              <div
+                                className="h-full rounded-full"
+                                style={{
+                                  width: `${c.preservationScore}%`,
+                                  backgroundColor: c.preservationScore >= 70 ? "#16A34A" : c.preservationScore >= 50 ? "#D97706" : "#DC2626",
+                                }}
+                              />
+                            </div>
+                            <span className="text-xs text-foreground-muted w-8 shrink-0">{c.preservationScore}%</span>
+                          </div>
+                        </td>
+                        <td className="py-3">
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cls}`}>{label}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>

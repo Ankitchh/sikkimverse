@@ -166,10 +166,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       ? await uploadToSupabase(buffer, uniqueName, category, file.type)
       : await uploadLocally(buffer, uniqueName, category)
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       { url, filename: uniqueName, originalName: file.name, size: file.size, mimeType: file.type, category },
       { status: 201 },
     )
+
+    // Fire-and-forget: trigger embedding generation for audio/text content
+    if (category === 'audio') {
+      const contentType = formData.get('contentType') as string | null
+      const contentId   = formData.get('contentId') as string | null
+      if (contentType && contentId) {
+        const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
+        fetch(`${baseUrl}/api/embeddings/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-internal-key': process.env.INTERNAL_API_KEY ?? '' },
+          body: JSON.stringify({ contentType, contentId }),
+        }).catch((e) => console.warn('[upload] embedding trigger failed:', e))
+      }
+    }
+
+    return response
   } catch (error) {
     console.error('[POST /api/upload]', error)
     return NextResponse.json({ error: 'Failed to upload file. Please try again.' }, { status: 500 })
