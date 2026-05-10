@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Trash2, Save, Globe, ChevronLeft, Settings2,
@@ -25,10 +25,43 @@ interface KeyboardLayout {
   id: string;
   name: string;
   community: string;
+  communityId?: string;
   script: string;
   layoutType: "mobile" | "desktop" | "both";
   isActive: boolean;
   keys: KeyDef[];
+}
+
+interface DbLayout {
+  id: string;
+  communityId: string;
+  name: string;
+  layoutType: string;
+  isActive: boolean;
+  community?: { name: string; slug: string };
+  keys?: Array<{ id: string; row: number; col: number; width: number; primaryChar: string; primaryLabel: string; phoneticHint?: string | null; altChars?: unknown }>;
+}
+
+function mapDbLayout(l: DbLayout): KeyboardLayout {
+  return {
+    id: l.id,
+    name: l.name,
+    community: l.community?.name ?? "",
+    communityId: l.communityId,
+    script: "custom",
+    layoutType: (l.layoutType ?? "BOTH").toLowerCase() as "mobile" | "desktop" | "both",
+    isActive: l.isActive,
+    keys: (l.keys ?? []).map((k) => ({
+      id: k.id,
+      primary: k.primaryChar,
+      label: k.primaryLabel,
+      phonetic: k.phoneticHint ?? "",
+      alts: Array.isArray(k.altChars) ? (k.altChars as Array<{ char: string }>).map((a) => a.char).join(",") : "",
+      row: k.row,
+      col: k.col,
+      width: k.width,
+    })),
+  };
 }
 
 // Built-in templates per script
@@ -107,28 +140,50 @@ function makeKeysFromTemplate(script: string): KeyDef[] {
   return keys;
 }
 
-const SAMPLE_COMMUNITIES = ["Lepcha", "Bhutia", "Limbu", "Tamang", "Rai"];
 const SCRIPTS = ["lepcha", "tibetan", "limbu", "devanagari", "custom"];
+const FALLBACK_COMMUNITIES = ["Lepcha", "Bhutia", "Limbu", "Tamang", "Rai"];
 
 export default function KeyboardBuilderPage() {
-  const [layouts, setLayouts] = useState<KeyboardLayout[]>([
-    {
-      id: "1",
-      name: "Lepcha Standard",
-      community: "Lepcha",
-      script: "lepcha",
-      layoutType: "both",
-      isActive: true,
-      keys: makeKeysFromTemplate("lepcha"),
-    },
-  ]);
+  const [layouts, setLayouts] = useState<KeyboardLayout[]>([]);
+  const [communities, setCommunities] = useState<Array<{ id: string; name: string }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const [activeLayoutId, setActiveLayoutId] = useState("1");
+  const [activeLayoutId, setActiveLayoutId] = useState("");
   const [editingKey, setEditingKey] = useState<KeyDef | null>(null);
   const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
   const [saved, setSaved] = useState(false);
   const [showAddLayout, setShowAddLayout] = useState(false);
   const [newLayout, setNewLayout] = useState<{ name: string; community: string; script: string; layoutType: "mobile" | "desktop" | "both" }>({ name: "", community: "Lepcha", script: "lepcha", layoutType: "both" });
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/admin/keyboards").then((r) => r.ok ? r.json() : { layouts: [] }),
+      fetch("/api/communities?limit=50").then((r) => r.ok ? r.json() : { communities: [] }),
+    ]).then(([kbData, commData]) => {
+      const dbLayouts = (kbData.layouts ?? []) as DbLayout[];
+      if (dbLayouts.length > 0) {
+        setLayouts(dbLayouts.map(mapDbLayout));
+        setActiveLayoutId(dbLayouts[0].id);
+      } else {
+        // Seed a local default layout for first-time admin
+        const defaultLayout: KeyboardLayout = {
+          id: "temp-default",
+          name: "Lepcha Standard",
+          community: "Lepcha",
+          script: "lepcha",
+          layoutType: "both",
+          isActive: false,
+          keys: makeKeysFromTemplate("lepcha"),
+        };
+        setLayouts([defaultLayout]);
+        setActiveLayoutId("temp-default");
+      }
+      const comms = (commData.communities ?? []) as Array<{ id: string; name: string }>;
+      setCommunities(comms.length > 0 ? comms : FALLBACK_COMMUNITIES.map((n) => ({ id: n.toLowerCase(), name: n })));
+    }).finally(() => setLoading(false));
+  }, []);
 
   const activeLayout = layouts.find((l) => l.id === activeLayoutId) ?? layouts[0];
 
@@ -188,13 +243,15 @@ export default function KeyboardBuilderPage() {
   }, [activeLayout, addKey]);
 
   const addLayout = useCallback(() => {
-    const id = String(Date.now());
+    const id = `temp-${Date.now()}`;
+    const comm = communities.find((c) => c.name === newLayout.community);
     setLayouts((prev) => [
       ...prev,
       {
         id,
         name: newLayout.name || `${newLayout.community} Keyboard`,
         community: newLayout.community,
+        communityId: comm?.id,
         script: newLayout.script,
         layoutType: newLayout.layoutType,
         isActive: false,
@@ -213,10 +270,56 @@ export default function KeyboardBuilderPage() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    // In production: POST /api/admin/keyboards with layout data
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
-  }, []);
+    if (!activeLayout) return;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const communityId = activeLayout.communityId
+        ?? communities.find((c) => c.name === activeLayout.community)?.id;
+      if (!communityId) {
+        setSaveError("Could not resolve community. Please re-select.");
+        setSaving(false);
+        return;
+      }
+      const slug = activeLayout.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "keyboard";
+      const isNew = activeLayout.id.startsWith("temp-");
+      const payload = {
+        id: isNew ? undefined : activeLayout.id,
+        communityId,
+        name: activeLayout.name,
+        slug,
+        layoutType: activeLayout.layoutType.toUpperCase(),
+        isActive: activeLayout.isActive,
+        keys: activeLayout.keys.map((k, idx) => ({
+          row: k.row,
+          col: k.col,
+          width: k.width,
+          primaryChar: k.primary,
+          primaryLabel: k.label,
+          altChars: k.alts ? k.alts.split(",").filter(Boolean).map((c) => ({ char: c.trim(), label: c.trim() })) : [],
+          phoneticHint: k.phonetic || undefined,
+          sortOrder: idx,
+        })),
+      };
+      const res = await fetch("/api/admin/keyboards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json() as { layout?: { id: string }; error?: string };
+      if (!res.ok) { setSaveError(data.error ?? "Failed to save"); return; }
+      if (data.layout?.id) {
+        setLayouts((prev) => prev.map((l) => l.id === activeLayoutId ? { ...l, id: data.layout!.id, communityId } : l));
+        setActiveLayoutId(data.layout.id);
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch {
+      setSaveError("Network error. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  }, [activeLayout, activeLayoutId, communities]);
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-8">
@@ -242,16 +345,26 @@ export default function KeyboardBuilderPage() {
             </button>
             <button
               onClick={handleSave}
+              disabled={saving}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all",
+                "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all disabled:opacity-60",
                 saved ? "bg-emerald-600 text-white" : "bg-primary text-white hover:bg-primary/90"
               )}
             >
-              {saved ? <><CheckCircle2 className="w-4 h-4" /> Saved!</> : <><Save className="w-4 h-4" /> Save</>}
+              {saving ? <><Save className="w-4 h-4 animate-pulse" /> Saving…</> : saved ? <><CheckCircle2 className="w-4 h-4" /> Saved!</> : <><Save className="w-4 h-4" /> Save</>}
             </button>
           </div>
         </div>
       </div>
+
+      {saveError && (
+        <div className="max-w-7xl mx-auto px-4 pt-4">
+          <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 text-sm text-red-700 dark:text-red-400">
+            <Info className="w-4 h-4 shrink-0" />
+            {saveError}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 py-6 flex gap-6 flex-col lg:flex-row">
         {/* Sidebar: Layouts */}
@@ -320,11 +433,14 @@ export default function KeyboardBuilderPage() {
                   <div>
                     <label className="text-xs text-foreground-muted block mb-1">Community</label>
                     <select
-                      value={activeLayout.community}
-                      onChange={(e) => setLayouts((prev) => prev.map((l) => l.id === activeLayoutId ? { ...l, community: e.target.value } : l))}
+                      value={activeLayout.communityId ?? activeLayout.community}
+                      onChange={(e) => {
+                        const comm = communities.find((c) => c.id === e.target.value);
+                        setLayouts((prev) => prev.map((l) => l.id === activeLayoutId ? { ...l, community: comm?.name ?? e.target.value, communityId: e.target.value } : l));
+                      }}
                       className="w-full px-3 py-1.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-primary"
                     >
-                      {SAMPLE_COMMUNITIES.map((c) => <option key={c}>{c}</option>)}
+                      {communities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                   </div>
                   <div>
@@ -523,7 +639,7 @@ export default function KeyboardBuilderPage() {
                     onChange={(e) => setNewLayout((v) => ({ ...v, community: e.target.value }))}
                     className="w-full px-3 py-2 rounded-xl border border-border bg-background-secondary focus:outline-none focus:border-primary"
                   >
-                    {SAMPLE_COMMUNITIES.map((c) => <option key={c}>{c}</option>)}
+                    {communities.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
                   </select>
                 </div>
                 <div>
