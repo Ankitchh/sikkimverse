@@ -1530,6 +1530,38 @@ Guide the lost ones safely home`,
     console.log(`  ✅ Plan: ${plan.name} (₹${plan.priceInr})`)
   }
 
+  // ─── Lepcha Script Characters ─────────────────────────────────────────────────
+  console.log('\n✍️  Seeding Lepcha script characters...')
+  const lepchaCommunity = await prisma.community.findUnique({ where: { slug: 'lepcha' }, select: { id: true } })
+  if (lepchaCommunity) {
+    const lepchaChars = [
+      { character: 'ᰀ', unicode: 'U+1C00', phonetic: 'Ka',  ipa: '/ka/',  meaning: 'Consonant Ka',  group: 'Velars',   strokeCount: 3, sortOrder: 1 },
+      { character: 'ᰁ', unicode: 'U+1C01', phonetic: 'Kha', ipa: '/kʰa/', meaning: 'Consonant Kha', group: 'Velars',   strokeCount: 4, sortOrder: 2 },
+      { character: 'ᰂ', unicode: 'U+1C02', phonetic: 'Ga',  ipa: '/ɡa/',  meaning: 'Consonant Ga',  group: 'Velars',   strokeCount: 3, sortOrder: 3 },
+      { character: 'ᰃ', unicode: 'U+1C03', phonetic: 'Nga', ipa: '/ŋa/',  meaning: 'Consonant Nga', group: 'Velars',   strokeCount: 2, sortOrder: 4 },
+      { character: 'ᰄ', unicode: 'U+1C04', phonetic: 'Ca',  ipa: '/tɕa/', meaning: 'Consonant Ca',  group: 'Palatals', strokeCount: 3, sortOrder: 5 },
+      { character: 'ᰅ', unicode: 'U+1C05', phonetic: 'Cha', ipa: '/tɕʰa/',meaning: 'Consonant Cha', group: 'Palatals', strokeCount: 4, sortOrder: 6 },
+      { character: 'ᰆ', unicode: 'U+1C06', phonetic: 'Ja',  ipa: '/dʑa/', meaning: 'Consonant Ja',  group: 'Palatals', strokeCount: 3, sortOrder: 7 },
+      { character: 'ᰇ', unicode: 'U+1C07', phonetic: 'Nya', ipa: '/ɲa/',  meaning: 'Consonant Nya', group: 'Palatals', strokeCount: 3, sortOrder: 8 },
+      { character: 'ᰈ', unicode: 'U+1C08', phonetic: 'Ta',  ipa: '/ta/',  meaning: 'Consonant Ta',  group: 'Dentals',  strokeCount: 3, sortOrder: 9 },
+      { character: 'ᰉ', unicode: 'U+1C09', phonetic: 'Tha', ipa: '/tʰa/', meaning: 'Consonant Tha', group: 'Dentals',  strokeCount: 4, sortOrder: 10 },
+      { character: 'ᰊ', unicode: 'U+1C0A', phonetic: 'Da',  ipa: '/da/',  meaning: 'Consonant Da',  group: 'Dentals',  strokeCount: 3, sortOrder: 11 },
+      { character: 'ᰋ', unicode: 'U+1C0B', phonetic: 'Na',  ipa: '/na/',  meaning: 'Consonant Na',  group: 'Dentals',  strokeCount: 2, sortOrder: 12 },
+      { character: 'ᰌ', unicode: 'U+1C0C', phonetic: 'Pa',  ipa: '/pa/',  meaning: 'Consonant Pa',  group: 'Labials',  strokeCount: 3, sortOrder: 13 },
+      { character: 'ᰍ', unicode: 'U+1C0D', phonetic: 'Pha', ipa: '/pʰa/', meaning: 'Consonant Pha', group: 'Labials',  strokeCount: 4, sortOrder: 14 },
+      { character: 'ᰎ', unicode: 'U+1C0E', phonetic: 'Ba',  ipa: '/ba/',  meaning: 'Consonant Ba',  group: 'Labials',  strokeCount: 3, sortOrder: 15 },
+      { character: 'ᰏ', unicode: 'U+1C0F', phonetic: 'Ma',  ipa: '/ma/',  meaning: 'Consonant Ma',  group: 'Labials',  strokeCount: 2, sortOrder: 16 },
+    ]
+    for (const char of lepchaChars) {
+      await prisma.scriptCharacter.upsert({
+        where: { id: `lepcha-${char.unicode.replace('U+', '').toLowerCase()}` },
+        update: { ...char, isPublished: true, communityId: lepchaCommunity.id },
+        create: { id: `lepcha-${char.unicode.replace('U+', '').toLowerCase()}`, ...char, isPublished: true, communityId: lepchaCommunity.id },
+      })
+    }
+    console.log(`  ✅ ${lepchaChars.length} Lepcha script characters seeded`)
+  }
+
   console.log('\n🎉 Seed completed successfully!')
   console.log('\n📋 Summary:')
   console.log(`  • ${communityData.length} communities`)

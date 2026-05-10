@@ -264,6 +264,7 @@ function analyzeWriting(canvasRef: React.RefObject<HTMLCanvasElement | null>, ex
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function WritingPracticePage() {
+  const [characters, setCharacters] = useState<Character[]>(CHARACTERS);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [tool, setTool] = useState<Tool>("pen");
   const [strokeColor, setStrokeColor] = useState(STROKE_COLORS[0]);
@@ -275,9 +276,31 @@ export default function WritingPracticePage() {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showGuide, setShowGuide] = useState(true);
 
+  // Try to load characters from DB (Lepcha community)
+  useEffect(() => {
+    fetch('/api/scripts/characters?communitySlug=lepcha')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (Array.isArray(data?.characters) && data.characters.length > 0) {
+          setCharacters(data.characters.map((c: {
+            id: string; character: string; phonetic: string;
+            meaning: string | null; group: string | null; strokeCount: number;
+          }) => ({
+            id: c.id,
+            character: c.character,
+            phonetic: c.phonetic,
+            meaning: c.meaning ?? 'Lepcha character',
+            group: c.group ?? 'Script',
+            strokes: c.strokeCount,
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const { canvasRef, clearCanvas, hasStrokes } = useCanvas(tool, strokeColor, strokeWidth);
 
-  const currentChar = CHARACTERS[currentIndex];
+  const currentChar = characters[currentIndex];
 
   const handleCheck = () => {
     const score = analyzeWriting(canvasRef, currentChar.strokes);
@@ -287,7 +310,7 @@ export default function WritingPracticePage() {
   };
 
   const handleNext = () => {
-    if (currentIndex < CHARACTERS.length - 1) {
+    if (currentIndex < characters.length - 1) {
       setCurrentIndex((i) => i + 1);
       clearCanvas();
       setGrade(null);
@@ -325,11 +348,11 @@ export default function WritingPracticePage() {
           <div className="flex-1">
             <h1 className="font-bold text-foreground text-sm">Lepcha Script Writing Practice</h1>
             <p className="text-xs text-foreground-muted">
-              Character {currentIndex + 1} of {CHARACTERS.length} — {completed.size} completed
+              Character {currentIndex + 1} of {characters.length} — {completed.size} completed
             </p>
           </div>
           <div className="flex items-center gap-1.5">
-            {CHARACTERS.slice(0, 8).map((_, i) => (
+            {characters.slice(0, 8).map((_, i) => (
               <div
                 key={i}
                 onClick={() => { setCurrentIndex(i); clearCanvas(); setGrade(null); setAccuracy(0); }}
@@ -340,8 +363,8 @@ export default function WritingPracticePage() {
                 )}
               />
             ))}
-            {CHARACTERS.length > 8 && (
-              <span className="text-xs text-foreground-muted">+{CHARACTERS.length - 8}</span>
+            {characters.length > 8 && (
+              <span className="text-xs text-foreground-muted">+{characters.length - 8}</span>
             )}
           </div>
         </div>
@@ -353,7 +376,7 @@ export default function WritingPracticePage() {
           <div className="lg:col-span-1">
             <h2 className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-3">Characters</h2>
             <div className="grid grid-cols-4 lg:grid-cols-2 gap-1.5">
-              {CHARACTERS.map((char, i) => (
+              {characters.map((char, i) => (
                 <motion.button
                   key={char.id}
                   whileHover={{ scale: 1.05 }}
@@ -504,7 +527,7 @@ export default function WritingPracticePage() {
                 </button>
                 <button
                   onClick={handleNext}
-                  disabled={currentIndex === CHARACTERS.length - 1}
+                  disabled={currentIndex === characters.length - 1}
                   className="p-2 rounded-lg border border-border hover:bg-background-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -629,7 +652,7 @@ export default function WritingPracticePage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleNext}
-                    disabled={currentIndex === CHARACTERS.length - 1}
+                    disabled={currentIndex === characters.length - 1}
                     className="flex-1 py-3.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                   >
                     Next Character
@@ -645,7 +668,7 @@ export default function WritingPracticePage() {
                 <Star className="w-4 h-4 text-amber-500" />
                 <span>{completed.size * 25} XP earned</span>
               </div>
-              <span>{completed.size} / {CHARACTERS.length} characters completed</span>
+              <span>{completed.size} / {characters.length} characters completed</span>
             </div>
           </div>
         </div>
