@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useSession, signOut } from "next-auth/react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -166,21 +167,9 @@ function ThemeToggle() {
 
 // ── User menu ─────────────────────────────────────────────────────────────────
 
-interface MockUser {
-  name: string;
-  email: string;
-  role: string;
-  image?: string | null;
-  xp: number;
-}
-
-// Simulated session — replace with next-auth useSession when wired up
-function useSession(): { user: MockUser | null; status: "loading" | "authenticated" | "unauthenticated" } {
-  return { user: null, status: "unauthenticated" };
-}
-
 function UserMenu() {
-  const { user, status } = useSession();
+  const { data: session, status } = useSession();
+  const user = session?.user ?? null;
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -226,17 +215,17 @@ function UserMenu() {
         aria-haspopup="menu"
       >
         <Avatar
-          src={user.image}
-          name={user.name}
+          src={user?.image}
+          name={user?.name ?? "U"}
           size="sm"
           ring="primary"
         />
         <div className="hidden md:flex flex-col items-start leading-none">
           <span className="text-sm font-medium text-foreground truncate max-w-[120px]">
-            {user.name}
+            {user?.name ?? "User"}
           </span>
           <Badge variant="cultural" size="sm" className="mt-0.5">
-            {user.role}
+            {(user as { role?: string })?.role ?? "Member"}
           </Badge>
         </div>
         <ChevronDown
@@ -264,12 +253,12 @@ function UserMenu() {
           >
             {/* User info */}
             <div className="px-3 py-2.5 border-b border-border">
-              <p className="text-sm font-semibold text-foreground">{user.name}</p>
-              <p className="text-xs text-foreground-muted truncate">{user.email}</p>
+              <p className="text-sm font-semibold text-foreground">{user?.name ?? "User"}</p>
+              <p className="text-xs text-foreground-muted truncate">{user?.email ?? ""}</p>
               <div className="mt-1.5 flex items-center gap-1.5">
                 <Star className="h-3 w-3 text-gold" aria-hidden />
                 <span className="text-xs text-gold-dark font-medium">
-                  {user.xp.toLocaleString()} XP
+                  {((user as { xp?: number })?.xp ?? 0).toLocaleString()} XP
                 </span>
               </div>
             </div>
@@ -305,7 +294,7 @@ function UserMenu() {
                 role="menuitem"
                 onClick={() => {
                   setOpen(false);
-                  // signOut() — wire up when next-auth is connected
+                  signOut({ callbackUrl: "/" });
                 }}
               >
                 <LogOut className="h-4 w-4" aria-hidden />

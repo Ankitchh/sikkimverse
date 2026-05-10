@@ -18,7 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 
 interface AudioPlayerProps {
-  src: string;
+  src?: string;
   title?: string;
   subtitle?: string;
   variant?: "compact" | "full";
@@ -45,6 +45,31 @@ export default function AudioPlayer({
   className,
   autoPlay = false,
 }: AudioPlayerProps) {
+  // No src — show a "not available" placeholder instead of a broken player
+  if (!src) {
+    if (variant === "compact") {
+      return (
+        <div className={cn("flex items-center gap-3 px-3 py-2 rounded-xl bg-background-secondary border border-border opacity-60", className)}>
+          <div className="h-8 w-8 rounded-full bg-border flex items-center justify-center flex-shrink-0">
+            <Play className="h-3.5 w-3.5 text-foreground-muted translate-x-0.5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            {title && <p className="text-sm font-medium text-foreground-muted truncate">{title}</p>}
+            <p className="text-xs text-foreground-muted">Audio not available</p>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className={cn("rounded-2xl bg-background-secondary border border-dashed border-border p-6 flex flex-col items-center gap-2 text-center", className)}>
+        <div className="h-10 w-10 rounded-full bg-border/50 flex items-center justify-center">
+          <Play className="h-5 w-5 text-foreground-muted translate-x-0.5" />
+        </div>
+        {title && <p className="text-sm font-medium text-foreground">{title}</p>}
+        <p className="text-xs text-foreground-muted">Audio recording not yet available</p>
+      </div>
+    );
+  }
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +79,7 @@ export default function AudioPlayer({
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [barHeights, setBarHeights] = useState<number[]>(
     Array.from({ length: BAR_COUNT }, () => 0.2)
   );
@@ -85,7 +111,8 @@ export default function AudioPlayer({
     const onPlay = () => setIsPlaying(true);
     const onPause = () => setIsPlaying(false);
     const onWaiting = () => setIsLoading(true);
-    const onCanPlay = () => setIsLoading(false);
+    const onCanPlay = () => { setIsLoading(false); setHasError(false); };
+    const onError = () => { setIsLoading(false); setHasError(true); setIsPlaying(false); };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("durationchange", onDurationChange);
@@ -94,6 +121,7 @@ export default function AudioPlayer({
     audio.addEventListener("pause", onPause);
     audio.addEventListener("waiting", onWaiting);
     audio.addEventListener("canplay", onCanPlay);
+    audio.addEventListener("error", onError);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
@@ -103,6 +131,7 @@ export default function AudioPlayer({
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("waiting", onWaiting);
       audio.removeEventListener("canplay", onCanPlay);
+      audio.removeEventListener("error", onError);
     };
   }, []);
 
@@ -167,6 +196,17 @@ export default function AudioPlayer({
       : Volume2;
 
   if (variant === "compact") {
+    if (hasError) {
+      return (
+        <div className={cn("flex items-center gap-3 px-3 py-2 rounded-xl bg-background-secondary border border-border opacity-60", className)}>
+          <div className="h-8 w-8 rounded-full bg-border flex items-center justify-center flex-shrink-0">
+            <Play className="h-3.5 w-3.5 text-foreground-muted translate-x-0.5" />
+          </div>
+          {title && <p className="text-sm font-medium text-foreground-muted truncate flex-1">{title}</p>}
+          <span className="text-xs text-foreground-muted">Unavailable</span>
+        </div>
+      );
+    }
     return (
       <div
         className={cn(
@@ -212,6 +252,18 @@ export default function AudioPlayer({
         <span className="text-xs text-foreground-muted tabular-nums flex-shrink-0">
           {formatTime(currentTime)}
         </span>
+      </div>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <div className={cn("rounded-2xl bg-background-secondary border border-dashed border-border p-6 flex flex-col items-center gap-2 text-center", className)}>
+        <div className="h-10 w-10 rounded-full bg-border/50 flex items-center justify-center">
+          <Play className="h-5 w-5 text-foreground-muted translate-x-0.5" />
+        </div>
+        {title && <p className="text-sm font-medium text-foreground">{title}</p>}
+        <p className="text-xs text-foreground-muted">Audio could not be loaded</p>
       </div>
     );
   }

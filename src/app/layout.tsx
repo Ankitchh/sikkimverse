@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { SessionProvider } from "@/components/providers/SessionProvider";
 import { Header } from "@/components/layout/Header";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Footer } from "@/components/layout/Footer";
@@ -146,6 +147,7 @@ export default function RootLayout({
           "pb-20 md:pb-0",
         ].join(" ")}
       >
+        <SessionProvider>
         <ThemeProvider defaultTheme="dark" storageKey="sikkimverse-theme">
           {/* Skip-to-content link for accessibility */}
           <a
@@ -180,6 +182,7 @@ export default function RootLayout({
           {/* Mobile bottom navigation */}
           <MobileNav />
         </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

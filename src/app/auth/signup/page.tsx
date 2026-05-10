@@ -249,11 +249,6 @@ export default function SignUpPage() {
               </span>
             </label>
 
-            {/* Captcha placeholder */}
-            <div className="rounded-xl border border-border bg-background-tertiary p-3 text-center">
-              <p className="text-xs text-foreground-muted">🛡️ Cloudflare Turnstile CAPTCHA loads here in production</p>
-            </div>
-
             <button
               type="submit"
               disabled={loading || !agreed}

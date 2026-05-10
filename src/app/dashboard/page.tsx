@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
-// Role → dashboard route mapping
 const ROLE_ROUTES: Record<string, string> = {
   ADMIN:               "/dashboard/admin",
   SUPER_ADMIN:         "/dashboard/admin",
@@ -16,21 +16,20 @@ const ROLE_ROUTES: Record<string, string> = {
   PUBLIC_USER:         "/learn",
 };
 
-// Simulated session hook — replace with next-auth's useSession when fully wired
-function useRoleFromSession(): { role: string | null; loading: boolean } {
-  // In production this reads from the JWT session. For now we default to PUBLIC_USER.
-  return { role: "PUBLIC_USER", loading: false };
-}
-
 export default function DashboardIndex() {
   const router = useRouter();
-  const { role, loading } = useRoleFromSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (loading || !role) return;
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.replace("/auth/signin?callbackUrl=/dashboard");
+      return;
+    }
+    const role = (session?.user as { role?: string })?.role ?? "PUBLIC_USER";
     const dest = ROLE_ROUTES[role] ?? "/learn";
     router.replace(dest);
-  }, [role, loading, router]);
+  }, [status, session, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
