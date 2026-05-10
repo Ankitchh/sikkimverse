@@ -311,6 +311,80 @@ async function main() {
   })
   console.log(`  ✅ Contributor: ${contributorUser.email}`)
 
+  // ─── Create Demo Accounts (all password: Demo@123) ────────────────────────────
+  console.log('\n🎭 Creating demo accounts...')
+  const demoHash = await bcrypt.hash('Demo@123', 12)
+
+  const demoUsers = [
+    {
+      name: 'Demo Student',
+      email: 'student@sikkimverse.demo',
+      role: 'PUBLIC_USER' as const,
+      communityId: null,
+      xp: 150,
+      streak: 3,
+    },
+    {
+      name: 'Demo Contributor',
+      email: 'contributor@sikkimverse.demo',
+      role: 'CONTRIBUTOR' as const,
+      communityId: communities['lepcha'].id,
+      xp: 2200,
+      streak: 12,
+    },
+    {
+      name: 'Demo Moderator',
+      email: 'moderator@sikkimverse.demo',
+      role: 'MODERATOR' as const,
+      communityId: communities['bhutia'].id,
+      xp: 5400,
+      streak: 21,
+    },
+    {
+      name: 'Demo Community President',
+      email: 'president@sikkimverse.demo',
+      role: 'COMMUNITY_PRESIDENT' as const,
+      communityId: communities['limbu'].id,
+      xp: 8800,
+      streak: 45,
+    },
+    {
+      name: 'Demo Government Officer',
+      email: 'govt@sikkimverse.demo',
+      role: 'GOVERNMENT_OFFICER' as const,
+      communityId: null,
+      xp: 3100,
+      streak: 9,
+    },
+    {
+      name: 'Demo Admin',
+      email: 'admin@sikkimverse.demo',
+      role: 'ADMIN' as const,
+      communityId: null,
+      xp: 12000,
+      streak: 60,
+    },
+    {
+      name: 'Demo Super Admin',
+      email: 'superadmin@sikkimverse.demo',
+      role: 'SUPER_ADMIN' as const,
+      communityId: null,
+      xp: 25000,
+      streak: 90,
+    },
+  ]
+
+  for (const u of demoUsers) {
+    await prisma.user.create({
+      data: {
+        ...u,
+        passwordHash: demoHash,
+        emailVerified: new Date(),
+      },
+    })
+    console.log(`  ✅ ${u.role}: ${u.email}`)
+  }
+
   // ─── Create Courses ───────────────────────────────────────────────────────────
   console.log('\n📚 Creating courses...')
 
@@ -1422,6 +1496,14 @@ Guide the lost ones safely home`,
   console.log(`  • ${festivalData.length} festivals`)
   console.log(`\n🔑 Admin credentials: admin@sikkimverse.com / Admin@123`)
   console.log(`🔑 Contributor credentials: contributor@sikkimverse.com / Contributor@123`)
+  console.log(`\n🎭 Demo accounts (all password: Demo@123):`)
+  console.log(`  student@sikkimverse.demo`)
+  console.log(`  contributor@sikkimverse.demo`)
+  console.log(`  moderator@sikkimverse.demo`)
+  console.log(`  president@sikkimverse.demo`)
+  console.log(`  govt@sikkimverse.demo`)
+  console.log(`  admin@sikkimverse.demo`)
+  console.log(`  superadmin@sikkimverse.demo`)
 }
 
 main()

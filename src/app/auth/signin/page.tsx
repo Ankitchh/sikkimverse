@@ -21,8 +21,13 @@ type SignInFormValues = z.infer<typeof signInSchema>;
 
 // Demo accounts shown on the login page for presentations / testing
 const DEMO_ACCOUNTS = [
-  { label: "Admin", emoji: "👑", email: "admin@sikkimverse.com", password: "Admin@123", color: "from-purple-600 to-indigo-600" },
-  { label: "Contributor", emoji: "🎤", email: "contributor@sikkimverse.com", password: "Contributor@123", color: "from-emerald-600 to-teal-600" },
+  { label: "Student",      emoji: "📚", role: "Public User",          email: "student@sikkimverse.demo",     password: "Demo@123", color: "from-slate-500 to-slate-600" },
+  { label: "Contributor",  emoji: "🎤", role: "Contributor",          email: "contributor@sikkimverse.demo",  password: "Demo@123", color: "from-emerald-600 to-teal-600" },
+  { label: "Moderator",    emoji: "🛡️", role: "Moderator",            email: "moderator@sikkimverse.demo",   password: "Demo@123", color: "from-blue-600 to-cyan-600" },
+  { label: "President",    emoji: "🏛️", role: "Community President",  email: "president@sikkimverse.demo",   password: "Demo@123", color: "from-amber-600 to-orange-600" },
+  { label: "Govt Officer", emoji: "🏗️", role: "Government Officer",   email: "govt@sikkimverse.demo",        password: "Demo@123", color: "from-violet-600 to-purple-600" },
+  { label: "Admin",        emoji: "👑", role: "Admin",                email: "admin@sikkimverse.demo",       password: "Demo@123", color: "from-purple-600 to-indigo-600" },
+  { label: "Super Admin",  emoji: "⚡", role: "Super Admin",          email: "superadmin@sikkimverse.demo",  password: "Demo@123", color: "from-rose-600 to-red-600" },
 ];
 
 function GoogleIcon() {
@@ -187,32 +192,34 @@ function SignInForm() {
             <div className="flex items-center gap-2 mb-3">
               <Zap className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-primary">Quick Demo Login</span>
-              <span className="text-xs text-foreground-muted ml-auto">For testing &amp; demos</span>
+              <span className="text-xs text-foreground-muted ml-auto bg-primary/10 px-2 py-0.5 rounded-full">pw: Demo@123</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-1.5">
               {DEMO_ACCOUNTS.map((acc) => (
                 <motion.button
                   key={acc.label}
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => handleDemoLogin(acc.email, acc.password, acc.label)}
                   disabled={!!demoLoading || isLoading}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-2.5 rounded-xl text-white text-sm font-semibold",
+                    "w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-white text-sm",
                     "bg-gradient-to-r transition-opacity disabled:opacity-60",
                     acc.color
                   )}
                 >
+                  <span className="text-base leading-none flex-shrink-0">{acc.emoji}</span>
+                  <span className="font-semibold flex-shrink-0">{acc.label}</span>
+                  <span className="text-white/65 text-[11px] truncate flex-1 text-left">{acc.email}</span>
                   {demoLoading === acc.label ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
                   ) : (
-                    <span>{acc.emoji}</span>
+                    <ArrowRight className="w-3.5 h-3.5 flex-shrink-0 opacity-60" />
                   )}
-                  {acc.label}
                 </motion.button>
               ))}
             </div>
-            <p className="text-[10px] text-foreground-muted mt-2 text-center">
-              Run <code className="bg-background-secondary px-1 rounded text-foreground">npx tsx prisma/seed.ts</code> to create demo accounts
+            <p className="text-[10px] text-foreground-muted mt-2.5 text-center">
+              Run <code className="bg-background px-1 rounded text-foreground">npx tsx prisma/seed.ts</code> to populate demo accounts
             </p>
           </div>
 
