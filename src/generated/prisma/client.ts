@@ -206,3 +206,33 @@ export type PasswordReset = Prisma.PasswordResetModel
  * 
  */
 export type ContentEmbedding = Prisma.ContentEmbeddingModel
+/**
+ * Model ScriptCharacter
+ * 
+ */
+export type ScriptCharacter = Prisma.ScriptCharacterModel
+/**
+ * Model ScriptLesson
+ * 
+ */
+export type ScriptLesson = Prisma.ScriptLessonModel
+/**
+ * Model ScriptLessonProgress
+ * 
+ */
+export type ScriptLessonProgress = Prisma.ScriptLessonProgressModel
+/**
+ * Model WritingScore
+ * 
+ */
+export type WritingScore = Prisma.WritingScoreModel
+/**
+ * Model KeyboardLayout
+ * 
+ */
+export type KeyboardLayout = Prisma.KeyboardLayoutModel
+/**
+ * Model KeyboardKey
+ * 
+ */
+export type KeyboardKey = Prisma.KeyboardKeyModel

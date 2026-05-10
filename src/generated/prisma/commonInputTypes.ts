@@ -552,6 +552,84 @@ export type EnumSubscriptionStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumSubscriptionStatusFilter<$PrismaModel>
 }
 
+export type EnumScriptLessonTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ScriptLessonType | Prisma.EnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ScriptLessonType[] | Prisma.ListEnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ScriptLessonType[] | Prisma.ListEnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumScriptLessonTypeFilter<$PrismaModel> | $Enums.ScriptLessonType
+}
+
+export type EnumScriptLessonStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ScriptLessonStatus | Prisma.EnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ScriptLessonStatus[] | Prisma.ListEnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ScriptLessonStatus[] | Prisma.ListEnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumScriptLessonStatusFilter<$PrismaModel> | $Enums.ScriptLessonStatus
+}
+
+export type EnumScriptLessonTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ScriptLessonType | Prisma.EnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ScriptLessonType[] | Prisma.ListEnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ScriptLessonType[] | Prisma.ListEnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumScriptLessonTypeWithAggregatesFilter<$PrismaModel> | $Enums.ScriptLessonType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumScriptLessonTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumScriptLessonTypeFilter<$PrismaModel>
+}
+
+export type EnumScriptLessonStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ScriptLessonStatus | Prisma.EnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ScriptLessonStatus[] | Prisma.ListEnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ScriptLessonStatus[] | Prisma.ListEnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumScriptLessonStatusWithAggregatesFilter<$PrismaModel> | $Enums.ScriptLessonStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumScriptLessonStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumScriptLessonStatusFilter<$PrismaModel>
+}
+
+export type FloatFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatFilter<$PrismaModel> | number
+}
+
+export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedFloatFilter<$PrismaModel>
+  _min?: Prisma.NestedFloatFilter<$PrismaModel>
+  _max?: Prisma.NestedFloatFilter<$PrismaModel>
+}
+
+export type EnumKeyboardLayoutTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.KeyboardLayoutType | Prisma.EnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.KeyboardLayoutType[] | Prisma.ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KeyboardLayoutType[] | Prisma.ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKeyboardLayoutTypeFilter<$PrismaModel> | $Enums.KeyboardLayoutType
+}
+
+export type EnumKeyboardLayoutTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.KeyboardLayoutType | Prisma.EnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.KeyboardLayoutType[] | Prisma.ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KeyboardLayoutType[] | Prisma.ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKeyboardLayoutTypeWithAggregatesFilter<$PrismaModel> | $Enums.KeyboardLayoutType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumKeyboardLayoutTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumKeyboardLayoutTypeFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1047,6 +1125,73 @@ export type NestedEnumSubscriptionStatusWithAggregatesFilter<$PrismaModel = neve
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumSubscriptionStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumSubscriptionStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumScriptLessonTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ScriptLessonType | Prisma.EnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ScriptLessonType[] | Prisma.ListEnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ScriptLessonType[] | Prisma.ListEnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumScriptLessonTypeFilter<$PrismaModel> | $Enums.ScriptLessonType
+}
+
+export type NestedEnumScriptLessonStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ScriptLessonStatus | Prisma.EnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ScriptLessonStatus[] | Prisma.ListEnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ScriptLessonStatus[] | Prisma.ListEnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumScriptLessonStatusFilter<$PrismaModel> | $Enums.ScriptLessonStatus
+}
+
+export type NestedEnumScriptLessonTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ScriptLessonType | Prisma.EnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ScriptLessonType[] | Prisma.ListEnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ScriptLessonType[] | Prisma.ListEnumScriptLessonTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumScriptLessonTypeWithAggregatesFilter<$PrismaModel> | $Enums.ScriptLessonType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumScriptLessonTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumScriptLessonTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumScriptLessonStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ScriptLessonStatus | Prisma.EnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ScriptLessonStatus[] | Prisma.ListEnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ScriptLessonStatus[] | Prisma.ListEnumScriptLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumScriptLessonStatusWithAggregatesFilter<$PrismaModel> | $Enums.ScriptLessonStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumScriptLessonStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumScriptLessonStatusFilter<$PrismaModel>
+}
+
+export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedFloatFilter<$PrismaModel>
+  _min?: Prisma.NestedFloatFilter<$PrismaModel>
+  _max?: Prisma.NestedFloatFilter<$PrismaModel>
+}
+
+export type NestedEnumKeyboardLayoutTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.KeyboardLayoutType | Prisma.EnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.KeyboardLayoutType[] | Prisma.ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KeyboardLayoutType[] | Prisma.ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKeyboardLayoutTypeFilter<$PrismaModel> | $Enums.KeyboardLayoutType
+}
+
+export type NestedEnumKeyboardLayoutTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.KeyboardLayoutType | Prisma.EnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.KeyboardLayoutType[] | Prisma.ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.KeyboardLayoutType[] | Prisma.ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumKeyboardLayoutTypeWithAggregatesFilter<$PrismaModel> | $Enums.KeyboardLayoutType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumKeyboardLayoutTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumKeyboardLayoutTypeFilter<$PrismaModel>
 }
 
 

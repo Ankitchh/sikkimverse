@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   CreditCard, CheckCircle2, AlertCircle, Loader2, Zap, Calendar,
@@ -121,9 +121,12 @@ function PlanCard({ plan, onSelect, isLoading, disabled }: {
   );
 }
 
-export default function BillingPage() {
+function BillingContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isRequired = searchParams.get("required") === "1";
+  const isSuccess = searchParams.get("success") === "1";
 
   const [plans, setPlans] = useState<Plan[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -249,6 +252,40 @@ export default function BillingPage() {
             <p className="text-sm text-foreground-secondary">Manage your plan and payment history</p>
           </div>
         </div>
+
+        {/* Paywall banner — shown when redirected from a subscription-gated route */}
+        {isRequired && !isActive && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded-xl p-4"
+          >
+            <Shield className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Subscription required</p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                Voice and writing practice require an active Heritage subscription. Start your free trial below.
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Success banner */}
+        {isSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 flex items-start gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-700 rounded-xl p-4"
+          >
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">Subscription activated!</p>
+              <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-0.5">
+                Welcome to SIKKIMVERSE Heritage. You now have full access to all practice features.
+              </p>
+            </div>
+          </motion.div>
+        )}
 
         {error && (
           <div className="mb-6 flex items-start gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
@@ -384,5 +421,17 @@ export default function BillingPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function BillingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 text-primary animate-spin" />
+      </div>
+    }>
+      <BillingContent />
+    </Suspense>
   );
 }

@@ -113,34 +113,55 @@ export async function PATCH(
         },
       })
 
-      // Update the actual content record status
+      // Update the actual content record status — use contentId when available for precision
       const contentStatus = status === 'APPROVED' ? 'APPROVED' : 'REJECTED'
+      const cid = submission.contentId
 
       if (submission.type === 'WORD') {
-        await tx.word.updateMany({
-          where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING' },
-          data: { status: contentStatus },
-        })
+        if (cid) {
+          await tx.word.update({ where: { id: cid }, data: { status: contentStatus } }).catch(() => null)
+        } else {
+          await tx.word.updateMany({
+            where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING', createdAt: { gte: new Date(submission.submittedAt.getTime() - 60_000) } },
+            data: { status: contentStatus },
+          })
+        }
       } else if (submission.type === 'STORY') {
-        await tx.story.updateMany({
-          where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING' },
-          data: { status: contentStatus },
-        })
+        if (cid) {
+          await tx.story.update({ where: { id: cid }, data: { status: contentStatus } }).catch(() => null)
+        } else {
+          await tx.story.updateMany({
+            where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING', createdAt: { gte: new Date(submission.submittedAt.getTime() - 60_000) } },
+            data: { status: contentStatus },
+          })
+        }
       } else if (submission.type === 'SONG') {
-        await tx.song.updateMany({
-          where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING' },
-          data: { status: contentStatus },
-        })
+        if (cid) {
+          await tx.song.update({ where: { id: cid }, data: { status: contentStatus } }).catch(() => null)
+        } else {
+          await tx.song.updateMany({
+            where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING', createdAt: { gte: new Date(submission.submittedAt.getTime() - 60_000) } },
+            data: { status: contentStatus },
+          })
+        }
       } else if (submission.type === 'RECORDING') {
-        await tx.recording.updateMany({
-          where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING' },
-          data: { status: contentStatus },
-        })
+        if (cid) {
+          await tx.recording.update({ where: { id: cid }, data: { status: contentStatus } }).catch(() => null)
+        } else {
+          await tx.recording.updateMany({
+            where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING', createdAt: { gte: new Date(submission.submittedAt.getTime() - 60_000) } },
+            data: { status: contentStatus },
+          })
+        }
       } else if (submission.type === 'VIDEO') {
-        await tx.video.updateMany({
-          where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING' },
-          data: { status: contentStatus },
-        })
+        if (cid) {
+          await tx.video.update({ where: { id: cid }, data: { status: contentStatus } }).catch(() => null)
+        } else {
+          await tx.video.updateMany({
+            where: { communityId: submission.communityId, contributorId: submission.contributorId, status: 'PENDING', createdAt: { gte: new Date(submission.submittedAt.getTime() - 60_000) } },
+            data: { status: contentStatus },
+          })
+        }
       }
 
       // Award XP if approved

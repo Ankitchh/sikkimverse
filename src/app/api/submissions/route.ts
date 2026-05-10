@@ -249,7 +249,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         contentId = video.id
       }
 
-      return { submission, contentId }
+      // Link the content record ID back to the submission
+      if (contentId) {
+        await tx.submission.update({
+          where: { id: submission.id },
+          data: { contentId },
+        })
+      }
+
+      return { submission: { ...submission, contentId }, contentId }
     })
 
     return NextResponse.json(

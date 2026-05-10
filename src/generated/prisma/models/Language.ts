@@ -252,6 +252,7 @@ export type LanguageWhereInput = {
   dialects?: Prisma.DialectListRelationFilter
   courses?: Prisma.CourseListRelationFilter
   words?: Prisma.WordListRelationFilter
+  scriptCharacters?: Prisma.ScriptCharacterListRelationFilter
 }
 
 export type LanguageOrderByWithRelationInput = {
@@ -268,6 +269,7 @@ export type LanguageOrderByWithRelationInput = {
   dialects?: Prisma.DialectOrderByRelationAggregateInput
   courses?: Prisma.CourseOrderByRelationAggregateInput
   words?: Prisma.WordOrderByRelationAggregateInput
+  scriptCharacters?: Prisma.ScriptCharacterOrderByRelationAggregateInput
 }
 
 export type LanguageWhereUniqueInput = Prisma.AtLeast<{
@@ -287,6 +289,7 @@ export type LanguageWhereUniqueInput = Prisma.AtLeast<{
   dialects?: Prisma.DialectListRelationFilter
   courses?: Prisma.CourseListRelationFilter
   words?: Prisma.WordListRelationFilter
+  scriptCharacters?: Prisma.ScriptCharacterListRelationFilter
 }, "id" | "code">
 
 export type LanguageOrderByWithAggregationInput = {
@@ -334,6 +337,7 @@ export type LanguageCreateInput = {
   dialects?: Prisma.DialectCreateNestedManyWithoutLanguageInput
   courses?: Prisma.CourseCreateNestedManyWithoutLanguageInput
   words?: Prisma.WordCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageUncheckedCreateInput = {
@@ -349,6 +353,7 @@ export type LanguageUncheckedCreateInput = {
   dialects?: Prisma.DialectUncheckedCreateNestedManyWithoutLanguageInput
   courses?: Prisma.CourseUncheckedCreateNestedManyWithoutLanguageInput
   words?: Prisma.WordUncheckedCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageUpdateInput = {
@@ -364,6 +369,7 @@ export type LanguageUpdateInput = {
   dialects?: Prisma.DialectUpdateManyWithoutLanguageNestedInput
   courses?: Prisma.CourseUpdateManyWithoutLanguageNestedInput
   words?: Prisma.WordUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageUncheckedUpdateInput = {
@@ -379,6 +385,7 @@ export type LanguageUncheckedUpdateInput = {
   dialects?: Prisma.DialectUncheckedUpdateManyWithoutLanguageNestedInput
   courses?: Prisma.CourseUncheckedUpdateManyWithoutLanguageNestedInput
   words?: Prisma.WordUncheckedUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageCreateManyInput = {
@@ -475,6 +482,11 @@ export type LanguageScalarRelationFilter = {
   isNot?: Prisma.LanguageWhereInput
 }
 
+export type LanguageNullableScalarRelationFilter = {
+  is?: Prisma.LanguageWhereInput | null
+  isNot?: Prisma.LanguageWhereInput | null
+}
+
 export type LanguageCreateNestedManyWithoutCommunityInput = {
   create?: Prisma.XOR<Prisma.LanguageCreateWithoutCommunityInput, Prisma.LanguageUncheckedCreateWithoutCommunityInput> | Prisma.LanguageCreateWithoutCommunityInput[] | Prisma.LanguageUncheckedCreateWithoutCommunityInput[]
   connectOrCreate?: Prisma.LanguageCreateOrConnectWithoutCommunityInput | Prisma.LanguageCreateOrConnectWithoutCommunityInput[]
@@ -563,6 +575,22 @@ export type LanguageUpdateOneRequiredWithoutWordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LanguageUpdateToOneWithWhereWithoutWordsInput, Prisma.LanguageUpdateWithoutWordsInput>, Prisma.LanguageUncheckedUpdateWithoutWordsInput>
 }
 
+export type LanguageCreateNestedOneWithoutScriptCharactersInput = {
+  create?: Prisma.XOR<Prisma.LanguageCreateWithoutScriptCharactersInput, Prisma.LanguageUncheckedCreateWithoutScriptCharactersInput>
+  connectOrCreate?: Prisma.LanguageCreateOrConnectWithoutScriptCharactersInput
+  connect?: Prisma.LanguageWhereUniqueInput
+}
+
+export type LanguageUpdateOneWithoutScriptCharactersNestedInput = {
+  create?: Prisma.XOR<Prisma.LanguageCreateWithoutScriptCharactersInput, Prisma.LanguageUncheckedCreateWithoutScriptCharactersInput>
+  connectOrCreate?: Prisma.LanguageCreateOrConnectWithoutScriptCharactersInput
+  upsert?: Prisma.LanguageUpsertWithoutScriptCharactersInput
+  disconnect?: Prisma.LanguageWhereInput | boolean
+  delete?: Prisma.LanguageWhereInput | boolean
+  connect?: Prisma.LanguageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LanguageUpdateToOneWithWhereWithoutScriptCharactersInput, Prisma.LanguageUpdateWithoutScriptCharactersInput>, Prisma.LanguageUncheckedUpdateWithoutScriptCharactersInput>
+}
+
 export type LanguageCreateWithoutCommunityInput = {
   id?: string
   name: string
@@ -575,6 +603,7 @@ export type LanguageCreateWithoutCommunityInput = {
   dialects?: Prisma.DialectCreateNestedManyWithoutLanguageInput
   courses?: Prisma.CourseCreateNestedManyWithoutLanguageInput
   words?: Prisma.WordCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageUncheckedCreateWithoutCommunityInput = {
@@ -589,6 +618,7 @@ export type LanguageUncheckedCreateWithoutCommunityInput = {
   dialects?: Prisma.DialectUncheckedCreateNestedManyWithoutLanguageInput
   courses?: Prisma.CourseUncheckedCreateNestedManyWithoutLanguageInput
   words?: Prisma.WordUncheckedCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageCreateOrConnectWithoutCommunityInput = {
@@ -644,6 +674,7 @@ export type LanguageCreateWithoutDialectsInput = {
   community: Prisma.CommunityCreateNestedOneWithoutLanguagesInput
   courses?: Prisma.CourseCreateNestedManyWithoutLanguageInput
   words?: Prisma.WordCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageUncheckedCreateWithoutDialectsInput = {
@@ -658,6 +689,7 @@ export type LanguageUncheckedCreateWithoutDialectsInput = {
   createdAt?: Date | string
   courses?: Prisma.CourseUncheckedCreateNestedManyWithoutLanguageInput
   words?: Prisma.WordUncheckedCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageCreateOrConnectWithoutDialectsInput = {
@@ -688,6 +720,7 @@ export type LanguageUpdateWithoutDialectsInput = {
   community?: Prisma.CommunityUpdateOneRequiredWithoutLanguagesNestedInput
   courses?: Prisma.CourseUpdateManyWithoutLanguageNestedInput
   words?: Prisma.WordUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageUncheckedUpdateWithoutDialectsInput = {
@@ -702,6 +735,7 @@ export type LanguageUncheckedUpdateWithoutDialectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   courses?: Prisma.CourseUncheckedUpdateManyWithoutLanguageNestedInput
   words?: Prisma.WordUncheckedUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageCreateWithoutCoursesInput = {
@@ -716,6 +750,7 @@ export type LanguageCreateWithoutCoursesInput = {
   community: Prisma.CommunityCreateNestedOneWithoutLanguagesInput
   dialects?: Prisma.DialectCreateNestedManyWithoutLanguageInput
   words?: Prisma.WordCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageUncheckedCreateWithoutCoursesInput = {
@@ -730,6 +765,7 @@ export type LanguageUncheckedCreateWithoutCoursesInput = {
   createdAt?: Date | string
   dialects?: Prisma.DialectUncheckedCreateNestedManyWithoutLanguageInput
   words?: Prisma.WordUncheckedCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageCreateOrConnectWithoutCoursesInput = {
@@ -760,6 +796,7 @@ export type LanguageUpdateWithoutCoursesInput = {
   community?: Prisma.CommunityUpdateOneRequiredWithoutLanguagesNestedInput
   dialects?: Prisma.DialectUpdateManyWithoutLanguageNestedInput
   words?: Prisma.WordUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageUncheckedUpdateWithoutCoursesInput = {
@@ -774,6 +811,7 @@ export type LanguageUncheckedUpdateWithoutCoursesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dialects?: Prisma.DialectUncheckedUpdateManyWithoutLanguageNestedInput
   words?: Prisma.WordUncheckedUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageCreateWithoutWordsInput = {
@@ -788,6 +826,7 @@ export type LanguageCreateWithoutWordsInput = {
   community: Prisma.CommunityCreateNestedOneWithoutLanguagesInput
   dialects?: Prisma.DialectCreateNestedManyWithoutLanguageInput
   courses?: Prisma.CourseCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageUncheckedCreateWithoutWordsInput = {
@@ -802,6 +841,7 @@ export type LanguageUncheckedCreateWithoutWordsInput = {
   createdAt?: Date | string
   dialects?: Prisma.DialectUncheckedCreateNestedManyWithoutLanguageInput
   courses?: Prisma.CourseUncheckedCreateNestedManyWithoutLanguageInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedCreateNestedManyWithoutLanguageInput
 }
 
 export type LanguageCreateOrConnectWithoutWordsInput = {
@@ -832,6 +872,7 @@ export type LanguageUpdateWithoutWordsInput = {
   community?: Prisma.CommunityUpdateOneRequiredWithoutLanguagesNestedInput
   dialects?: Prisma.DialectUpdateManyWithoutLanguageNestedInput
   courses?: Prisma.CourseUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageUncheckedUpdateWithoutWordsInput = {
@@ -846,6 +887,83 @@ export type LanguageUncheckedUpdateWithoutWordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dialects?: Prisma.DialectUncheckedUpdateManyWithoutLanguageNestedInput
   courses?: Prisma.CourseUncheckedUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedUpdateManyWithoutLanguageNestedInput
+}
+
+export type LanguageCreateWithoutScriptCharactersInput = {
+  id?: string
+  name: string
+  code: string
+  scriptType?: string | null
+  description?: string | null
+  speakerCount?: number
+  endangermentLevel?: $Enums.EndangermentLevel
+  createdAt?: Date | string
+  community: Prisma.CommunityCreateNestedOneWithoutLanguagesInput
+  dialects?: Prisma.DialectCreateNestedManyWithoutLanguageInput
+  courses?: Prisma.CourseCreateNestedManyWithoutLanguageInput
+  words?: Prisma.WordCreateNestedManyWithoutLanguageInput
+}
+
+export type LanguageUncheckedCreateWithoutScriptCharactersInput = {
+  id?: string
+  name: string
+  code: string
+  communityId: string
+  scriptType?: string | null
+  description?: string | null
+  speakerCount?: number
+  endangermentLevel?: $Enums.EndangermentLevel
+  createdAt?: Date | string
+  dialects?: Prisma.DialectUncheckedCreateNestedManyWithoutLanguageInput
+  courses?: Prisma.CourseUncheckedCreateNestedManyWithoutLanguageInput
+  words?: Prisma.WordUncheckedCreateNestedManyWithoutLanguageInput
+}
+
+export type LanguageCreateOrConnectWithoutScriptCharactersInput = {
+  where: Prisma.LanguageWhereUniqueInput
+  create: Prisma.XOR<Prisma.LanguageCreateWithoutScriptCharactersInput, Prisma.LanguageUncheckedCreateWithoutScriptCharactersInput>
+}
+
+export type LanguageUpsertWithoutScriptCharactersInput = {
+  update: Prisma.XOR<Prisma.LanguageUpdateWithoutScriptCharactersInput, Prisma.LanguageUncheckedUpdateWithoutScriptCharactersInput>
+  create: Prisma.XOR<Prisma.LanguageCreateWithoutScriptCharactersInput, Prisma.LanguageUncheckedCreateWithoutScriptCharactersInput>
+  where?: Prisma.LanguageWhereInput
+}
+
+export type LanguageUpdateToOneWithWhereWithoutScriptCharactersInput = {
+  where?: Prisma.LanguageWhereInput
+  data: Prisma.XOR<Prisma.LanguageUpdateWithoutScriptCharactersInput, Prisma.LanguageUncheckedUpdateWithoutScriptCharactersInput>
+}
+
+export type LanguageUpdateWithoutScriptCharactersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  scriptType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  speakerCount?: Prisma.IntFieldUpdateOperationsInput | number
+  endangermentLevel?: Prisma.EnumEndangermentLevelFieldUpdateOperationsInput | $Enums.EndangermentLevel
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneRequiredWithoutLanguagesNestedInput
+  dialects?: Prisma.DialectUpdateManyWithoutLanguageNestedInput
+  courses?: Prisma.CourseUpdateManyWithoutLanguageNestedInput
+  words?: Prisma.WordUpdateManyWithoutLanguageNestedInput
+}
+
+export type LanguageUncheckedUpdateWithoutScriptCharactersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  communityId?: Prisma.StringFieldUpdateOperationsInput | string
+  scriptType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  speakerCount?: Prisma.IntFieldUpdateOperationsInput | number
+  endangermentLevel?: Prisma.EnumEndangermentLevelFieldUpdateOperationsInput | $Enums.EndangermentLevel
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dialects?: Prisma.DialectUncheckedUpdateManyWithoutLanguageNestedInput
+  courses?: Prisma.CourseUncheckedUpdateManyWithoutLanguageNestedInput
+  words?: Prisma.WordUncheckedUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageCreateManyCommunityInput = {
@@ -871,6 +989,7 @@ export type LanguageUpdateWithoutCommunityInput = {
   dialects?: Prisma.DialectUpdateManyWithoutLanguageNestedInput
   courses?: Prisma.CourseUpdateManyWithoutLanguageNestedInput
   words?: Prisma.WordUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageUncheckedUpdateWithoutCommunityInput = {
@@ -885,6 +1004,7 @@ export type LanguageUncheckedUpdateWithoutCommunityInput = {
   dialects?: Prisma.DialectUncheckedUpdateManyWithoutLanguageNestedInput
   courses?: Prisma.CourseUncheckedUpdateManyWithoutLanguageNestedInput
   words?: Prisma.WordUncheckedUpdateManyWithoutLanguageNestedInput
+  scriptCharacters?: Prisma.ScriptCharacterUncheckedUpdateManyWithoutLanguageNestedInput
 }
 
 export type LanguageUncheckedUpdateManyWithoutCommunityInput = {
@@ -907,12 +1027,14 @@ export type LanguageCountOutputType = {
   dialects: number
   courses: number
   words: number
+  scriptCharacters: number
 }
 
 export type LanguageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   dialects?: boolean | LanguageCountOutputTypeCountDialectsArgs
   courses?: boolean | LanguageCountOutputTypeCountCoursesArgs
   words?: boolean | LanguageCountOutputTypeCountWordsArgs
+  scriptCharacters?: boolean | LanguageCountOutputTypeCountScriptCharactersArgs
 }
 
 /**
@@ -946,6 +1068,13 @@ export type LanguageCountOutputTypeCountWordsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.WordWhereInput
 }
 
+/**
+ * LanguageCountOutputType without action
+ */
+export type LanguageCountOutputTypeCountScriptCharactersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ScriptCharacterWhereInput
+}
+
 
 export type LanguageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -961,6 +1090,7 @@ export type LanguageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   dialects?: boolean | Prisma.Language$dialectsArgs<ExtArgs>
   courses?: boolean | Prisma.Language$coursesArgs<ExtArgs>
   words?: boolean | Prisma.Language$wordsArgs<ExtArgs>
+  scriptCharacters?: boolean | Prisma.Language$scriptCharactersArgs<ExtArgs>
   _count?: boolean | Prisma.LanguageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["language"]>
 
@@ -1008,6 +1138,7 @@ export type LanguageInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   dialects?: boolean | Prisma.Language$dialectsArgs<ExtArgs>
   courses?: boolean | Prisma.Language$coursesArgs<ExtArgs>
   words?: boolean | Prisma.Language$wordsArgs<ExtArgs>
+  scriptCharacters?: boolean | Prisma.Language$scriptCharactersArgs<ExtArgs>
   _count?: boolean | Prisma.LanguageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LanguageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1024,6 +1155,7 @@ export type $LanguagePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     dialects: Prisma.$DialectPayload<ExtArgs>[]
     courses: Prisma.$CoursePayload<ExtArgs>[]
     words: Prisma.$WordPayload<ExtArgs>[]
+    scriptCharacters: Prisma.$ScriptCharacterPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1433,6 +1565,7 @@ export interface Prisma__LanguageClient<T, Null = never, ExtArgs extends runtime
   dialects<T extends Prisma.Language$dialectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$dialectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DialectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   courses<T extends Prisma.Language$coursesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$coursesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   words<T extends Prisma.Language$wordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$wordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  scriptCharacters<T extends Prisma.Language$scriptCharactersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$scriptCharactersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScriptCharacterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1941,6 +2074,30 @@ export type Language$wordsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.WordScalarFieldEnum | Prisma.WordScalarFieldEnum[]
+}
+
+/**
+ * Language.scriptCharacters
+ */
+export type Language$scriptCharactersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ScriptCharacter
+   */
+  select?: Prisma.ScriptCharacterSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ScriptCharacter
+   */
+  omit?: Prisma.ScriptCharacterOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ScriptCharacterInclude<ExtArgs> | null
+  where?: Prisma.ScriptCharacterWhereInput
+  orderBy?: Prisma.ScriptCharacterOrderByWithRelationInput | Prisma.ScriptCharacterOrderByWithRelationInput[]
+  cursor?: Prisma.ScriptCharacterWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ScriptCharacterScalarFieldEnum | Prisma.ScriptCharacterScalarFieldEnum[]
 }
 
 /**

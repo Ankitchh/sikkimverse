@@ -32,6 +32,7 @@ export type SubmissionMinAggregateOutputType = {
   moderatorId: string | null
   status: $Enums.ContentStatus | null
   rejectionReason: string | null
+  contentId: string | null
   submittedAt: Date | null
   reviewedAt: Date | null
 }
@@ -44,6 +45,7 @@ export type SubmissionMaxAggregateOutputType = {
   moderatorId: string | null
   status: $Enums.ContentStatus | null
   rejectionReason: string | null
+  contentId: string | null
   submittedAt: Date | null
   reviewedAt: Date | null
 }
@@ -56,6 +58,7 @@ export type SubmissionCountAggregateOutputType = {
   moderatorId: number
   status: number
   rejectionReason: number
+  contentId: number
   submittedAt: number
   reviewedAt: number
   _all: number
@@ -70,6 +73,7 @@ export type SubmissionMinAggregateInputType = {
   moderatorId?: true
   status?: true
   rejectionReason?: true
+  contentId?: true
   submittedAt?: true
   reviewedAt?: true
 }
@@ -82,6 +86,7 @@ export type SubmissionMaxAggregateInputType = {
   moderatorId?: true
   status?: true
   rejectionReason?: true
+  contentId?: true
   submittedAt?: true
   reviewedAt?: true
 }
@@ -94,6 +99,7 @@ export type SubmissionCountAggregateInputType = {
   moderatorId?: true
   status?: true
   rejectionReason?: true
+  contentId?: true
   submittedAt?: true
   reviewedAt?: true
   _all?: true
@@ -179,6 +185,7 @@ export type SubmissionGroupByOutputType = {
   moderatorId: string | null
   status: $Enums.ContentStatus
   rejectionReason: string | null
+  contentId: string | null
   submittedAt: Date
   reviewedAt: Date | null
   _count: SubmissionCountAggregateOutputType | null
@@ -212,6 +219,7 @@ export type SubmissionWhereInput = {
   moderatorId?: Prisma.StringNullableFilter<"Submission"> | string | null
   status?: Prisma.EnumContentStatusFilter<"Submission"> | $Enums.ContentStatus
   rejectionReason?: Prisma.StringNullableFilter<"Submission"> | string | null
+  contentId?: Prisma.StringNullableFilter<"Submission"> | string | null
   submittedAt?: Prisma.DateTimeFilter<"Submission"> | Date | string
   reviewedAt?: Prisma.DateTimeNullableFilter<"Submission"> | Date | string | null
   community?: Prisma.XOR<Prisma.CommunityScalarRelationFilter, Prisma.CommunityWhereInput>
@@ -227,6 +235,7 @@ export type SubmissionOrderByWithRelationInput = {
   moderatorId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   rejectionReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  contentId?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   community?: Prisma.CommunityOrderByWithRelationInput
@@ -245,6 +254,7 @@ export type SubmissionWhereUniqueInput = Prisma.AtLeast<{
   moderatorId?: Prisma.StringNullableFilter<"Submission"> | string | null
   status?: Prisma.EnumContentStatusFilter<"Submission"> | $Enums.ContentStatus
   rejectionReason?: Prisma.StringNullableFilter<"Submission"> | string | null
+  contentId?: Prisma.StringNullableFilter<"Submission"> | string | null
   submittedAt?: Prisma.DateTimeFilter<"Submission"> | Date | string
   reviewedAt?: Prisma.DateTimeNullableFilter<"Submission"> | Date | string | null
   community?: Prisma.XOR<Prisma.CommunityScalarRelationFilter, Prisma.CommunityWhereInput>
@@ -260,6 +270,7 @@ export type SubmissionOrderByWithAggregationInput = {
   moderatorId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   rejectionReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  contentId?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SubmissionCountOrderByAggregateInput
@@ -278,6 +289,7 @@ export type SubmissionScalarWhereWithAggregatesInput = {
   moderatorId?: Prisma.StringNullableWithAggregatesFilter<"Submission"> | string | null
   status?: Prisma.EnumContentStatusWithAggregatesFilter<"Submission"> | $Enums.ContentStatus
   rejectionReason?: Prisma.StringNullableWithAggregatesFilter<"Submission"> | string | null
+  contentId?: Prisma.StringNullableWithAggregatesFilter<"Submission"> | string | null
   submittedAt?: Prisma.DateTimeWithAggregatesFilter<"Submission"> | Date | string
   reviewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Submission"> | Date | string | null
 }
@@ -287,6 +299,7 @@ export type SubmissionCreateInput = {
   type: $Enums.SubmissionType
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
   community: Prisma.CommunityCreateNestedOneWithoutSubmissionsInput
@@ -302,6 +315,7 @@ export type SubmissionUncheckedCreateInput = {
   moderatorId?: string | null
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
 }
@@ -311,6 +325,7 @@ export type SubmissionUpdateInput = {
   type?: Prisma.EnumSubmissionTypeFieldUpdateOperationsInput | $Enums.SubmissionType
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   community?: Prisma.CommunityUpdateOneRequiredWithoutSubmissionsNestedInput
@@ -326,6 +341,7 @@ export type SubmissionUncheckedUpdateInput = {
   moderatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -338,6 +354,7 @@ export type SubmissionCreateManyInput = {
   moderatorId?: string | null
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
 }
@@ -347,6 +364,7 @@ export type SubmissionUpdateManyMutationInput = {
   type?: Prisma.EnumSubmissionTypeFieldUpdateOperationsInput | $Enums.SubmissionType
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -359,6 +377,7 @@ export type SubmissionUncheckedUpdateManyInput = {
   moderatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -381,6 +400,7 @@ export type SubmissionCountOrderByAggregateInput = {
   moderatorId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   rejectionReason?: Prisma.SortOrder
+  contentId?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
 }
@@ -393,6 +413,7 @@ export type SubmissionMaxOrderByAggregateInput = {
   moderatorId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   rejectionReason?: Prisma.SortOrder
+  contentId?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
 }
@@ -405,6 +426,7 @@ export type SubmissionMinOrderByAggregateInput = {
   moderatorId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   rejectionReason?: Prisma.SortOrder
+  contentId?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
 }
@@ -544,6 +566,7 @@ export type SubmissionCreateWithoutModeratorInput = {
   type: $Enums.SubmissionType
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
   community: Prisma.CommunityCreateNestedOneWithoutSubmissionsInput
@@ -557,6 +580,7 @@ export type SubmissionUncheckedCreateWithoutModeratorInput = {
   contributorId: string
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
 }
@@ -576,6 +600,7 @@ export type SubmissionCreateWithoutContributorInput = {
   type: $Enums.SubmissionType
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
   community: Prisma.CommunityCreateNestedOneWithoutSubmissionsInput
@@ -589,6 +614,7 @@ export type SubmissionUncheckedCreateWithoutContributorInput = {
   moderatorId?: string | null
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
 }
@@ -630,6 +656,7 @@ export type SubmissionScalarWhereInput = {
   moderatorId?: Prisma.StringNullableFilter<"Submission"> | string | null
   status?: Prisma.EnumContentStatusFilter<"Submission"> | $Enums.ContentStatus
   rejectionReason?: Prisma.StringNullableFilter<"Submission"> | string | null
+  contentId?: Prisma.StringNullableFilter<"Submission"> | string | null
   submittedAt?: Prisma.DateTimeFilter<"Submission"> | Date | string
   reviewedAt?: Prisma.DateTimeNullableFilter<"Submission"> | Date | string | null
 }
@@ -655,6 +682,7 @@ export type SubmissionCreateWithoutCommunityInput = {
   type: $Enums.SubmissionType
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
   contributor: Prisma.UserCreateNestedOneWithoutSubmissionsInput
@@ -668,6 +696,7 @@ export type SubmissionUncheckedCreateWithoutCommunityInput = {
   moderatorId?: string | null
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
 }
@@ -705,6 +734,7 @@ export type SubmissionCreateManyModeratorInput = {
   contributorId: string
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
 }
@@ -716,6 +746,7 @@ export type SubmissionCreateManyContributorInput = {
   moderatorId?: string | null
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
 }
@@ -725,6 +756,7 @@ export type SubmissionUpdateWithoutModeratorInput = {
   type?: Prisma.EnumSubmissionTypeFieldUpdateOperationsInput | $Enums.SubmissionType
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   community?: Prisma.CommunityUpdateOneRequiredWithoutSubmissionsNestedInput
@@ -738,6 +770,7 @@ export type SubmissionUncheckedUpdateWithoutModeratorInput = {
   contributorId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -749,6 +782,7 @@ export type SubmissionUncheckedUpdateManyWithoutModeratorInput = {
   contributorId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -758,6 +792,7 @@ export type SubmissionUpdateWithoutContributorInput = {
   type?: Prisma.EnumSubmissionTypeFieldUpdateOperationsInput | $Enums.SubmissionType
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   community?: Prisma.CommunityUpdateOneRequiredWithoutSubmissionsNestedInput
@@ -771,6 +806,7 @@ export type SubmissionUncheckedUpdateWithoutContributorInput = {
   moderatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -782,6 +818,7 @@ export type SubmissionUncheckedUpdateManyWithoutContributorInput = {
   moderatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -793,6 +830,7 @@ export type SubmissionCreateManyCommunityInput = {
   moderatorId?: string | null
   status?: $Enums.ContentStatus
   rejectionReason?: string | null
+  contentId?: string | null
   submittedAt?: Date | string
   reviewedAt?: Date | string | null
 }
@@ -802,6 +840,7 @@ export type SubmissionUpdateWithoutCommunityInput = {
   type?: Prisma.EnumSubmissionTypeFieldUpdateOperationsInput | $Enums.SubmissionType
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contributor?: Prisma.UserUpdateOneRequiredWithoutSubmissionsNestedInput
@@ -815,6 +854,7 @@ export type SubmissionUncheckedUpdateWithoutCommunityInput = {
   moderatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -826,6 +866,7 @@ export type SubmissionUncheckedUpdateManyWithoutCommunityInput = {
   moderatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus
   rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -840,6 +881,7 @@ export type SubmissionSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   moderatorId?: boolean
   status?: boolean
   rejectionReason?: boolean
+  contentId?: boolean
   submittedAt?: boolean
   reviewedAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
@@ -855,6 +897,7 @@ export type SubmissionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   moderatorId?: boolean
   status?: boolean
   rejectionReason?: boolean
+  contentId?: boolean
   submittedAt?: boolean
   reviewedAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
@@ -870,6 +913,7 @@ export type SubmissionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   moderatorId?: boolean
   status?: boolean
   rejectionReason?: boolean
+  contentId?: boolean
   submittedAt?: boolean
   reviewedAt?: boolean
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
@@ -885,11 +929,12 @@ export type SubmissionSelectScalar = {
   moderatorId?: boolean
   status?: boolean
   rejectionReason?: boolean
+  contentId?: boolean
   submittedAt?: boolean
   reviewedAt?: boolean
 }
 
-export type SubmissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "communityId" | "contributorId" | "moderatorId" | "status" | "rejectionReason" | "submittedAt" | "reviewedAt", ExtArgs["result"]["submission"]>
+export type SubmissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "communityId" | "contributorId" | "moderatorId" | "status" | "rejectionReason" | "contentId" | "submittedAt" | "reviewedAt", ExtArgs["result"]["submission"]>
 export type SubmissionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   community?: boolean | Prisma.CommunityDefaultArgs<ExtArgs>
   contributor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -921,6 +966,7 @@ export type $SubmissionPayload<ExtArgs extends runtime.Types.Extensions.Internal
     moderatorId: string | null
     status: $Enums.ContentStatus
     rejectionReason: string | null
+    contentId: string | null
     submittedAt: Date
     reviewedAt: Date | null
   }, ExtArgs["result"]["submission"]>
@@ -1356,6 +1402,7 @@ export interface SubmissionFieldRefs {
   readonly moderatorId: Prisma.FieldRef<"Submission", 'String'>
   readonly status: Prisma.FieldRef<"Submission", 'ContentStatus'>
   readonly rejectionReason: Prisma.FieldRef<"Submission", 'String'>
+  readonly contentId: Prisma.FieldRef<"Submission", 'String'>
   readonly submittedAt: Prisma.FieldRef<"Submission", 'DateTime'>
   readonly reviewedAt: Prisma.FieldRef<"Submission", 'DateTime'>
 }

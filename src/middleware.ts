@@ -162,6 +162,23 @@ export async function middleware(request: NextRequest) {
       return response
     }
 
+    // Subscription gate: practice routes require ACTIVE or TRIALING subscription
+    if (requiresSubscription(pathname)) {
+      const subStatus = token.subscriptionStatus as string | null | undefined
+      const subEnd = token.subscriptionEnd as string | null | undefined
+      const isActive =
+        (subStatus === 'ACTIVE' || subStatus === 'TRIALING') &&
+        (subEnd ? new Date(subEnd) > new Date() : true)
+
+      if (!isActive) {
+        const billingUrl = new URL('/settings/billing', request.url)
+        billingUrl.searchParams.set('required', '1')
+        const response = NextResponse.redirect(billingUrl)
+        applySecurityHeaders(response)
+        return response
+      }
+    }
+
     // Role-based dashboard guards
     const requiredRoles = getDashboardRoles(pathname)
     if (requiredRoles) {

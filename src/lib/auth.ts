@@ -95,6 +95,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.communityId = (user as { communityId?: string | null }).communityId ?? null
         token.xp = (user as { xp?: number }).xp ?? 0
         token.streak = (user as { streak?: number }).streak ?? 0
+
+        // Load subscription status at sign-in so middleware can gate routes without a DB call
+        try {
+          const sub = await prisma.userSubscription.findUnique({
+            where: { userId: user.id as string },
+            select: { status: true, currentPeriodEnd: true },
+          })
+          token.subscriptionStatus = sub?.status ?? null
+          token.subscriptionEnd = sub?.currentPeriodEnd?.toISOString() ?? null
+        } catch {
+          token.subscriptionStatus = null
+          token.subscriptionEnd = null
+        }
       }
 
       // Handle session update calls (e.g. after profile changes)
@@ -103,6 +116,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (session.communityId !== undefined) token.communityId = session.communityId
         if (typeof session.xp === 'number') token.xp = session.xp
         if (typeof session.streak === 'number') token.streak = session.streak
+        if (session.subscriptionStatus !== undefined) token.subscriptionStatus = session.subscriptionStatus
       }
 
       return token
@@ -115,6 +129,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.communityId = (token.communityId as string | null) ?? null
         session.user.xp = (token.xp as number) ?? 0
         session.user.streak = (token.streak as number) ?? 0
+        session.user.subscriptionStatus = (token.subscriptionStatus as string | null) ?? null
       }
       return session
     },

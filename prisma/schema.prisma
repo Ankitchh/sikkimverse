@@ -627,6 +627,7 @@ model Submission {
   moderatorId     String?
   status          ContentStatus  @default(PENDING)
   rejectionReason String?        @db.Text
+  contentId       String?        // ID of the created content record (Word, Story, etc.)
   submittedAt     DateTime       @default(now())
   reviewedAt      DateTime?
 

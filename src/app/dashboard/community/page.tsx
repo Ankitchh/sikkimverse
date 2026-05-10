@@ -91,11 +91,12 @@ export default function CommunityDashboard() {
   const reviewSubmission = useCallback(async (id: string, action: "approve" | "reject") => {
     setActionLoading(id);
     try {
-      const body: { action: string; rejectionReason?: string } = { action };
+      const status = action === "approve" ? "APPROVED" : "REJECTED";
+      const body: { status: string; rejectionReason?: string } = { status };
       if (action === "reject" && rejReason) body.rejectionReason = rejReason;
 
       const res = await fetch(`/api/submissions/${id}/review`, {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });

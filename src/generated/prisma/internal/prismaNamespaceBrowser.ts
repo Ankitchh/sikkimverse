@@ -83,7 +83,13 @@ export const ModelName = {
   RevenueShare: 'RevenueShare',
   EmailVerificationToken: 'EmailVerificationToken',
   PasswordReset: 'PasswordReset',
-  ContentEmbedding: 'ContentEmbedding'
+  ContentEmbedding: 'ContentEmbedding',
+  ScriptCharacter: 'ScriptCharacter',
+  ScriptLesson: 'ScriptLesson',
+  ScriptLessonProgress: 'ScriptLessonProgress',
+  WritingScore: 'WritingScore',
+  KeyboardLayout: 'KeyboardLayout',
+  KeyboardKey: 'KeyboardKey'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -449,6 +455,7 @@ export const SubmissionScalarFieldEnum = {
   moderatorId: 'moderatorId',
   status: 'status',
   rejectionReason: 'rejectionReason',
+  contentId: 'contentId',
   submittedAt: 'submittedAt',
   reviewedAt: 'reviewedAt'
 } as const
@@ -595,6 +602,112 @@ export const ContentEmbeddingScalarFieldEnum = {
 } as const
 
 export type ContentEmbeddingScalarFieldEnum = (typeof ContentEmbeddingScalarFieldEnum)[keyof typeof ContentEmbeddingScalarFieldEnum]
+
+
+export const ScriptCharacterScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  languageId: 'languageId',
+  character: 'character',
+  unicode: 'unicode',
+  phonetic: 'phonetic',
+  ipa: 'ipa',
+  meaning: 'meaning',
+  strokeCount: 'strokeCount',
+  strokeData: 'strokeData',
+  audioUrl: 'audioUrl',
+  sortOrder: 'sortOrder',
+  group: 'group',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScriptCharacterScalarFieldEnum = (typeof ScriptCharacterScalarFieldEnum)[keyof typeof ScriptCharacterScalarFieldEnum]
+
+
+export const ScriptLessonScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  characterId: 'characterId',
+  type: 'type',
+  status: 'status',
+  title: 'title',
+  instructions: 'instructions',
+  stepOrder: 'stepOrder',
+  xpReward: 'xpReward',
+  referenceData: 'referenceData',
+  strokeAnimation: 'strokeAnimation',
+  audioUrl: 'audioUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScriptLessonScalarFieldEnum = (typeof ScriptLessonScalarFieldEnum)[keyof typeof ScriptLessonScalarFieldEnum]
+
+
+export const ScriptLessonProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  lessonId: 'lessonId',
+  completed: 'completed',
+  score: 'score',
+  attempts: 'attempts',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ScriptLessonProgressScalarFieldEnum = (typeof ScriptLessonProgressScalarFieldEnum)[keyof typeof ScriptLessonProgressScalarFieldEnum]
+
+
+export const WritingScoreScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  characterId: 'characterId',
+  score: 'score',
+  grade: 'grade',
+  accuracy: 'accuracy',
+  strokeScore: 'strokeScore',
+  imageData: 'imageData',
+  feedback: 'feedback',
+  createdAt: 'createdAt'
+} as const
+
+export type WritingScoreScalarFieldEnum = (typeof WritingScoreScalarFieldEnum)[keyof typeof WritingScoreScalarFieldEnum]
+
+
+export const KeyboardLayoutScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  layoutType: 'layoutType',
+  isActive: 'isActive',
+  version: 'version',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type KeyboardLayoutScalarFieldEnum = (typeof KeyboardLayoutScalarFieldEnum)[keyof typeof KeyboardLayoutScalarFieldEnum]
+
+
+export const KeyboardKeyScalarFieldEnum = {
+  id: 'id',
+  layoutId: 'layoutId',
+  row: 'row',
+  col: 'col',
+  width: 'width',
+  primaryChar: 'primaryChar',
+  primaryLabel: 'primaryLabel',
+  altChars: 'altChars',
+  phoneticHint: 'phoneticHint',
+  audioUrl: 'audioUrl',
+  sortOrder: 'sortOrder'
+} as const
+
+export type KeyboardKeyScalarFieldEnum = (typeof KeyboardKeyScalarFieldEnum)[keyof typeof KeyboardKeyScalarFieldEnum]
 
 
 export const SortOrder = {

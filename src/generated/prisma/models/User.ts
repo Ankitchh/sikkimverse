@@ -303,6 +303,9 @@ export type UserWhereInput = {
   subscription?: Prisma.XOR<Prisma.UserSubscriptionNullableScalarRelationFilter, Prisma.UserSubscriptionWhereInput> | null
   emailVerifications?: Prisma.EmailVerificationTokenListRelationFilter
   passwordResets?: Prisma.PasswordResetListRelationFilter
+  scriptProgress?: Prisma.ScriptLessonProgressListRelationFilter
+  writingScores?: Prisma.WritingScoreListRelationFilter
+  keyboardsCreated?: Prisma.KeyboardLayoutListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -338,6 +341,9 @@ export type UserOrderByWithRelationInput = {
   subscription?: Prisma.UserSubscriptionOrderByWithRelationInput
   emailVerifications?: Prisma.EmailVerificationTokenOrderByRelationAggregateInput
   passwordResets?: Prisma.PasswordResetOrderByRelationAggregateInput
+  scriptProgress?: Prisma.ScriptLessonProgressOrderByRelationAggregateInput
+  writingScores?: Prisma.WritingScoreOrderByRelationAggregateInput
+  keyboardsCreated?: Prisma.KeyboardLayoutOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -376,6 +382,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   subscription?: Prisma.XOR<Prisma.UserSubscriptionNullableScalarRelationFilter, Prisma.UserSubscriptionWhereInput> | null
   emailVerifications?: Prisma.EmailVerificationTokenListRelationFilter
   passwordResets?: Prisma.PasswordResetListRelationFilter
+  scriptProgress?: Prisma.ScriptLessonProgressListRelationFilter
+  writingScores?: Prisma.WritingScoreListRelationFilter
+  keyboardsCreated?: Prisma.KeyboardLayoutListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -450,6 +459,9 @@ export type UserCreateInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -484,6 +496,9 @@ export type UserUncheckedCreateInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUpdateInput = {
@@ -518,6 +533,9 @@ export type UserUpdateInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -552,6 +570,9 @@ export type UserUncheckedUpdateInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -991,6 +1012,48 @@ export type UserUpdateOneRequiredWithoutPasswordResetsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPasswordResetsInput, Prisma.UserUpdateWithoutPasswordResetsInput>, Prisma.UserUncheckedUpdateWithoutPasswordResetsInput>
 }
 
+export type UserCreateNestedOneWithoutScriptProgressInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutScriptProgressInput, Prisma.UserUncheckedCreateWithoutScriptProgressInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutScriptProgressInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutScriptProgressNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutScriptProgressInput, Prisma.UserUncheckedCreateWithoutScriptProgressInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutScriptProgressInput
+  upsert?: Prisma.UserUpsertWithoutScriptProgressInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutScriptProgressInput, Prisma.UserUpdateWithoutScriptProgressInput>, Prisma.UserUncheckedUpdateWithoutScriptProgressInput>
+}
+
+export type UserCreateNestedOneWithoutWritingScoresInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWritingScoresInput, Prisma.UserUncheckedCreateWithoutWritingScoresInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWritingScoresInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutWritingScoresNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWritingScoresInput, Prisma.UserUncheckedCreateWithoutWritingScoresInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWritingScoresInput
+  upsert?: Prisma.UserUpsertWithoutWritingScoresInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWritingScoresInput, Prisma.UserUpdateWithoutWritingScoresInput>, Prisma.UserUncheckedUpdateWithoutWritingScoresInput>
+}
+
+export type UserCreateNestedOneWithoutKeyboardsCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutKeyboardsCreatedInput, Prisma.UserUncheckedCreateWithoutKeyboardsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutKeyboardsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutKeyboardsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutKeyboardsCreatedInput, Prisma.UserUncheckedCreateWithoutKeyboardsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutKeyboardsCreatedInput
+  upsert?: Prisma.UserUpsertWithoutKeyboardsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutKeyboardsCreatedInput, Prisma.UserUpdateWithoutKeyboardsCreatedInput>, Prisma.UserUncheckedUpdateWithoutKeyboardsCreatedInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   email: string
@@ -1022,6 +1085,9 @@ export type UserCreateWithoutAccountsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1055,6 +1121,9 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1104,6 +1173,9 @@ export type UserUpdateWithoutAccountsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1137,6 +1209,9 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1170,6 +1245,9 @@ export type UserCreateWithoutSessionsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1203,6 +1281,9 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1252,6 +1333,9 @@ export type UserUpdateWithoutSessionsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1285,6 +1369,9 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutCommunityInput = {
@@ -1318,6 +1405,9 @@ export type UserCreateWithoutCommunityInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutCommunityInput = {
@@ -1351,6 +1441,9 @@ export type UserUncheckedCreateWithoutCommunityInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutCommunityInput = {
@@ -1429,6 +1522,9 @@ export type UserCreateWithoutProgressInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutProgressInput = {
@@ -1462,6 +1558,9 @@ export type UserUncheckedCreateWithoutProgressInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutProgressInput = {
@@ -1511,6 +1610,9 @@ export type UserUpdateWithoutProgressInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProgressInput = {
@@ -1544,6 +1646,9 @@ export type UserUncheckedUpdateWithoutProgressInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutQuizAttemptsInput = {
@@ -1577,6 +1682,9 @@ export type UserCreateWithoutQuizAttemptsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutQuizAttemptsInput = {
@@ -1610,6 +1718,9 @@ export type UserUncheckedCreateWithoutQuizAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutQuizAttemptsInput = {
@@ -1659,6 +1770,9 @@ export type UserUpdateWithoutQuizAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutQuizAttemptsInput = {
@@ -1692,6 +1806,9 @@ export type UserUncheckedUpdateWithoutQuizAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutAchievementsInput = {
@@ -1725,6 +1842,9 @@ export type UserCreateWithoutAchievementsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAchievementsInput = {
@@ -1758,6 +1878,9 @@ export type UserUncheckedCreateWithoutAchievementsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAchievementsInput = {
@@ -1807,6 +1930,9 @@ export type UserUpdateWithoutAchievementsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAchievementsInput = {
@@ -1840,6 +1966,9 @@ export type UserUncheckedUpdateWithoutAchievementsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutStoriesInput = {
@@ -1873,6 +2002,9 @@ export type UserCreateWithoutStoriesInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutStoriesInput = {
@@ -1906,6 +2038,9 @@ export type UserUncheckedCreateWithoutStoriesInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutStoriesInput = {
@@ -1955,6 +2090,9 @@ export type UserUpdateWithoutStoriesInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStoriesInput = {
@@ -1988,6 +2126,9 @@ export type UserUncheckedUpdateWithoutStoriesInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutSongsInput = {
@@ -2021,6 +2162,9 @@ export type UserCreateWithoutSongsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSongsInput = {
@@ -2054,6 +2198,9 @@ export type UserUncheckedCreateWithoutSongsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSongsInput = {
@@ -2103,6 +2250,9 @@ export type UserUpdateWithoutSongsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSongsInput = {
@@ -2136,6 +2286,9 @@ export type UserUncheckedUpdateWithoutSongsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutVideosInput = {
@@ -2169,6 +2322,9 @@ export type UserCreateWithoutVideosInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutVideosInput = {
@@ -2202,6 +2358,9 @@ export type UserUncheckedCreateWithoutVideosInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutVideosInput = {
@@ -2251,6 +2410,9 @@ export type UserUpdateWithoutVideosInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVideosInput = {
@@ -2284,6 +2446,9 @@ export type UserUncheckedUpdateWithoutVideosInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutRecordingsInput = {
@@ -2317,6 +2482,9 @@ export type UserCreateWithoutRecordingsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutRecordingsInput = {
@@ -2350,6 +2518,9 @@ export type UserUncheckedCreateWithoutRecordingsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutRecordingsInput = {
@@ -2399,6 +2570,9 @@ export type UserUpdateWithoutRecordingsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRecordingsInput = {
@@ -2432,6 +2606,9 @@ export type UserUncheckedUpdateWithoutRecordingsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutWordsInput = {
@@ -2465,6 +2642,9 @@ export type UserCreateWithoutWordsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutWordsInput = {
@@ -2498,6 +2678,9 @@ export type UserUncheckedCreateWithoutWordsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutWordsInput = {
@@ -2547,6 +2730,9 @@ export type UserUpdateWithoutWordsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWordsInput = {
@@ -2580,6 +2766,9 @@ export type UserUncheckedUpdateWithoutWordsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutPronunciationAttemptsInput = {
@@ -2613,6 +2802,9 @@ export type UserCreateWithoutPronunciationAttemptsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutPronunciationAttemptsInput = {
@@ -2646,6 +2838,9 @@ export type UserUncheckedCreateWithoutPronunciationAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutPronunciationAttemptsInput = {
@@ -2695,6 +2890,9 @@ export type UserUpdateWithoutPronunciationAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPronunciationAttemptsInput = {
@@ -2728,6 +2926,9 @@ export type UserUncheckedUpdateWithoutPronunciationAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutHandwritingAttemptsInput = {
@@ -2761,6 +2962,9 @@ export type UserCreateWithoutHandwritingAttemptsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutHandwritingAttemptsInput = {
@@ -2794,6 +2998,9 @@ export type UserUncheckedCreateWithoutHandwritingAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutHandwritingAttemptsInput = {
@@ -2843,6 +3050,9 @@ export type UserUpdateWithoutHandwritingAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutHandwritingAttemptsInput = {
@@ -2876,6 +3086,9 @@ export type UserUncheckedUpdateWithoutHandwritingAttemptsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2909,6 +3122,9 @@ export type UserCreateWithoutNotificationsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2942,6 +3158,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2991,6 +3210,9 @@ export type UserUpdateWithoutNotificationsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -3024,6 +3246,9 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutSubmissionsInput = {
@@ -3057,6 +3282,9 @@ export type UserCreateWithoutSubmissionsInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSubmissionsInput = {
@@ -3090,6 +3318,9 @@ export type UserUncheckedCreateWithoutSubmissionsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSubmissionsInput = {
@@ -3128,6 +3359,9 @@ export type UserCreateWithoutModeratedSubmissionInput = {
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutModeratedSubmissionInput = {
@@ -3161,6 +3395,9 @@ export type UserUncheckedCreateWithoutModeratedSubmissionInput = {
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutModeratedSubmissionInput = {
@@ -3210,6 +3447,9 @@ export type UserUpdateWithoutSubmissionsInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubmissionsInput = {
@@ -3243,6 +3483,9 @@ export type UserUncheckedUpdateWithoutSubmissionsInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutModeratedSubmissionInput = {
@@ -3287,6 +3530,9 @@ export type UserUpdateWithoutModeratedSubmissionInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutModeratedSubmissionInput = {
@@ -3320,6 +3566,9 @@ export type UserUncheckedUpdateWithoutModeratedSubmissionInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutSubscriptionInput = {
@@ -3353,6 +3602,9 @@ export type UserCreateWithoutSubscriptionInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionInput = {
@@ -3386,6 +3638,9 @@ export type UserUncheckedCreateWithoutSubscriptionInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionInput = {
@@ -3435,6 +3690,9 @@ export type UserUpdateWithoutSubscriptionInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionInput = {
@@ -3468,6 +3726,9 @@ export type UserUncheckedUpdateWithoutSubscriptionInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutEmailVerificationsInput = {
@@ -3501,6 +3762,9 @@ export type UserCreateWithoutEmailVerificationsInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutEmailVerificationsInput = {
@@ -3534,6 +3798,9 @@ export type UserUncheckedCreateWithoutEmailVerificationsInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutEmailVerificationsInput = {
@@ -3583,6 +3850,9 @@ export type UserUpdateWithoutEmailVerificationsInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailVerificationsInput = {
@@ -3616,6 +3886,9 @@ export type UserUncheckedUpdateWithoutEmailVerificationsInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutPasswordResetsInput = {
@@ -3649,6 +3922,9 @@ export type UserCreateWithoutPasswordResetsInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
   subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetsInput = {
@@ -3682,6 +3958,9 @@ export type UserUncheckedCreateWithoutPasswordResetsInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetsInput = {
@@ -3731,6 +4010,9 @@ export type UserUpdateWithoutPasswordResetsInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetsInput = {
@@ -3764,6 +4046,489 @@ export type UserUncheckedUpdateWithoutPasswordResetsInput = {
   handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutScriptProgressInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutUsersInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutScriptProgressInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  communityId?: string | null
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryUncheckedCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongUncheckedCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoUncheckedCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordUncheckedCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutScriptProgressInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutScriptProgressInput, Prisma.UserUncheckedCreateWithoutScriptProgressInput>
+}
+
+export type UserUpsertWithoutScriptProgressInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutScriptProgressInput, Prisma.UserUncheckedUpdateWithoutScriptProgressInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutScriptProgressInput, Prisma.UserUncheckedCreateWithoutScriptProgressInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutScriptProgressInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutScriptProgressInput, Prisma.UserUncheckedUpdateWithoutScriptProgressInput>
+}
+
+export type UserUpdateWithoutScriptProgressInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutUsersNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutScriptProgressInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  communityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUncheckedUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUncheckedUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUncheckedUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUncheckedUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutWritingScoresInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutUsersInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutWritingScoresInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  communityId?: string | null
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryUncheckedCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongUncheckedCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoUncheckedCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordUncheckedCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutWritingScoresInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutWritingScoresInput, Prisma.UserUncheckedCreateWithoutWritingScoresInput>
+}
+
+export type UserUpsertWithoutWritingScoresInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutWritingScoresInput, Prisma.UserUncheckedUpdateWithoutWritingScoresInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutWritingScoresInput, Prisma.UserUncheckedCreateWithoutWritingScoresInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutWritingScoresInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutWritingScoresInput, Prisma.UserUncheckedUpdateWithoutWritingScoresInput>
+}
+
+export type UserUpdateWithoutWritingScoresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutUsersNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutWritingScoresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  communityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUncheckedUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUncheckedUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUncheckedUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUncheckedUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutKeyboardsCreatedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  community?: Prisma.CommunityCreateNestedOneWithoutUsersInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutKeyboardsCreatedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.UserRole
+  communityId?: string | null
+  xp?: number
+  streak?: number
+  streakLastActivity?: Date | string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  stories?: Prisma.StoryUncheckedCreateNestedManyWithoutContributorInput
+  songs?: Prisma.SongUncheckedCreateNestedManyWithoutContributorInput
+  videos?: Prisma.VideoUncheckedCreateNestedManyWithoutContributorInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutContributorInput
+  words?: Prisma.WordUncheckedCreateNestedManyWithoutContributorInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedCreateNestedManyWithoutModeratorInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutContributorInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedCreateNestedManyWithoutUserInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.UserSubscriptionUncheckedCreateNestedOneWithoutUserInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedCreateNestedManyWithoutUserInput
+  writingScores?: Prisma.WritingScoreUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutKeyboardsCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutKeyboardsCreatedInput, Prisma.UserUncheckedCreateWithoutKeyboardsCreatedInput>
+}
+
+export type UserUpsertWithoutKeyboardsCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutKeyboardsCreatedInput, Prisma.UserUncheckedUpdateWithoutKeyboardsCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutKeyboardsCreatedInput, Prisma.UserUncheckedCreateWithoutKeyboardsCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutKeyboardsCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutKeyboardsCreatedInput, Prisma.UserUncheckedUpdateWithoutKeyboardsCreatedInput>
+}
+
+export type UserUpdateWithoutKeyboardsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  community?: Prisma.CommunityUpdateOneWithoutUsersNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutKeyboardsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  communityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  xp?: Prisma.IntFieldUpdateOperationsInput | number
+  streak?: Prisma.IntFieldUpdateOperationsInput | number
+  streakLastActivity?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  stories?: Prisma.StoryUncheckedUpdateManyWithoutContributorNestedInput
+  songs?: Prisma.SongUncheckedUpdateManyWithoutContributorNestedInput
+  videos?: Prisma.VideoUncheckedUpdateManyWithoutContributorNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutContributorNestedInput
+  words?: Prisma.WordUncheckedUpdateManyWithoutContributorNestedInput
+  moderatedSubmission?: Prisma.SubmissionUncheckedUpdateManyWithoutModeratorNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutContributorNestedInput
+  pronunciationAttempts?: Prisma.PronunciationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  handwritingAttempts?: Prisma.HandwritingAttemptUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyCommunityInput = {
@@ -3812,6 +4577,9 @@ export type UserUpdateWithoutCommunityInput = {
   subscription?: Prisma.UserSubscriptionUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCommunityInput = {
@@ -3845,6 +4613,9 @@ export type UserUncheckedUpdateWithoutCommunityInput = {
   subscription?: Prisma.UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput
   emailVerifications?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+  scriptProgress?: Prisma.ScriptLessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  writingScores?: Prisma.WritingScoreUncheckedUpdateManyWithoutUserNestedInput
+  keyboardsCreated?: Prisma.KeyboardLayoutUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutCommunityInput = {
@@ -3885,6 +4656,9 @@ export type UserCountOutputType = {
   handwritingAttempts: number
   emailVerifications: number
   passwordResets: number
+  scriptProgress: number
+  writingScores: number
+  keyboardsCreated: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3905,6 +4679,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   handwritingAttempts?: boolean | UserCountOutputTypeCountHandwritingAttemptsArgs
   emailVerifications?: boolean | UserCountOutputTypeCountEmailVerificationsArgs
   passwordResets?: boolean | UserCountOutputTypeCountPasswordResetsArgs
+  scriptProgress?: boolean | UserCountOutputTypeCountScriptProgressArgs
+  writingScores?: boolean | UserCountOutputTypeCountWritingScoresArgs
+  keyboardsCreated?: boolean | UserCountOutputTypeCountKeyboardsCreatedArgs
 }
 
 /**
@@ -4036,6 +4813,27 @@ export type UserCountOutputTypeCountPasswordResetsArgs<ExtArgs extends runtime.T
   where?: Prisma.PasswordResetWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountScriptProgressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ScriptLessonProgressWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountWritingScoresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WritingScoreWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountKeyboardsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.KeyboardLayoutWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4070,6 +4868,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>
   emailVerifications?: boolean | Prisma.User$emailVerificationsArgs<ExtArgs>
   passwordResets?: boolean | Prisma.User$passwordResetsArgs<ExtArgs>
+  scriptProgress?: boolean | Prisma.User$scriptProgressArgs<ExtArgs>
+  writingScores?: boolean | Prisma.User$writingScoresArgs<ExtArgs>
+  keyboardsCreated?: boolean | Prisma.User$keyboardsCreatedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4144,6 +4945,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>
   emailVerifications?: boolean | Prisma.User$emailVerificationsArgs<ExtArgs>
   passwordResets?: boolean | Prisma.User$passwordResetsArgs<ExtArgs>
+  scriptProgress?: boolean | Prisma.User$scriptProgressArgs<ExtArgs>
+  writingScores?: boolean | Prisma.User$writingScoresArgs<ExtArgs>
+  keyboardsCreated?: boolean | Prisma.User$keyboardsCreatedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4175,6 +4979,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     subscription: Prisma.$UserSubscriptionPayload<ExtArgs> | null
     emailVerifications: Prisma.$EmailVerificationTokenPayload<ExtArgs>[]
     passwordResets: Prisma.$PasswordResetPayload<ExtArgs>[]
+    scriptProgress: Prisma.$ScriptLessonProgressPayload<ExtArgs>[]
+    writingScores: Prisma.$WritingScorePayload<ExtArgs>[]
+    keyboardsCreated: Prisma.$KeyboardLayoutPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4603,6 +5410,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   subscription<T extends Prisma.User$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionArgs<ExtArgs>>): Prisma.Prisma__UserSubscriptionClient<runtime.Types.Result.GetResult<Prisma.$UserSubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   emailVerifications<T extends Prisma.User$emailVerificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailVerificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailVerificationTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   passwordResets<T extends Prisma.User$passwordResetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$passwordResetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  scriptProgress<T extends Prisma.User$scriptProgressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$scriptProgressArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScriptLessonProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  writingScores<T extends Prisma.User$writingScoresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$writingScoresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WritingScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  keyboardsCreated<T extends Prisma.User$keyboardsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$keyboardsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KeyboardLayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5489,6 +6299,78 @@ export type User$passwordResetsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.PasswordResetScalarFieldEnum | Prisma.PasswordResetScalarFieldEnum[]
+}
+
+/**
+ * User.scriptProgress
+ */
+export type User$scriptProgressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ScriptLessonProgress
+   */
+  select?: Prisma.ScriptLessonProgressSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ScriptLessonProgress
+   */
+  omit?: Prisma.ScriptLessonProgressOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ScriptLessonProgressInclude<ExtArgs> | null
+  where?: Prisma.ScriptLessonProgressWhereInput
+  orderBy?: Prisma.ScriptLessonProgressOrderByWithRelationInput | Prisma.ScriptLessonProgressOrderByWithRelationInput[]
+  cursor?: Prisma.ScriptLessonProgressWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ScriptLessonProgressScalarFieldEnum | Prisma.ScriptLessonProgressScalarFieldEnum[]
+}
+
+/**
+ * User.writingScores
+ */
+export type User$writingScoresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WritingScore
+   */
+  select?: Prisma.WritingScoreSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WritingScore
+   */
+  omit?: Prisma.WritingScoreOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WritingScoreInclude<ExtArgs> | null
+  where?: Prisma.WritingScoreWhereInput
+  orderBy?: Prisma.WritingScoreOrderByWithRelationInput | Prisma.WritingScoreOrderByWithRelationInput[]
+  cursor?: Prisma.WritingScoreWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WritingScoreScalarFieldEnum | Prisma.WritingScoreScalarFieldEnum[]
+}
+
+/**
+ * User.keyboardsCreated
+ */
+export type User$keyboardsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the KeyboardLayout
+   */
+  select?: Prisma.KeyboardLayoutSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the KeyboardLayout
+   */
+  omit?: Prisma.KeyboardLayoutOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KeyboardLayoutInclude<ExtArgs> | null
+  where?: Prisma.KeyboardLayoutWhereInput
+  orderBy?: Prisma.KeyboardLayoutOrderByWithRelationInput | Prisma.KeyboardLayoutOrderByWithRelationInput[]
+  cursor?: Prisma.KeyboardLayoutWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.KeyboardLayoutScalarFieldEnum | Prisma.KeyboardLayoutScalarFieldEnum[]
 }
 
 /**

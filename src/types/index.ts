@@ -620,6 +620,7 @@ declare module 'next-auth' {
       communityId: string | null
       xp: number
       streak: number
+      subscriptionStatus: string | null
     }
   }
 
@@ -628,6 +629,7 @@ declare module 'next-auth' {
     communityId?: string | null
     xp?: number
     streak?: number
+    subscriptionStatus?: string | null
   }
 }
 
@@ -638,5 +640,7 @@ declare module 'next-auth/jwt' {
     communityId?: string | null
     xp?: number
     streak?: number
+    subscriptionStatus?: string | null
+    subscriptionEnd?: string | null
   }
 }

@@ -129,6 +129,38 @@ export const HandwritingGrade = {
 export type HandwritingGrade = (typeof HandwritingGrade)[keyof typeof HandwritingGrade]
 
 
+export const ScriptLessonType = {
+  INTRODUCTION: 'INTRODUCTION',
+  STROKE_ORDER: 'STROKE_ORDER',
+  TRACE: 'TRACE',
+  PRACTICE: 'PRACTICE',
+  COMBINE: 'COMBINE',
+  WORD_BUILD: 'WORD_BUILD',
+  SENTENCE: 'SENTENCE',
+  EXAM: 'EXAM'
+} as const
+
+export type ScriptLessonType = (typeof ScriptLessonType)[keyof typeof ScriptLessonType]
+
+
+export const ScriptLessonStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type ScriptLessonStatus = (typeof ScriptLessonStatus)[keyof typeof ScriptLessonStatus]
+
+
+export const KeyboardLayoutType = {
+  MOBILE: 'MOBILE',
+  DESKTOP: 'DESKTOP',
+  BOTH: 'BOTH'
+} as const
+
+export type KeyboardLayoutType = (typeof KeyboardLayoutType)[keyof typeof KeyboardLayoutType]
+
+
 export const SubscriptionStatus = {
   TRIALING: 'TRIALING',
   ACTIVE: 'ACTIVE',

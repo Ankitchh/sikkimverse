@@ -416,7 +416,13 @@ export const ModelName = {
   RevenueShare: 'RevenueShare',
   EmailVerificationToken: 'EmailVerificationToken',
   PasswordReset: 'PasswordReset',
-  ContentEmbedding: 'ContentEmbedding'
+  ContentEmbedding: 'ContentEmbedding',
+  ScriptCharacter: 'ScriptCharacter',
+  ScriptLesson: 'ScriptLesson',
+  ScriptLessonProgress: 'ScriptLessonProgress',
+  WritingScore: 'WritingScore',
+  KeyboardLayout: 'KeyboardLayout',
+  KeyboardKey: 'KeyboardKey'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -432,7 +438,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "account" | "session" | "verificationToken" | "user" | "community" | "language" | "dialect" | "course" | "lesson" | "userProgress" | "quiz" | "quizAttempt" | "achievement" | "userAchievement" | "story" | "song" | "video" | "recording" | "word" | "pronunciationAttempt" | "handwritingAttempt" | "notification" | "submission" | "communityEarning" | "festival" | "tag" | "subscriptionPlan" | "userSubscription" | "paymentEvent" | "revenueShare" | "emailVerificationToken" | "passwordReset" | "contentEmbedding"
+    modelProps: "account" | "session" | "verificationToken" | "user" | "community" | "language" | "dialect" | "course" | "lesson" | "userProgress" | "quiz" | "quizAttempt" | "achievement" | "userAchievement" | "story" | "song" | "video" | "recording" | "word" | "pronunciationAttempt" | "handwritingAttempt" | "notification" | "submission" | "communityEarning" | "festival" | "tag" | "subscriptionPlan" | "userSubscription" | "paymentEvent" | "revenueShare" | "emailVerificationToken" | "passwordReset" | "contentEmbedding" | "scriptCharacter" | "scriptLesson" | "scriptLessonProgress" | "writingScore" | "keyboardLayout" | "keyboardKey"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2878,6 +2884,450 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ScriptCharacter: {
+      payload: Prisma.$ScriptCharacterPayload<ExtArgs>
+      fields: Prisma.ScriptCharacterFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ScriptCharacterFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ScriptCharacterFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>
+        }
+        findFirst: {
+          args: Prisma.ScriptCharacterFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ScriptCharacterFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>
+        }
+        findMany: {
+          args: Prisma.ScriptCharacterFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>[]
+        }
+        create: {
+          args: Prisma.ScriptCharacterCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>
+        }
+        createMany: {
+          args: Prisma.ScriptCharacterCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ScriptCharacterCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>[]
+        }
+        delete: {
+          args: Prisma.ScriptCharacterDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>
+        }
+        update: {
+          args: Prisma.ScriptCharacterUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>
+        }
+        deleteMany: {
+          args: Prisma.ScriptCharacterDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ScriptCharacterUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ScriptCharacterUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>[]
+        }
+        upsert: {
+          args: Prisma.ScriptCharacterUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptCharacterPayload>
+        }
+        aggregate: {
+          args: Prisma.ScriptCharacterAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateScriptCharacter>
+        }
+        groupBy: {
+          args: Prisma.ScriptCharacterGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScriptCharacterGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ScriptCharacterCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScriptCharacterCountAggregateOutputType> | number
+        }
+      }
+    }
+    ScriptLesson: {
+      payload: Prisma.$ScriptLessonPayload<ExtArgs>
+      fields: Prisma.ScriptLessonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ScriptLessonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ScriptLessonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>
+        }
+        findFirst: {
+          args: Prisma.ScriptLessonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ScriptLessonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>
+        }
+        findMany: {
+          args: Prisma.ScriptLessonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>[]
+        }
+        create: {
+          args: Prisma.ScriptLessonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>
+        }
+        createMany: {
+          args: Prisma.ScriptLessonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ScriptLessonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>[]
+        }
+        delete: {
+          args: Prisma.ScriptLessonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>
+        }
+        update: {
+          args: Prisma.ScriptLessonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>
+        }
+        deleteMany: {
+          args: Prisma.ScriptLessonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ScriptLessonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ScriptLessonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>[]
+        }
+        upsert: {
+          args: Prisma.ScriptLessonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonPayload>
+        }
+        aggregate: {
+          args: Prisma.ScriptLessonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateScriptLesson>
+        }
+        groupBy: {
+          args: Prisma.ScriptLessonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScriptLessonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ScriptLessonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScriptLessonCountAggregateOutputType> | number
+        }
+      }
+    }
+    ScriptLessonProgress: {
+      payload: Prisma.$ScriptLessonProgressPayload<ExtArgs>
+      fields: Prisma.ScriptLessonProgressFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ScriptLessonProgressFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ScriptLessonProgressFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>
+        }
+        findFirst: {
+          args: Prisma.ScriptLessonProgressFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ScriptLessonProgressFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>
+        }
+        findMany: {
+          args: Prisma.ScriptLessonProgressFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>[]
+        }
+        create: {
+          args: Prisma.ScriptLessonProgressCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>
+        }
+        createMany: {
+          args: Prisma.ScriptLessonProgressCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ScriptLessonProgressCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>[]
+        }
+        delete: {
+          args: Prisma.ScriptLessonProgressDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>
+        }
+        update: {
+          args: Prisma.ScriptLessonProgressUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>
+        }
+        deleteMany: {
+          args: Prisma.ScriptLessonProgressDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ScriptLessonProgressUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ScriptLessonProgressUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>[]
+        }
+        upsert: {
+          args: Prisma.ScriptLessonProgressUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScriptLessonProgressPayload>
+        }
+        aggregate: {
+          args: Prisma.ScriptLessonProgressAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateScriptLessonProgress>
+        }
+        groupBy: {
+          args: Prisma.ScriptLessonProgressGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScriptLessonProgressGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ScriptLessonProgressCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScriptLessonProgressCountAggregateOutputType> | number
+        }
+      }
+    }
+    WritingScore: {
+      payload: Prisma.$WritingScorePayload<ExtArgs>
+      fields: Prisma.WritingScoreFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WritingScoreFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WritingScoreFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>
+        }
+        findFirst: {
+          args: Prisma.WritingScoreFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WritingScoreFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>
+        }
+        findMany: {
+          args: Prisma.WritingScoreFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>[]
+        }
+        create: {
+          args: Prisma.WritingScoreCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>
+        }
+        createMany: {
+          args: Prisma.WritingScoreCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WritingScoreCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>[]
+        }
+        delete: {
+          args: Prisma.WritingScoreDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>
+        }
+        update: {
+          args: Prisma.WritingScoreUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>
+        }
+        deleteMany: {
+          args: Prisma.WritingScoreDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WritingScoreUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WritingScoreUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>[]
+        }
+        upsert: {
+          args: Prisma.WritingScoreUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WritingScorePayload>
+        }
+        aggregate: {
+          args: Prisma.WritingScoreAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWritingScore>
+        }
+        groupBy: {
+          args: Prisma.WritingScoreGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WritingScoreGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WritingScoreCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WritingScoreCountAggregateOutputType> | number
+        }
+      }
+    }
+    KeyboardLayout: {
+      payload: Prisma.$KeyboardLayoutPayload<ExtArgs>
+      fields: Prisma.KeyboardLayoutFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KeyboardLayoutFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KeyboardLayoutFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>
+        }
+        findFirst: {
+          args: Prisma.KeyboardLayoutFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KeyboardLayoutFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>
+        }
+        findMany: {
+          args: Prisma.KeyboardLayoutFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>[]
+        }
+        create: {
+          args: Prisma.KeyboardLayoutCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>
+        }
+        createMany: {
+          args: Prisma.KeyboardLayoutCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KeyboardLayoutCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>[]
+        }
+        delete: {
+          args: Prisma.KeyboardLayoutDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>
+        }
+        update: {
+          args: Prisma.KeyboardLayoutUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>
+        }
+        deleteMany: {
+          args: Prisma.KeyboardLayoutDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KeyboardLayoutUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KeyboardLayoutUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>[]
+        }
+        upsert: {
+          args: Prisma.KeyboardLayoutUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardLayoutPayload>
+        }
+        aggregate: {
+          args: Prisma.KeyboardLayoutAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKeyboardLayout>
+        }
+        groupBy: {
+          args: Prisma.KeyboardLayoutGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KeyboardLayoutGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KeyboardLayoutCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KeyboardLayoutCountAggregateOutputType> | number
+        }
+      }
+    }
+    KeyboardKey: {
+      payload: Prisma.$KeyboardKeyPayload<ExtArgs>
+      fields: Prisma.KeyboardKeyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KeyboardKeyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KeyboardKeyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>
+        }
+        findFirst: {
+          args: Prisma.KeyboardKeyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KeyboardKeyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>
+        }
+        findMany: {
+          args: Prisma.KeyboardKeyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>[]
+        }
+        create: {
+          args: Prisma.KeyboardKeyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>
+        }
+        createMany: {
+          args: Prisma.KeyboardKeyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KeyboardKeyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>[]
+        }
+        delete: {
+          args: Prisma.KeyboardKeyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>
+        }
+        update: {
+          args: Prisma.KeyboardKeyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>
+        }
+        deleteMany: {
+          args: Prisma.KeyboardKeyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KeyboardKeyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KeyboardKeyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>[]
+        }
+        upsert: {
+          args: Prisma.KeyboardKeyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KeyboardKeyPayload>
+        }
+        aggregate: {
+          args: Prisma.KeyboardKeyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKeyboardKey>
+        }
+        groupBy: {
+          args: Prisma.KeyboardKeyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KeyboardKeyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KeyboardKeyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KeyboardKeyCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3264,6 +3714,7 @@ export const SubmissionScalarFieldEnum = {
   moderatorId: 'moderatorId',
   status: 'status',
   rejectionReason: 'rejectionReason',
+  contentId: 'contentId',
   submittedAt: 'submittedAt',
   reviewedAt: 'reviewedAt'
 } as const
@@ -3410,6 +3861,112 @@ export const ContentEmbeddingScalarFieldEnum = {
 } as const
 
 export type ContentEmbeddingScalarFieldEnum = (typeof ContentEmbeddingScalarFieldEnum)[keyof typeof ContentEmbeddingScalarFieldEnum]
+
+
+export const ScriptCharacterScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  languageId: 'languageId',
+  character: 'character',
+  unicode: 'unicode',
+  phonetic: 'phonetic',
+  ipa: 'ipa',
+  meaning: 'meaning',
+  strokeCount: 'strokeCount',
+  strokeData: 'strokeData',
+  audioUrl: 'audioUrl',
+  sortOrder: 'sortOrder',
+  group: 'group',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScriptCharacterScalarFieldEnum = (typeof ScriptCharacterScalarFieldEnum)[keyof typeof ScriptCharacterScalarFieldEnum]
+
+
+export const ScriptLessonScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  characterId: 'characterId',
+  type: 'type',
+  status: 'status',
+  title: 'title',
+  instructions: 'instructions',
+  stepOrder: 'stepOrder',
+  xpReward: 'xpReward',
+  referenceData: 'referenceData',
+  strokeAnimation: 'strokeAnimation',
+  audioUrl: 'audioUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScriptLessonScalarFieldEnum = (typeof ScriptLessonScalarFieldEnum)[keyof typeof ScriptLessonScalarFieldEnum]
+
+
+export const ScriptLessonProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  lessonId: 'lessonId',
+  completed: 'completed',
+  score: 'score',
+  attempts: 'attempts',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ScriptLessonProgressScalarFieldEnum = (typeof ScriptLessonProgressScalarFieldEnum)[keyof typeof ScriptLessonProgressScalarFieldEnum]
+
+
+export const WritingScoreScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  characterId: 'characterId',
+  score: 'score',
+  grade: 'grade',
+  accuracy: 'accuracy',
+  strokeScore: 'strokeScore',
+  imageData: 'imageData',
+  feedback: 'feedback',
+  createdAt: 'createdAt'
+} as const
+
+export type WritingScoreScalarFieldEnum = (typeof WritingScoreScalarFieldEnum)[keyof typeof WritingScoreScalarFieldEnum]
+
+
+export const KeyboardLayoutScalarFieldEnum = {
+  id: 'id',
+  communityId: 'communityId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  layoutType: 'layoutType',
+  isActive: 'isActive',
+  version: 'version',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type KeyboardLayoutScalarFieldEnum = (typeof KeyboardLayoutScalarFieldEnum)[keyof typeof KeyboardLayoutScalarFieldEnum]
+
+
+export const KeyboardKeyScalarFieldEnum = {
+  id: 'id',
+  layoutId: 'layoutId',
+  row: 'row',
+  col: 'col',
+  width: 'width',
+  primaryChar: 'primaryChar',
+  primaryLabel: 'primaryLabel',
+  altChars: 'altChars',
+  phoneticHint: 'phoneticHint',
+  audioUrl: 'audioUrl',
+  sortOrder: 'sortOrder'
+} as const
+
+export type KeyboardKeyScalarFieldEnum = (typeof KeyboardKeyScalarFieldEnum)[keyof typeof KeyboardKeyScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -3726,6 +4283,34 @@ export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'ScriptLessonType'
+ */
+export type EnumScriptLessonTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScriptLessonType'>
+    
+
+
+/**
+ * Reference to a field of type 'ScriptLessonType[]'
+ */
+export type ListEnumScriptLessonTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScriptLessonType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ScriptLessonStatus'
+ */
+export type EnumScriptLessonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScriptLessonStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ScriptLessonStatus[]'
+ */
+export type ListEnumScriptLessonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScriptLessonStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -3736,6 +4321,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'KeyboardLayoutType'
+ */
+export type EnumKeyboardLayoutTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KeyboardLayoutType'>
+    
+
+
+/**
+ * Reference to a field of type 'KeyboardLayoutType[]'
+ */
+export type ListEnumKeyboardLayoutTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KeyboardLayoutType[]'>
     
 
 /**
@@ -3881,6 +4480,12 @@ export type GlobalOmitConfig = {
   emailVerificationToken?: Prisma.EmailVerificationTokenOmit
   passwordReset?: Prisma.PasswordResetOmit
   contentEmbedding?: Prisma.ContentEmbeddingOmit
+  scriptCharacter?: Prisma.ScriptCharacterOmit
+  scriptLesson?: Prisma.ScriptLessonOmit
+  scriptLessonProgress?: Prisma.ScriptLessonProgressOmit
+  writingScore?: Prisma.WritingScoreOmit
+  keyboardLayout?: Prisma.KeyboardLayoutOmit
+  keyboardKey?: Prisma.KeyboardKeyOmit
 }
 
 /* Types for Logging */
