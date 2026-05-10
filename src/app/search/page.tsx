@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, Clock, TrendingUp, BookOpen, Users, FileText, Music, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,23 +8,23 @@ import Link from "next/link";
 
 type ResultType = "all" | "communities" | "courses" | "stories" | "songs" | "words";
 
+interface SearchResult {
+  id: string;
+  type: string;
+  title: string;
+  excerpt: string;
+  communityId: string | null;
+  score: number;
+}
+
 const RECENT = ["Lepcha script", "Bhutia folk songs", "Losoong festival", "Tamang language"];
 
-const ALL_RESULTS = [
-  { type: "community", title: "Lepcha Community", subtitle: "30,000 speakers · North & West Sikkim", href: "/communities/lepcha", icon: "🌿" },
-  { type: "community", title: "Bhutia Community", subtitle: "45,000 speakers · East & North Sikkim", href: "/communities/bhutia", icon: "🏔️" },
-  { type: "course",    title: "Lepcha Beginners",  subtitle: "20 lessons · Beginner · 500 enrolled", href: "/learn/lepcha-beginners", icon: "📚" },
-  { type: "course",    title: "Bhutia Essentials", subtitle: "15 lessons · Beginner · 320 enrolled", href: "/learn/bhutia-essentials", icon: "📚" },
-  { type: "story",     title: "The Legend of Mayel Lyang", subtitle: "Lepcha · Folk tale · 8 min read", href: "/archive", icon: "📜" },
-  { type: "story",     title: "Tashiding Monastery Stories", subtitle: "Bhutia · History · 5 min read", href: "/archive", icon: "📜" },
-  { type: "song",      title: "Lepcha Creation Song", subtitle: "Lepcha · Traditional · 3:42", href: "/archive", icon: "🎵" },
-  { type: "song",      title: "Limbu Warrior Ballad", subtitle: "Limbu · Folk · 4:20", href: "/archive", icon: "🎵" },
-  { type: "word",      title: "Rum (Nature/God)",  subtitle: "Lepcha · Noun · Listen pronunciation", href: "/practice/voice", icon: "🔤" },
-  { type: "word",      title: "Tashi Delek",       subtitle: "Bhutia · Greeting · Auspicious wishes", href: "/practice/voice", icon: "🔤" },
-];
-
 const TYPE_ICONS: Record<string, React.ComponentType<{className?: string}>> = {
-  community: Globe, course: BookOpen, story: FileText, song: Music, word: TrendingUp
+  community: Globe, course: BookOpen, story: FileText, song: Music, word: TrendingUp, recording: Music, video: FileText,
+};
+
+const TYPE_EMOJIS: Record<string, string> = {
+  word: "🔤", story: "📜", song: "🎵", recording: "🎤", video: "🎬", community: "🏔️", course: "📚",
 };
 
 const TABS: { id: ResultType; label: string }[] = [
@@ -36,27 +36,57 @@ const TABS: { id: ResultType; label: string }[] = [
   { id: "words",       label: "Words" },
 ];
 
+function resultHref(r: SearchResult): string {
+  if (r.type === "story" || r.type === "song" || r.type === "recording" || r.type === "video") return "/archive";
+  if (r.type === "word") return "/practice/voice";
+  if (r.type === "community") return `/communities/${r.id}`;
+  if (r.type === "course") return `/learn/${r.id}`;
+  return "/";
+}
+
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<ResultType>("all");
-  const [results, setResults] = useState<typeof ALL_RESULTS>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [trending, setTrending] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const runSearch = useCallback((q: string) => {
+  useEffect(() => {
+    fetch('/api/search/semantic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: 'Lepcha Bhutia Sikkim', limit: 5 }),
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (Array.isArray(data?.results)) setTrending(data.results.slice(0, 5)); })
+      .catch(() => {});
+  }, []);
+
+  const runSearch = useCallback(async (q: string) => {
     if (!q.trim()) { setResults([]); return; }
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
     setLoading(true);
-    setTimeout(() => {
-      const filtered = ALL_RESULTS.filter(r =>
-        r.title.toLowerCase().includes(q.toLowerCase()) ||
-        r.subtitle.toLowerCase().includes(q.toLowerCase())
-      );
-      setResults(filtered);
+    try {
+      const res = await fetch('/api/search/semantic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: q, limit: 20 }),
+        signal: abortRef.current.signal,
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setResults(data.results ?? []);
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name !== 'AbortError') setResults([]);
+    } finally {
       setLoading(false);
-    }, 350);
+    }
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => runSearch(query), 300);
+    const timer = setTimeout(() => runSearch(query), 350);
     return () => clearTimeout(timer);
   }, [query, runSearch]);
 
@@ -86,7 +116,7 @@ export default function SearchPage() {
           )}
         </div>
 
-        {/* Empty state — show recents */}
+        {/* Empty state — show recents + trending */}
         {!query && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
             <div>
@@ -111,23 +141,28 @@ export default function SearchPage() {
                 <TrendingUp className="w-3.5 h-3.5" /> Trending
               </p>
               <div className="space-y-1">
-                {ALL_RESULTS.slice(0, 5).map((r) => {
-                  const Icon = TYPE_ICONS[r.type] ?? Globe;
-                  return (
-                    <Link
-                      key={r.title}
-                      href={r.href}
-                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-background-secondary transition-colors group"
-                    >
-                      <span className="text-xl">{r.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate group-hover:text-primary">{r.title}</p>
-                        <p className="text-xs text-foreground-muted truncate">{r.subtitle}</p>
-                      </div>
-                      <Icon className="w-4 h-4 text-foreground-muted shrink-0" />
-                    </Link>
-                  );
-                })}
+                {trending.length === 0
+                  ? Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="h-14 rounded-xl bg-background-secondary animate-pulse border border-border" />
+                    ))
+                  : trending.map((r) => {
+                      const Icon = TYPE_ICONS[r.type] ?? Globe;
+                      return (
+                        <Link
+                          key={r.id}
+                          href={resultHref(r)}
+                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-background-secondary transition-colors group"
+                        >
+                          <span className="text-xl">{TYPE_EMOJIS[r.type] ?? '🔍'}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate group-hover:text-primary">{r.title}</p>
+                            <p className="text-xs text-foreground-muted truncate">{r.excerpt}</p>
+                          </div>
+                          <Icon className="w-4 h-4 text-foreground-muted shrink-0" />
+                        </Link>
+                      );
+                    })
+                }
               </div>
             </div>
           </motion.div>
@@ -179,19 +214,19 @@ export default function SearchPage() {
                     const Icon = TYPE_ICONS[r.type] ?? Globe;
                     return (
                       <motion.div
-                        key={r.title}
+                        key={r.id}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.04 }}
                       >
                         <Link
-                          href={r.href}
+                          href={resultHref(r)}
                           className="flex items-center gap-3 p-3 rounded-xl hover:bg-background-secondary transition-colors group border border-transparent hover:border-border"
                         >
-                          <span className="text-2xl">{r.icon}</span>
+                          <span className="text-2xl">{TYPE_EMOJIS[r.type] ?? '🔍'}</span>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-foreground group-hover:text-primary truncate">{r.title}</p>
-                            <p className="text-xs text-foreground-muted truncate">{r.subtitle}</p>
+                            <p className="text-xs text-foreground-muted truncate">{r.excerpt}</p>
                           </div>
                           <div className="flex items-center gap-1 text-foreground-muted text-xs shrink-0">
                             <Icon className="w-3.5 h-3.5" />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Trophy,
@@ -28,74 +28,26 @@ interface Notification {
   read: boolean;
 }
 
-// ── Sample data ───────────────────────────────────────────────────────────────
+// Map DB notification types to local display types
+function apiTypeToLocal(apiType: string): NotifType {
+  if (apiType.startsWith('SUBMISSION')) return 'community';
+  if (apiType.startsWith('ACHIEVEMENT') || apiType === 'LEVEL_UP') return 'achievement';
+  if (apiType.startsWith('LESSON') || apiType.startsWith('COURSE') || apiType === 'STREAK') return 'learning';
+  return 'system';
+}
 
-const INITIAL_NOTIFICATIONS: Notification[] = [
-  {
-    id: "n1",
-    type: "achievement",
-    title: "Badge Earned!",
-    message: "You earned the 'First Word' badge for submitting your first word to the archive.",
-    time: "2 hours ago",
-    read: false,
-  },
-  {
-    id: "n2",
-    type: "community",
-    title: "Submission Approved",
-    message: "Lepcha community approved your song submission 'River of Stars'. Great contribution!",
-    time: "5 hours ago",
-    read: false,
-  },
-  {
-    id: "n3",
-    type: "learning",
-    title: "New Lesson Available",
-    message: "Bhutia Script Level 2 is now available. Continue your learning journey today.",
-    time: "1 day ago",
-    read: true,
-  },
-  {
-    id: "n4",
-    type: "community",
-    title: "New Elder Recording",
-    message: "Elder Tenzing shared a new recording: 'Traditional Harvest Chant of Dzongu'. Listen now.",
-    time: "1 day ago",
-    read: true,
-  },
-  {
-    id: "n5",
-    type: "learning",
-    title: "Streak Milestone!",
-    message: "Your streak is at 7 days! Keep going — you're building a wonderful learning habit.",
-    time: "2 days ago",
-    read: true,
-  },
-  {
-    id: "n6",
-    type: "community",
-    title: "Submission Rejected",
-    message: "Submission rejected: Missing audio file. Please re-upload with a clear audio recording attached.",
-    time: "3 days ago",
-    read: false,
-  },
-  {
-    id: "n7",
-    type: "system",
-    title: "Welcome to SIKKIMVERSE",
-    message: "Your account is fully set up. Start your first lesson or explore the community archive.",
-    time: "1 week ago",
-    read: true,
-  },
-  {
-    id: "n8",
-    type: "achievement",
-    title: "Level Up!",
-    message: "You reached Level 3! You've mastered the basics of Lepcha script.",
-    time: "1 week ago",
-    read: true,
-  },
-];
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? 's' : ''} ago`;
+}
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -239,9 +191,31 @@ function EmptyState({ tab }: { tab: Tab }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("All");
   const [page, setPage] = useState(1);
+
+  const loadNotifications = useCallback(async () => {
+    try {
+      const res = await fetch('/api/notifications?limit=50');
+      if (!res.ok) return;
+      const data = await res.json();
+      setNotifications((data.notifications ?? []).map((n: {
+        id: string; type: string; title: string; message: string; isRead: boolean; createdAt: string;
+      }) => ({
+        id: n.id,
+        type: apiTypeToLocal(n.type),
+        title: n.title,
+        message: n.message,
+        time: timeAgo(n.createdAt),
+        read: n.isRead,
+      })));
+    } catch {}
+    finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { loadNotifications(); }, [loadNotifications]);
 
   const filtered = filterByTab(notifications, activeTab);
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -253,10 +227,20 @@ export default function NotificationsPage() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
+    fetch('/api/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: [id] }),
+    }).catch(() => {});
   }
 
   function markAllRead() {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    fetch('/api/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ markAll: true }),
+    }).catch(() => {});
   }
 
   function handleTabChange(tab: Tab) {
@@ -334,7 +318,18 @@ export default function NotificationsPage() {
         {/* Notifications list */}
         <div className="space-y-3">
           <AnimatePresence mode="popLayout">
-            {paginated.length === 0 ? (
+            {loading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex gap-4 p-4 rounded-xl border border-border bg-background-secondary animate-pulse">
+                  <div className="h-10 w-10 rounded-full bg-gray-200 shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 w-1/2 bg-gray-200 rounded" />
+                    <div className="h-3 w-3/4 bg-gray-200 rounded" />
+                    <div className="h-2.5 w-1/4 bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))
+            ) : paginated.length === 0 ? (
               <EmptyState key="empty" tab={activeTab} />
             ) : (
               paginated.map((notif, i) => (
