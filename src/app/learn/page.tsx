@@ -21,6 +21,13 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+interface ApiLesson {
+  id: string;
+  title: string;
+  order: number;
+  status?: string;
+}
+
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 interface ApiCourse {
@@ -95,15 +102,6 @@ function levelName(level: number): string {
 }
 
 // PATH_NODES are illustrative — a real implementation would fetch user lesson progress
-const PATH_NODES = [
-  { id: 1, label: "Greetings", done: true },
-  { id: 2, label: "Numbers", done: true },
-  { id: 3, label: "Family", done: true },
-  { id: 4, label: "Colors", active: true },
-  { id: 5, label: "Food", locked: true },
-  { id: 6, label: "Nature", locked: true },
-  { id: 7, label: "Traditions", locked: true },
-];
 
 // ── Level Badge ────────────────────────────────────────────────────────────────
 function LevelBadge({ level }: { level: Course["level"] }) {
@@ -198,31 +196,46 @@ function CourseCard({ course }: { course: Course }) {
 }
 
 // ── Learning Path ──────────────────────────────────────────────────────────────
-function LearningPath() {
+interface PathLesson { id: string; title: string; order: number; status: "completed" | "current" | "locked" }
+interface PathCourse { id: string; title: string; community: string; lessons: PathLesson[] }
+
+function LearningPath({ course }: { course: PathCourse | null }) {
+  if (!course || course.lessons.length === 0) return null;
+
+  const visibleLessons = course.lessons.slice(0, 7);
+  const currentIdx = visibleLessons.findIndex(l => l.status === "current");
+  const activeIdx = currentIdx >= 0 ? currentIdx : visibleLessons.findIndex(l => l.status === "locked");
+
   return (
     <div className="bg-background-secondary rounded-2xl border border-border p-6">
       <div className="flex items-center justify-between mb-5">
         <h2 className="font-bold text-foreground text-lg">Learning Path</h2>
-        <span className="text-sm text-foreground-muted">Lepcha Beginners</span>
+        <Link href={`/learn/${course.id}`} className="text-sm text-primary hover:underline">
+          {course.community} · {course.title}
+        </Link>
       </div>
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {PATH_NODES.map((node, i) => (
-          <div key={node.id} className="flex items-center shrink-0">
+        {visibleLessons.map((lesson, i) => {
+          const isDone = lesson.status === "completed";
+          const isActive = i === activeIdx;
+          const isLocked = lesson.status === "locked" && !isActive;
+          const node = (
             <motion.div
+              key={lesson.id}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: i * 0.08 }}
               className={cn(
-                "w-14 h-14 rounded-full flex flex-col items-center justify-center text-center border-2 transition-all cursor-pointer relative",
-                node.done && "bg-primary border-primary text-white",
-                node.active && "bg-saffron border-saffron text-white shadow-lg scale-110",
-                node.locked && "bg-background-tertiary border-border text-foreground-muted"
+                "w-14 h-14 rounded-full flex flex-col items-center justify-center text-center border-2 transition-all relative",
+                isDone   && "bg-primary border-primary text-white cursor-pointer hover:opacity-90",
+                isActive && "bg-saffron border-saffron text-white shadow-lg scale-110 cursor-pointer",
+                isLocked && "bg-background-tertiary border-border text-foreground-muted cursor-not-allowed opacity-60",
               )}
             >
-              {node.done && <CheckCircle2 className="w-5 h-5" />}
-              {node.active && <Play className="w-5 h-5" />}
-              {node.locked && <Lock className="w-4 h-4" />}
-              {node.active && (
+              {isDone   && <CheckCircle2 className="w-5 h-5" />}
+              {isActive && <Play className="w-5 h-5" />}
+              {isLocked && <Lock className="w-4 h-4" />}
+              {isActive && (
                 <motion.div
                   animate={{ scale: [1, 1.4, 1] }}
                   transition={{ repeat: Infinity, duration: 2 }}
@@ -230,14 +243,31 @@ function LearningPath() {
                 />
               )}
             </motion.div>
-            {i < PATH_NODES.length - 1 && (
-              <div className={cn("w-6 h-0.5 mx-0.5", node.done ? "bg-primary" : "bg-border")} />
-            )}
-            <div className="absolute mt-16 w-14 text-center">
-              <p className="text-xs text-foreground-muted leading-tight">{node.label}</p>
+          );
+
+          return (
+            <div key={lesson.id} className="flex items-center shrink-0">
+              {isLocked ? (
+                <div className="relative">
+                  {node}
+                  <div className="absolute -bottom-5 left-0 w-14 text-center">
+                    <p className="text-xs text-foreground-muted leading-tight truncate">{lesson.title.split(" ")[0]}</p>
+                  </div>
+                </div>
+              ) : (
+                <Link href={`/learn/lesson/${lesson.id}`} className="relative">
+                  {node}
+                  <div className="absolute -bottom-5 left-0 w-14 text-center">
+                    <p className="text-xs text-foreground-muted leading-tight truncate">{lesson.title.split(" ")[0]}</p>
+                  </div>
+                </Link>
+              )}
+              {i < visibleLessons.length - 1 && (
+                <div className={cn("w-6 h-0.5 mx-0.5 shrink-0", isDone ? "bg-primary" : "bg-border")} />
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -263,6 +293,7 @@ export default function LearnPage() {
   const { data: session } = useSession();
   const [courses, setCourses] = useState<Course[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [pathCourse, setPathCourse] = useState<PathCourse | null>(null);
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
   const [activeTab, setActiveTab] = useState("All");
@@ -293,6 +324,28 @@ export default function LearnPage() {
           emoji: COMMUNITY_EMOJIS[c.community?.slug ?? ''] ?? '📚',
         }));
         setCourses(mapped);
+
+        // Load the first course's full lesson list for the Learning Path widget
+        const firstCourse = data.data[0] as ApiCourse | undefined;
+        if (firstCourse) {
+          fetch(`/api/courses/${firstCourse.id}`)
+            .then(r => r.ok ? r.json() : null)
+            .then(detail => {
+              if (!detail?.data) return;
+              setPathCourse({
+                id: detail.data.id,
+                title: detail.data.title,
+                community: detail.data.community?.name ?? '',
+                lessons: (detail.data.lessons as ApiLesson[]).map(l => ({
+                  id: l.id,
+                  title: l.title,
+                  order: l.order,
+                  status: (l.status as PathLesson['status']) ?? 'locked',
+                })),
+              });
+            })
+            .catch(() => {});
+        }
       })
       .catch(() => {})
       .finally(() => setLoadingCourses(false));
@@ -442,7 +495,9 @@ export default function LearnPage() {
                 <p className="text-white/80 text-sm">Translate 5 phrases • 50 XP reward</p>
               </div>
             </div>
-            <Link href="/learn/lesson/daily-challenge">
+            <Link href={pathCourse?.lessons.find(l => l.status === "current")?.id
+              ? `/learn/lesson/${pathCourse.lessons.find(l => l.status === "current")!.id}`
+              : pathCourse ? `/learn/${pathCourse.id}` : "/learn"}>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -464,7 +519,7 @@ export default function LearnPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
         >
-          <LearningPath />
+          <LearningPath course={pathCourse} />
         </motion.div>
 
         {/* Browse Courses */}

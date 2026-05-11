@@ -119,7 +119,7 @@ function validateCsrf(request: NextRequest): boolean {
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Derive IP for rate limiting
