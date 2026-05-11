@@ -9,7 +9,20 @@ import { PrismaClient } from '../src/generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import bcrypt from 'bcryptjs'
 
-const connectionString = process.env.DATABASE_URL ?? 'postgresql://localhost:5432/sikkimverse'
+function resolveConnectionString(): string {
+  if (process.env.DIRECT_DATABASE_URL) return process.env.DIRECT_DATABASE_URL
+  const url = process.env.DATABASE_URL ?? ''
+  if (url.startsWith('prisma+postgres://')) {
+    try {
+      const apiKey = new URL(url).searchParams.get('api_key') ?? ''
+      const decoded = JSON.parse(Buffer.from(apiKey, 'base64').toString('utf8'))
+      if (decoded.databaseUrl) return decoded.databaseUrl
+    } catch { /* fall through */ }
+  }
+  return url || 'postgresql://localhost:5432/sikkimverse'
+}
+
+const connectionString = resolveConnectionString()
 const adapter = new PrismaPg({ connectionString })
 const prisma = new PrismaClient({ adapter })
 
