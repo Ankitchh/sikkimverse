@@ -74,11 +74,12 @@ const buttonVariants = cva(
       variant: "default",
       size: "md",
     },
-  }
+  },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   loading?: boolean;
   leftIcon?: React.ReactNode;
@@ -95,11 +96,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       loading = false,
       leftIcon,
       rightIcon,
+      asChild: _asChild,
       disabled,
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const isDisabled = disabled || loading;
 
@@ -112,7 +114,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading ? (
-          <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden="true" />
+          <Loader2
+            className="h-4 w-4 animate-spin shrink-0"
+            aria-hidden="true"
+          />
         ) : (
           leftIcon && (
             <span className="shrink-0" aria-hidden="true">
@@ -128,7 +133,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

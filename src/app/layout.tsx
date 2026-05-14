@@ -138,6 +138,7 @@ export default function RootLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className={[
           "min-h-full flex flex-col",
           "font-sans antialiased",
@@ -148,40 +149,40 @@ export default function RootLayout({
         ].join(" ")}
       >
         <SessionProvider>
-        <ThemeProvider defaultTheme="dark" storageKey="sikkimverse-theme">
-          {/* Skip-to-content link for accessibility */}
-          <a
-            href="#main-content"
-            className={[
-              "sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100]",
-              "focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2",
-              "focus:text-sm focus:font-medium focus:text-primary-foreground",
-              "focus:shadow-lg focus:outline-none",
-            ].join(" ")}
-          >
-            Skip to main content
-          </a>
+          <ThemeProvider defaultTheme="dark" storageKey="sikkimverse-theme">
+            {/* Skip-to-content link for accessibility */}
+            <a
+              href="#main-content"
+              className={[
+                "sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100",
+                "focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2",
+                "focus:text-sm focus:font-medium focus:text-primary-foreground",
+                "focus:shadow-lg focus:outline-none",
+              ].join(" ")}
+            >
+              Skip to main content
+            </a>
 
-          {/* Site header */}
-          <Header />
+            {/* Site header */}
+            <Header />
 
-          {/* Main content */}
-          <main
-            id="main-content"
-            className="flex flex-col flex-1 min-h-0"
-            tabIndex={-1}
-          >
-            {children}
-          </main>
+            {/* Main content */}
+            <main
+              id="main-content"
+              className="flex flex-col flex-1 min-h-0"
+              tabIndex={-1}
+            >
+              {children}
+            </main>
 
-          {/* Site footer (hidden on mobile — nav bar replaces it) */}
-          <div className="hidden md:block">
-            <Footer />
-          </div>
+            {/* Site footer (hidden on mobile — nav bar replaces it) */}
+            <div className="hidden md:block">
+              <Footer />
+            </div>
 
-          {/* Mobile bottom navigation */}
-          <MobileNav />
-        </ThemeProvider>
+            {/* Mobile bottom navigation */}
+            <MobileNav />
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>

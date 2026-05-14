@@ -15,7 +15,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type LessonType = "Vocabulary" | "Grammar" | "Pronunciation" | "Script" | "Culture";
+type LessonType =
+  | "Vocabulary"
+  | "Grammar"
+  | "Pronunciation"
+  | "Script"
+  | "Culture";
 
 interface LessonCardProps {
   order: number;
@@ -97,27 +102,27 @@ export default function LessonCard({
         isLocked
           ? "opacity-50 cursor-not-allowed bg-background-tertiary border-border"
           : isCurrent
-          ? "bg-background-secondary border-primary/40 shadow-md cursor-pointer"
-          : isCompleted
-          ? "bg-background-secondary border-border hover:border-primary/30 cursor-pointer"
-          : "bg-background-secondary border-border hover:border-border hover:shadow-sm cursor-pointer",
-        className
+            ? "bg-background-secondary border-primary/40 shadow-md cursor-pointer"
+            : isCompleted
+              ? "bg-background-secondary border-border hover:border-primary/30 cursor-pointer"
+              : "bg-background-secondary border-border hover:border-border hover:shadow-sm cursor-pointer",
+        className,
       )}
       aria-label={`${isLocked ? "Locked: " : ""}Lesson ${order}: ${title}`}
     >
       <div className="p-4 flex items-center gap-4">
         {/* Status icon circle */}
-        <div className="flex-shrink-0 relative">
+        <div className="shrink-0 relative">
           <div
             className={cn(
               "h-10 w-10 rounded-full flex items-center justify-center transition-colors",
               isLocked
                 ? "bg-border/60"
                 : isCompleted
-                ? "bg-green-500"
-                : isCurrent
-                ? "bg-primary"
-                : "bg-background-tertiary border-2 border-border"
+                  ? "bg-green-500"
+                  : isCurrent
+                    ? "bg-primary"
+                    : "bg-background-tertiary border-2 border-border",
             )}
           >
             {isLocked ? (
@@ -127,7 +132,9 @@ export default function LessonCard({
             ) : isCurrent ? (
               <PlayCircle className="h-5 w-5 text-white fill-white/20" />
             ) : (
-              <span className="text-sm font-bold text-foreground-muted">{order}</span>
+              <span className="text-sm font-bold text-foreground-muted">
+                {order}
+              </span>
             )}
           </div>
 
@@ -148,12 +155,12 @@ export default function LessonCard({
             <p
               className={cn(
                 "text-sm font-semibold leading-snug",
-                isLocked ? "text-foreground-muted" : "text-foreground"
+                isLocked ? "text-foreground-muted" : "text-foreground",
               )}
             >
               {title}
             </p>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0">
               {/* XP badge */}
               {!isLocked && (
                 <span
@@ -161,7 +168,7 @@ export default function LessonCard({
                     "inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md",
                     isCompleted
                       ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
-                      : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+                      : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400",
                   )}
                 >
                   <Zap className="h-2.5 w-2.5" />+{xpReward}
@@ -177,7 +184,7 @@ export default function LessonCard({
                 "inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border",
                 config.color,
                 config.bg,
-                config.border
+                config.border,
               )}
             >
               <TypeIcon className="h-2.5 w-2.5" />
@@ -205,21 +212,25 @@ export default function LessonCard({
         {/* Right arrow indicator */}
         {isClickable && (
           <motion.div
-            className="flex-shrink-0"
+            className="shrink-0"
             animate={isCurrent ? { x: [0, 3, 0] } : {}}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
             <svg
               className={cn(
                 "h-4 w-4",
-                isCurrent ? "text-primary" : "text-foreground-muted"
+                isCurrent ? "text-primary" : "text-foreground-muted",
               )}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={2}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </motion.div>
         )}

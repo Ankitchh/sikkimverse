@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 // ─── GET /api/lessons/[id] ────────────────────────────────────────────────────
 
@@ -9,50 +9,52 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ): Promise<NextResponse> {
   try {
-    const { id } = await params
-    const session = await auth()
+    const { id } = await params;
+    const session = await auth();
 
     // Fetch lesson with all relations via separate queries for TypeScript compatibility
     const lesson = await prisma.lesson.findFirst({
       where: { id, isPublished: true },
-    })
+    });
 
     if (!lesson) {
-      return NextResponse.json({ error: 'Lesson not found.' }, { status: 404 })
+      return NextResponse.json({ error: "Lesson not found." }, { status: 404 });
     }
 
-    const [course, quizzes] = await Promise.all([
-      prisma.course.findUnique({
-        where: { id: lesson.courseId },
-        include: {
-          community: { select: { id: true, name: true, slug: true, colorPrimary: true } },
-          language:  { select: { id: true, name: true, code: true } },
-          lessons: {
-            where: { isPublished: true },
-            orderBy: { order: 'asc' },
-            select: { id: true, title: true, order: true },
-          },
+    const course = await prisma.course.findUnique({
+      where: { id: lesson.courseId },
+      include: {
+        community: {
+          select: { id: true, name: true, slug: true, colorPrimary: true },
         },
-      }),
-      prisma.quiz.findMany({
-        where: { lessonId: id },
-        select: {
-          id: true,
-          type: true,
-          question: true,
-          options: true,
-          correctAnswer: true,
+        language: { select: { id: true, name: true, code: true } },
+        lessons: {
+          where: { isPublished: true },
+          orderBy: { order: "asc" },
+          select: { id: true, title: true, order: true },
         },
-      }),
-    ])
+      },
+    });
 
     if (!course) {
-      return NextResponse.json({ error: 'Course not found.' }, { status: 404 })
+      return NextResponse.json({ error: "Course not found." }, { status: 404 });
     }
 
+    const quizzes = await prisma.quiz.findMany({
+      where: { lessonId: id },
+      select: {
+        id: true,
+        type: true,
+        question: true,
+        options: true,
+        correctAnswer: true,
+      },
+    });
+
     // Fetch user progress
-    let userProgress: { completed: boolean; score: number | null } | null = null
-    let courseProgress: Record<string, boolean> = {}
+    let userProgress: { completed: boolean; score: number | null } | null =
+      null;
+    let courseProgress: Record<string, boolean> = {};
 
     if (session?.user?.id) {
       const [lessonProg, allProgress] = await Promise.all([
@@ -64,15 +66,18 @@ export async function GET(
           where: { userId: session.user.id, courseId: lesson.courseId },
           select: { lessonId: true, completed: true },
         }),
-      ])
-      userProgress = lessonProg
-      courseProgress = Object.fromEntries(allProgress.map(p => [p.lessonId, p.completed]))
+      ]);
+      userProgress = lessonProg;
+      courseProgress = Object.fromEntries(
+        allProgress.map((p) => [p.lessonId, p.completed]),
+      );
     }
 
-    const sortedLessons = course.lessons
-    const idx = sortedLessons.findIndex(l => l.id === id)
-    const prevLesson = idx > 0 ? sortedLessons[idx - 1] : null
-    const nextLesson = idx < sortedLessons.length - 1 ? sortedLessons[idx + 1] : null
+    const sortedLessons = course.lessons;
+    const idx = sortedLessons.findIndex((l) => l.id === id);
+    const prevLesson = idx > 0 ? sortedLessons[idx - 1] : null;
+    const nextLesson =
+      idx < sortedLessons.length - 1 ? sortedLessons[idx + 1] : null;
 
     return NextResponse.json({
       data: {
@@ -103,9 +108,12 @@ export async function GET(
           : null,
         courseProgress,
       },
-    })
+    });
   } catch (error) {
-    console.error('[GET /api/lessons/[id]]', error)
-    return NextResponse.json({ error: 'Failed to fetch lesson.' }, { status: 500 })
+    console.error("[GET /api/lessons/[id]]", error);
+    return NextResponse.json(
+      { error: "Failed to fetch lesson." },
+      { status: 500 },
+    );
   }
 }

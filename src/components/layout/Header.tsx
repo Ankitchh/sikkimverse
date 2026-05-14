@@ -25,7 +25,7 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { useSession, signOut } from "next-auth/react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { NotificationBell } from "@/components/features/NotificationBell";
 
 // ── Nav items ─────────────────────────────────────────────────────────────────
@@ -48,7 +48,7 @@ function SikkimverseLogo() {
     >
       {/* Cultural knot / mandala icon */}
       <div className="relative h-8 w-8 shrink-0">
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-forest to-forest-light opacity-90 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 rounded-lg bg-linear-to-br from-forest to-forest-light opacity-90 group-hover:opacity-100 transition-opacity" />
         <div className="absolute inset-0 flex items-center justify-center">
           <svg
             viewBox="0 0 24 24"
@@ -107,14 +107,16 @@ function NavLink({ href, label, icon: Icon, active }: NavLinkProps) {
         "transition-all duration-200 group",
         active
           ? "text-primary bg-primary/8"
-          : "text-foreground-secondary hover:text-foreground hover:bg-background-secondary"
+          : "text-foreground-secondary hover:text-foreground hover:bg-background-secondary",
       )}
       aria-current={active ? "page" : undefined}
     >
       <Icon
         className={cn(
           "h-4 w-4 transition-colors",
-          active ? "text-primary" : "text-foreground-muted group-hover:text-foreground"
+          active
+            ? "text-primary"
+            : "text-foreground-muted group-hover:text-foreground",
         )}
         aria-hidden
       />
@@ -143,14 +145,14 @@ function ThemeToggle() {
         "relative h-8 w-14 rounded-full border transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
         isDark
           ? "bg-forest/20 border-forest/30"
-          : "bg-amber-100 border-amber-200"
+          : "bg-amber-100 border-amber-200",
       )}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
       <motion.span
         className={cn(
           "absolute top-0.5 h-6 w-6 rounded-full flex items-center justify-center shadow-sm",
-          isDark ? "bg-forest text-white" : "bg-amber-400 text-white"
+          isDark ? "bg-forest text-white" : "bg-amber-400 text-white",
         )}
         animate={{ x: isDark ? 24 : 2 }}
         transition={{ type: "spring", stiffness: 500, damping: 35 }}
@@ -191,14 +193,13 @@ function UserMenu() {
 
   if (!user) {
     return (
-      <Button
-        variant="cultural"
-        size="sm"
-        leftIcon={<LogIn className="h-3.5 w-3.5" />}
-        asChild
+      <Link
+        href="/auth/signin"
+        className={cn(buttonVariants({ variant: "cultural", size: "sm" }))}
       >
-        <Link href="/auth/signin">Sign in</Link>
-      </Button>
+        <LogIn className="h-3.5 w-3.5" />
+        Sign in
+      </Link>
     );
   }
 
@@ -209,7 +210,7 @@ function UserMenu() {
         className={cn(
           "flex items-center gap-2 rounded-lg px-2 py-1.5",
           "transition-colors hover:bg-background-secondary",
-          "focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+          "focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
         )}
         aria-expanded={open}
         aria-haspopup="menu"
@@ -221,7 +222,7 @@ function UserMenu() {
           ring="primary"
         />
         <div className="hidden md:flex flex-col items-start leading-none">
-          <span className="text-sm font-medium text-foreground truncate max-w-[120px]">
+          <span className="text-sm font-medium text-foreground truncate max-w-30">
             {user?.name ?? "User"}
           </span>
           <Badge variant="cultural" size="sm" className="mt-0.5">
@@ -231,7 +232,7 @@ function UserMenu() {
         <ChevronDown
           className={cn(
             "h-3.5 w-3.5 text-foreground-muted transition-transform duration-200",
-            open && "rotate-180"
+            open && "rotate-180",
           )}
           aria-hidden
         />
@@ -247,14 +248,18 @@ function UserMenu() {
             className={cn(
               "absolute right-0 top-full mt-2 w-56 z-50",
               "glass rounded-xl border border-border shadow-lg",
-              "py-1.5 overflow-hidden"
+              "py-1.5 overflow-hidden",
             )}
             role="menu"
           >
             {/* User info */}
             <div className="px-3 py-2.5 border-b border-border">
-              <p className="text-sm font-semibold text-foreground">{user?.name ?? "User"}</p>
-              <p className="text-xs text-foreground-muted truncate">{user?.email ?? ""}</p>
+              <p className="text-sm font-semibold text-foreground">
+                {user?.name ?? "User"}
+              </p>
+              <p className="text-xs text-foreground-muted truncate">
+                {user?.email ?? ""}
+              </p>
               <div className="mt-1.5 flex items-center gap-1.5">
                 <Star className="h-3 w-3 text-gold" aria-hidden />
                 <span className="text-xs text-gold-dark font-medium">
@@ -274,7 +279,7 @@ function UserMenu() {
                   href={href}
                   className={cn(
                     "flex items-center gap-2.5 px-3 py-2 text-sm text-foreground-secondary",
-                    "hover:bg-background-secondary hover:text-foreground transition-colors"
+                    "hover:bg-background-secondary hover:text-foreground transition-colors",
                   )}
                   role="menuitem"
                   onClick={() => setOpen(false)}
@@ -289,7 +294,7 @@ function UserMenu() {
               <button
                 className={cn(
                   "flex w-full items-center gap-2.5 px-3 py-2 text-sm text-red-500",
-                  "hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  "hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors",
                 )}
                 role="menuitem"
                 onClick={() => {
@@ -326,7 +331,9 @@ function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [open]);
 
   return (
@@ -353,7 +360,7 @@ function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
             className={cn(
               "fixed right-0 top-0 bottom-0 z-50 w-72 max-w-[90vw]",
               "glass border-l border-border",
-              "flex flex-col overflow-y-auto"
+              "flex flex-col overflow-y-auto",
             )}
             role="dialog"
             aria-label="Mobile navigation"
@@ -372,9 +379,14 @@ function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
             </div>
 
             {/* Nav links */}
-            <nav className="flex-1 px-3 py-4 flex flex-col gap-1" aria-label="Mobile navigation">
+            <nav
+              className="flex-1 px-3 py-4 flex flex-col gap-1"
+              aria-label="Mobile navigation"
+            >
               {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-                const active = pathname === href || (href !== "/" && pathname.startsWith(href));
+                const active =
+                  pathname === href ||
+                  (href !== "/" && pathname.startsWith(href));
                 return (
                   <Link
                     key={href}
@@ -385,14 +397,17 @@ function MobileMenu({ open, onClose, pathname }: MobileMenuProps) {
                       "transition-all duration-150",
                       active
                         ? "bg-primary/10 text-primary"
-                        : "text-foreground-secondary hover:bg-background-secondary hover:text-foreground"
+                        : "text-foreground-secondary hover:bg-background-secondary hover:text-foreground",
                     )}
                     aria-current={active ? "page" : undefined}
                   >
                     <Icon className="h-5 w-5 shrink-0" aria-hidden />
                     {label}
                     {active && (
-                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
+                      <span
+                        className="ml-auto h-1.5 w-1.5 rounded-full bg-primary"
+                        aria-hidden
+                      />
                     )}
                   </Link>
                 );
@@ -443,7 +458,7 @@ export function Header() {
           "transition-all duration-300",
           scrolled
             ? "glass border-b border-border shadow-md"
-            : "bg-background/80 backdrop-blur-sm border-b border-transparent"
+            : "bg-background/80 backdrop-blur-sm border-b border-transparent",
         )}
         role="banner"
       >
@@ -491,7 +506,7 @@ export function Header() {
               className={cn(
                 "md:hidden rounded-md p-2",
                 "text-foreground-secondary hover:text-foreground hover:bg-background-secondary",
-                "transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+                "transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
               )}
               aria-label="Open navigation menu"
               aria-expanded={mobileOpen}
